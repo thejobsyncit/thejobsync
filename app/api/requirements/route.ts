@@ -86,36 +86,6 @@ export async function POST(request: NextRequest) {
       include: { client: { select: { companyName: true } } },
     });
 
-    // Send emails to all candidates if the job is open
-    if (requirement.status === 'open') {
-      (prisma as any).candidateAccount.findMany({
-        select: { email: true, name: true }
-      }).then(async (candidates: any[]) => {
-        if (candidates.length > 0) {
-          const { sendEmail } = await import('@/lib/mail');
-          const emailPromises = candidates.map((c) => sendEmail({
-            to: c.email,
-            subject: `New Job Opening: ${requirement.title} at ${requirement.client.companyName}`,
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaec; border-radius: 8px;">
-                <h2 style="color: #4F46E5;">New Job Opportunity!</h2>
-                <p>Hi ${c.name},</p>
-                <p>We are excited to inform you about a new opening for <strong>${requirement.title}</strong> at <strong>${requirement.client.companyName}</strong>.</p>
-                <p><strong>Location:</strong> ${requirement.location}</p>
-                <p><strong>Experience Required:</strong> ${requirement.experience}</p>
-                <br/>
-                <p>Log in to your candidate portal to view more details and apply!</p>
-                <br/>
-                <p>Best Regards,</p>
-                <p><strong>HR Team</strong><br/>ManpowerCRM</p>
-              </div>
-            `
-          }));
-          await Promise.all(emailPromises);
-        }
-      }).catch((e: any) => console.error("Error sending bulk job notifications:", e));
-    }
-
     return NextResponse.json({
       ...requirement,
       clientName: requirement.client.companyName,

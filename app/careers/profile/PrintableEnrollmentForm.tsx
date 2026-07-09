@@ -3,24 +3,12 @@ import React from 'react';
 export default function PrintableEnrollmentForm({ candidate }: { candidate: any }) {
   if (!candidate) return null;
 
-  const skills = candidate.skillsArr || (() => {
+  const skills = (() => {
     try {
       return typeof candidate.skills === 'string' ? JSON.parse(candidate.skills) : candidate.skills || [];
     } catch {
       return [];
     }
-  })();
-
-  const educations = candidate.educations || (() => {
-    try {
-      return typeof candidate.education === 'string' ? JSON.parse(candidate.education) : [];
-    } catch { return []; }
-  })();
-
-  const experiences = candidate.experiences || (() => {
-    try {
-      return typeof candidate.experience === 'string' ? JSON.parse(candidate.experience) : [];
-    } catch { return []; }
   })();
 
   return (
@@ -42,35 +30,27 @@ export default function PrintableEnrollmentForm({ candidate }: { candidate: any 
               background: white;
             }
             .print-section { margin-bottom: 30px; }
-            .print-header { border-bottom: 2px solid #0ea5e9; padding-bottom: 15px; margin-bottom: 30px; display: flex; justify-content: space-between; alignItems: center; }
-            h1 { margin: 0 0 5px 0; color: #0f172a; font-size: 28px; }
-            h2 { margin: 0 0 15px 0; color: #0f172a; font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
-            p { margin: 6px 0; font-size: 14px; line-height: 1.5; }
-            .label { font-weight: bold; color: #475569; width: 140px; display: inline-block; }
+            .print-header { border-bottom: 2px solid #0ea5e9; padding-bottom: 15px; margin-bottom: 30px; }
+            h1, h2, h3 { margin: 0 0 10px 0; color: #0f172a; }
+            p { margin: 5px 0; font-size: 14px; line-height: 1.5; }
+            .label { font-weight: bold; color: #475569; width: 150px; display: inline-block; }
             .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-            .tag { display: inline-block; background: #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 13px; margin: 0 6px 6px 0; border: 1px solid #cbd5e1; }
-            .item-block { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #e2e8f0; }
-            .item-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+            .tag { display: inline-block; background: #e2e8f0; padding: 4px 10px; border-radius: 12px; font-size: 12px; margin: 4px 4px 0 0; }
           }
         `}
       </style>
-
+      
       <div className="print-header">
-        <div>
-          <h1>Candidate Enrollment Profile</h1>
-          <p style={{ color: '#64748b' }}>Generated on: {new Date().toLocaleDateString()}</p>
-        </div>
-        {candidate.photoUrl && (
-          <img src={candidate.photoUrl} alt="Photo" style={{ width: 100, height: 130, objectFit: 'cover', border: '2px solid #0ea5e9', borderRadius: 8 }} />
-        )}
+        <h1>Candidate Enrollment Profile</h1>
+        <p>Generated on: {new Date().toLocaleDateString()}</p>
       </div>
 
       <div className="print-section grid">
         <div>
           <h2>Personal Details</h2>
-          <p><span className="label">Name:</span> {candidate.name || 'Not specified'}</p>
-          <p><span className="label">Email:</span> {candidate.email || 'Not specified'}</p>
-          <p><span className="label">Phone:</span> {candidate.phone || 'Not specified'}</p>
+          <p><span className="label">Name:</span> {candidate.name}</p>
+          <p><span className="label">Email:</span> {candidate.email}</p>
+          <p><span className="label">Phone:</span> {candidate.phone}</p>
           <p><span className="label">Location:</span> {candidate.location || 'Not specified'}</p>
         </div>
         <div>
@@ -81,28 +61,19 @@ export default function PrintableEnrollmentForm({ candidate }: { candidate: any 
         </div>
       </div>
 
-      {educations.length > 0 && educations[0].degree && (
+      {(candidate.currentCompany || candidate.currentRole || candidate.experience) && (
         <div className="print-section">
-          <h2>Education Details</h2>
-          {educations.map((edu: any, i: number) => (
-            <div key={i} className="item-block">
-              <p style={{ fontSize: '16px', fontWeight: 'bold' }}>{edu.degree}</p>
-              <p>{edu.college}</p>
-              <p style={{ color: '#475569', fontSize: '13px' }}>Year: {edu.year || 'N/A'} | CGPA/Percentage: {edu.cgpa || 'N/A'}</p>
-            </div>
-          ))}
+          <h2>Experience Details</h2>
+          {candidate.currentCompany && <p><span className="label">Current Company:</span> {candidate.currentCompany}</p>}
+          {candidate.currentRole && <p><span className="label">Current Role:</span> {candidate.currentRole}</p>}
+          {candidate.experience && <p><span className="label">Experience Notes:</span> {candidate.experience}</p>}
         </div>
       )}
 
-      {(experiences.length > 0 && experiences[0].role) && (
+      {candidate.education && (
         <div className="print-section">
-          <h2>Experience Details</h2>
-          {experiences.map((exp: any, i: number) => (
-            <div key={i} className="item-block">
-              <p style={{ fontSize: '16px', fontWeight: 'bold' }}>{exp.role} <span style={{ fontWeight: 'normal', color: '#475569' }}>at</span> {exp.company}</p>
-              <p style={{ color: '#475569', fontSize: '13px' }}>Duration: {exp.from} - {exp.current ? 'Present' : exp.to}</p>
-            </div>
-          ))}
+          <h2>Education Details</h2>
+          <p>{candidate.education}</p>
         </div>
       )}
 
@@ -120,7 +91,7 @@ export default function PrintableEnrollmentForm({ candidate }: { candidate: any 
       {candidate.summary && (
         <div className="print-section">
           <h2>About Me</h2>
-          <p style={{ whiteSpace: 'pre-wrap' }}>{candidate.summary}</p>
+          <p>{candidate.summary}</p>
         </div>
       )}
     </div>

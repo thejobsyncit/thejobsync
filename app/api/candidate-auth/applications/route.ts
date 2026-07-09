@@ -108,51 +108,6 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Fetch Requirement Details to create a meaningful message
-    let jobTitle = "a job";
-    let companyName = "";
-    if (requirementId) {
-      const requirement = await prisma.jobRequirement.findUnique({
-        where: { id: requirementId },
-        include: { client: true }
-      });
-      if (requirement) {
-        jobTitle = requirement.title;
-        if (requirement.client) {
-          companyName = ` at ${requirement.client.companyName}`;
-        }
-      }
-    }
-
-    // Create a notification (CandidateMessage) for the candidate
-    await (prisma as any).candidateMessage.create({
-      data: {
-        candidateAccountId,
-        sender: 'system',
-        message: `Application successful! Your application for ${jobTitle}${companyName} has been received. Our HR team will review it and get back to you shortly. You can track this in your 'My Applications' tab.`,
-      }
-    });
-
-    // Send an actual email to the candidate
-    const { sendEmail } = await import('@/lib/mail');
-    await sendEmail({
-      to: candAccount.email,
-      subject: `Application Received: ${jobTitle}${companyName}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaec; border-radius: 8px;">
-          <h2 style="color: #4F46E5;">Application Successful</h2>
-          <p>Hi ${candAccount.name},</p>
-          <p>Thank you for applying for the <strong>${jobTitle}</strong> position${companyName}.</p>
-          <p>Your application has been successfully submitted and will be reviewed by our HR team. We will get back to you shortly with the next steps.</p>
-          <br/>
-          <p>You can track the status of your application in your candidate portal under the "My Applications" tab.</p>
-          <br/>
-          <p>Best Regards,</p>
-          <p><strong>HR Team</strong><br/>ManpowerCRM</p>
-        </div>
-      `
-    });
-
     return NextResponse.json(application, { status: 201 });
   } catch (error) {
     console.error('Application error:', error);
