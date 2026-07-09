@@ -8,7 +8,7 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
   const plans = [
     {
       name: 'JS Pro Resume',
-      price: '₹1',
+      price: '₹99',
       features: [
         'Dynamic resume builder',
         'Profile subscription',

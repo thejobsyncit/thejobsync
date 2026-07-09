@@ -69,6 +69,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('crm_user');
   }, [user]);
 
+  // Idle Timeout Logic: 2 Minutes
+  useEffect(() => {
+    if (!user) return;
+
+    let timeoutId: NodeJS.Timeout;
+
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      // 2 minutes = 120,000 milliseconds
+      timeoutId = setTimeout(() => {
+        logout();
+      }, 120000);
+    };
+
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    const handleActivity = () => resetTimer();
+
+    events.forEach(event => window.addEventListener(event, handleActivity));
+    resetTimer(); // Start the timer when the component mounts or user logs in
+
+    return () => {
+      clearTimeout(timeoutId);
+      events.forEach(event => window.removeEventListener(event, handleActivity));
+    };
+  }, [user, logout]);
+
   return (
     <AuthContext.Provider value={{ user, isLoading, login, logout, isAuthenticated: !!user }}>
       {children}

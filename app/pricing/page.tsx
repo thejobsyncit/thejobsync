@@ -81,7 +81,7 @@ export default function PricingPage() {
     {
       title: 'JS Pro Resume',
       popular: false,
-      price: { inr: '₹1', usd: '$1' },
+      price: { inr: '₹99', usd: '$99' },
       features: [
         'Dynamic resume builder',
         'Profile subscription',
