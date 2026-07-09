@@ -305,6 +305,7 @@ model CandidateAccount {
   education      String?
   location       String?
   resumeUrl      String?
+  photoUrl       String?
   currentCompany String?
   currentRole    String?
   expectedSalary String?

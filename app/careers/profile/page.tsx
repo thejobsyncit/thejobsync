@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCandidateAuth } from '@/context/CandidateAuthContext';
-import { User, Briefcase, GraduationCap, Star, Save, CheckCircle, UploadCloud, FileText, X, Plus, Trash2, Download } from 'lucide-react';
+import { User, Briefcase, GraduationCap, Star, Save, CheckCircle, UploadCloud, FileText, X, Plus, Trash2, Download, ChevronDown, Search, Camera } from 'lucide-react';
 import DashboardLayout from '../DashboardLayout';
 import { motion } from 'framer-motion';
 import PrintableEnrollmentForm from './PrintableEnrollmentForm';
@@ -18,16 +18,74 @@ const getINPUT = (isDark: boolean) => ({
 });
 const getLABEL = (isDark: boolean) => ({ fontSize: '0.85rem', fontWeight: 600 as const, color: isDark ? '#94a3b8' : '#475569', display: 'block' as const, marginBottom: 8 });
 
+const DISTRICTS = [
+  "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri",
+  "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur",
+  "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris",
+  "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga",
+  "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli",
+  "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore",
+  "Viluppuram", "Virudhunagar"
+];
+
+const DEGREES = [
+  "B.Tech - Computer Science", "B.Tech - Information Technology", "B.Tech - Electronics", "B.Tech - Mechanical", "B.Tech - Civil",
+  "B.E. - Computer Science", "B.E. - Electrical", "B.E. - Electronics", "B.E. - Mechanical", "B.E. - Civil",
+  "B.Sc - Computer Science", "B.Sc - Information Technology", "B.Sc - Mathematics", "B.Sc - Physics", "B.Sc - Chemistry",
+  "BCA", "BBA", "B.Com", "B.A. - English", "B.A. - Economics", "B.Arch",
+  "M.Tech - Computer Science", "M.E. - Computer Science", "MCA", "MBA", "M.Sc - Computer Science", "Ph.D", "Diploma",
+  "High School (10th)", "Higher Secondary (12th)"
+];
+
+const COLLEGES = [
+  "Indian Institute of Technology Madras (IIT Madras)",
+  "Indian Institute of Technology Bombay (IIT Bombay)",
+  "Indian Institute of Technology Delhi (IIT Delhi)",
+  "Indian Institute of Technology Kanpur (IIT Kanpur)",
+  "Indian Institute of Technology Kharagpur (IIT KGP)",
+  "National Institute of Technology, Tiruchirappalli (NIT Trichy)",
+  "Anna University, Chennai",
+  "Vellore Institute of Technology (VIT)",
+  "SRM Institute of Science and Technology",
+  "PSG College of Technology, Coimbatore",
+  "Madras Institute of Technology (MIT)",
+  "SSN College of Engineering",
+  "College of Engineering, Guindy (CEG)",
+  "Loyola College, Chennai",
+  "Madras Christian College (MCC)",
+  "Sathyabama Institute of Science and Technology",
+  "Hindustan Institute of Technology and Science",
+  "Coimbatore Institute of Technology (CIT)",
+  "Kumaraguru College of Technology (KCT)",
+  "Sri Krishna College of Engineering and Technology (SKCET)",
+  "Thiagarajar College of Engineering, Madurai",
+  "Sastra Deemed University, Thanjavur",
+  "Amrita Vishwa Vidyapeetham",
+  "Karunya Institute of Technology and Sciences",
+  "B.S. Abdur Rahman Crescent Institute of Science and Technology",
+  "Meenakshi Sundararajan Engineering College",
+  "Rajalakshmi Engineering College",
+  "Saveetha Engineering College",
+  "Vel Tech Rangarajan Dr. Sagunthala R&D Institute of Science and Technology",
+  "Sri Venkateswara College of Engineering (SVCE)",
+  "St. Joseph's College of Engineering",
+  "RMK Engineering College",
+  "Easwari Engineering College",
+  "Kongu Engineering College",
+  "Bannari Amman Institute of Technology",
+  "Mepco Schlenk Engineering College"
+];
 export default function CandidateProfilePage() {
   const { candidate, updateProfile, isAuthenticated, isLoading } = useCandidateAuth();
   const { isDark } = usePortalTheme();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<any>({
     name: '', email: '', phone: '', headline: '', summary: '',
     location: '', currentCompany: '', currentRole: '', expectedSalary: '',
-    preferredRoles: '', resumeUrl: '', resumeFileName: '',
+    preferredRoles: '', resumeUrl: '', resumeFileName: '', photoUrl: '',
     skillsArr: [],
     educations: [{ degree: '', college: '', year: '', cgpa: '' }],
     experiences: [{ company: '', role: '', from: '', to: '', current: false }],
@@ -36,6 +94,7 @@ export default function CandidateProfilePage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [photoUploading, setPhotoUploading] = useState(false);
   const [showATSModal, setShowATSModal] = useState(false);
 
   useEffect(() => {
@@ -80,6 +139,7 @@ export default function CandidateProfilePage() {
       expectedSalary: candidate.expectedSalary || '',
       preferredRoles: (candidate as any).preferredRoles || '',
       resumeUrl: (candidate as any).resumeUrl || '',
+      photoUrl: (candidate as any).photoUrl || '',
       resumeFileName: '',
       skillsArr,
       educations,
@@ -129,7 +189,7 @@ export default function CandidateProfilePage() {
       if (res.ok) {
         const { url, name, extractedData } = await res.json();
         let newForm = { ...form, resumeUrl: url, resumeFileName: name || file.name };
-        
+
         if (extractedData) {
           let updatedFields = [];
           if (extractedData.email && extractedData.email !== form.email) { newForm.email = extractedData.email; updatedFields.push('Email'); }
@@ -140,19 +200,49 @@ export default function CandidateProfilePage() {
             newForm.skillsArr = Array.from(mergedSkills);
             if (newForm.skillsArr.length > originalLength) updatedFields.push('Skills');
           }
-          
+
           if (updatedFields.length > 0) {
             toast.success(`Auto-filled: ${updatedFields.join(', ')}`);
           } else {
             toast('Resume uploaded! (No new fields to auto-fill)', { icon: 'ℹ️' });
           }
         }
-        
+
         setForm(newForm);
       } else {
         alert('Resume upload failed. Please try again.');
       }
     } finally { setUploading(false); }
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Photo size must be less than 5MB");
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      alert("Please upload a valid image file");
+      return;
+    }
+
+    setPhotoUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload/photo', { method: 'POST', body: fd });
+      if (res.ok) {
+        const { url } = await res.json();
+        setForm({ ...form, photoUrl: url });
+        toast.success('Photo uploaded successfully!');
+      } else {
+        alert('Photo upload failed. Please try again.');
+      }
+    } catch (err) {
+      alert('Error uploading photo');
+    } finally { setPhotoUploading(false); }
   };
 
   const handleSave = async () => {
@@ -170,6 +260,7 @@ export default function CandidateProfilePage() {
         expectedSalary: form.expectedSalary,
         preferredRoles: form.preferredRoles,
         resumeUrl: form.resumeUrl,
+        photoUrl: form.photoUrl,
         skills: JSON.stringify(form.skillsArr),
         education: JSON.stringify(form.educations),
         experience: JSON.stringify(form.experiences),
@@ -208,6 +299,34 @@ export default function CandidateProfilePage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Basic Information */}
           <Section title="Basic Information" icon={<User size={20} color="#38bdf8" />}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginBottom: '1rem' }}>
+              <div style={{ position: 'relative' }}>
+                <div
+                  onClick={() => photoRef.current?.click()}
+                  style={{ width: 120, height: 140, borderRadius: 16, background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.02)', border: `2px dashed ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', position: 'relative' }}
+                  className="hover:opacity-80 transition-opacity"
+                >
+                  {form.photoUrl ? (
+                    <img src={form.photoUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <>
+                      <Camera size={28} color="#94a3b8" style={{ marginBottom: 8 }} />
+                      <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>Add Photo</span>
+                    </>
+                  )}
+                  {photoUploading && (
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span style={{ color: 'white', fontSize: '0.8rem', fontWeight: 600 }}>Uploading...</span>
+                    </div>
+                  )}
+                </div>
+                <input type="file" ref={photoRef} onChange={handlePhotoUpload} accept="image/*" style={{ display: 'none' }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ color: isDark ? '#e2e8f0' : '#475569', fontSize: '0.95rem', marginBottom: '0.5rem' }}>Upload your passport size photo.</p>
+                <p style={{ color: '#94a3b8', fontSize: '0.85rem', lineHeight: 1.5 }}>Max size 5MB. Formats: JPG, PNG, WEBP. <br />A professional photo helps recruiters identify you easily and makes your profile stand out.</p>
+              </div>
+            </div>
             <Grid2>
               <Field label="Full Name *">
                 <input style={getINPUT(isDark)} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Your full name" className="focus:border-sky-500" />
@@ -221,7 +340,7 @@ export default function CandidateProfilePage() {
                 <input style={getINPUT(isDark)} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Your mobile number" className="focus:border-sky-500" />
               </Field>
               <Field label="Location *">
-                <input style={getINPUT(isDark)} value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="City, State" className="focus:border-sky-500" />
+                <SmartSelector value={form.location} onChange={val => setForm({ ...form, location: val })} isDark={isDark} options={DISTRICTS} placeholder="Select your district" searchPlaceholder="Search district..." />
               </Field>
             </Grid2>
             <Field label="Professional Headline" full>
@@ -243,10 +362,10 @@ export default function CandidateProfilePage() {
                 )}
                 <Grid2>
                   <Field label="Degree / Course *">
-                    <input style={getINPUT(isDark)} value={edu.degree} onChange={e => updateEdu(i, 'degree', e.target.value)} placeholder="e.g. B.Tech Computer Science" className="focus:border-sky-500" />
+                    <SmartSelector value={edu.degree} onChange={val => updateEdu(i, 'degree', val)} isDark={isDark} options={DEGREES} placeholder="Select Degree/Course" searchPlaceholder="Search degree..." />
                   </Field>
                   <Field label="College / University Name *">
-                    <input style={getINPUT(isDark)} value={edu.college} onChange={e => updateEdu(i, 'college', e.target.value)} placeholder="e.g. Anna University" className="focus:border-sky-500" />
+                    <SmartSelector value={edu.college} onChange={val => updateEdu(i, 'college', val)} isDark={isDark} options={COLLEGES} placeholder="Select College/University" searchPlaceholder="Search college..." />
                   </Field>
                 </Grid2>
                 <Grid2>
@@ -428,7 +547,7 @@ export default function CandidateProfilePage() {
         </button>
       </div>
 
-      <PrintableEnrollmentForm candidate={candidate} />
+      <PrintableEnrollmentForm candidate={form} />
       <ATSPremiumPlansModal isOpen={showATSModal} onClose={() => setShowATSModal(false)} />
 
     </DashboardLayout>
@@ -454,9 +573,104 @@ function Grid2({ children }: { children: React.ReactNode }) {
 function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
   const { isDark } = usePortalTheme();
   return (
-    <div style={{ gridColumn: full ? '1/-1' : undefined }}>
+    <div style={{ gridColumn: full ? '1/-1' : undefined, minWidth: 0 }}>
       <label style={getLABEL(isDark)}>{label}</label>
       {children}
+    </div>
+  );
+}
+
+function SmartSelector({ value, onChange, isDark, options, placeholder, searchPlaceholder }: { value: string, onChange: (val: string) => void, isDark: boolean, options: string[], placeholder: string, searchPlaceholder: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [isOther, setIsOther] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (value && !options.includes(value)) {
+      setIsOther(true);
+    }
+  }, [value, options]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const filtered = options.filter(d => d.toLowerCase().includes(search.toLowerCase()));
+
+  if (isOther) {
+    return (
+      <div style={{ position: 'relative' }}>
+        <input
+          style={getINPUT(isDark)}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          autoFocus
+        />
+        <button
+          type="button"
+          onClick={() => { setIsOther(false); onChange(''); }}
+          style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#0ea5e9', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}
+        >
+          Select from list
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={wrapperRef} style={{ position: 'relative', zIndex: isOpen ? 50 : 1 }}>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        style={{ ...getINPUT(isDark), cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+      >
+        <span style={{ color: value ? (isDark ? 'white' : '#0f172a') : '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: 16, flex: 1, minWidth: 0, textAlign: 'left' }}>{value || placeholder}</span>
+        <ChevronDown size={16} color="#94a3b8" style={{ flexShrink: 0 }} />
+      </div>
+
+      {isOpen && (
+        <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50, marginTop: 4, background: isDark ? '#1e293b' : 'white', border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', maxHeight: 250, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div style={{ padding: 8, borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Search size={16} color="#94a3b8" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder={searchPlaceholder}
+              style={{ flex: 1, background: 'none', border: 'none', outline: 'none', color: isDark ? 'white' : '#0f172a', fontSize: '0.9rem' }}
+              autoFocus
+            />
+          </div>
+          <div style={{ overflowY: 'auto', flex: 1 }}>
+            {filtered.map(d => (
+              <div
+                key={d}
+                onClick={() => { onChange(d); setIsOpen(false); setSearch(''); }}
+                style={{ padding: '10px 16px', cursor: 'pointer', fontSize: '0.9rem', color: isDark ? '#e2e8f0' : '#334155' }}
+                className={isDark ? "hover:bg-slate-700" : "hover:bg-slate-100"}
+              >
+                {d}
+              </div>
+            ))}
+            {filtered.length === 0 && (
+              <div style={{ padding: '10px 16px', fontSize: '0.9rem', color: '#94a3b8', textAlign: 'center' }}>No results found</div>
+            )}
+            <div
+              onClick={() => { setIsOther(true); onChange(search); setIsOpen(false); setSearch(''); }}
+              style={{ padding: '10px 16px', cursor: 'pointer', fontSize: '0.9rem', color: '#0ea5e9', fontWeight: 600, borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` }}
+              className={isDark ? "hover:bg-slate-700" : "hover:bg-slate-100"}
+            >
+              + Other (Type manually)
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
