@@ -1,5 +1,4 @@
-﻿'use client';
-import { motion } from 'framer-motion';
+'use client';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function NewsBlog() {
@@ -24,11 +23,7 @@ export default function NewsBlog() {
         </div>
 
         {/* Featured Post Card */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+        <div 
           className="bg-white dark:bg-slate-800/80 rounded-3xl overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.06)] border border-gray-100 dark:border-white/5 flex flex-col md:flex-row mb-12 transition-all duration-300"
         >
           {/* Image Left */}
@@ -65,7 +60,7 @@ export default function NewsBlog() {
               <span className="text-[13px] font-medium text-slate-400 dark:text-slate-500 transition-colors duration-300">May 25, 2026</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </section>

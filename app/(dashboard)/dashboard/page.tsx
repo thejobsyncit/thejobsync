@@ -130,7 +130,7 @@ export default function DashboardPage() {
           {/* Charts Row */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '1rem',
             marginBottom: '1.5rem',
           }}>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '1rem',
           }}>
             {/* Top Skills Demand */}

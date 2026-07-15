@@ -78,7 +78,7 @@ export default function RecruiterPage() {
       )}
 
       {activeTab === 'candidates' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '0.75rem' }}>
           {myCandidates.map((cand, i) => (
             <div key={cand.id} className={`card animate-fade-in-up delay-${Math.min(i + 1, 6)}`} style={{ padding: '1rem' }}>
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '0.625rem' }}>

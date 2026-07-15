@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Briefcase, Building2, Zap, ArrowRight, Sun, Moon } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 
 import Navbar from '@/components/landing/Navbar';
@@ -32,9 +30,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-50 font-sans overflow-x-hidden transition-colors duration-300">
-      <div className="sticky top-0 z-50">
-        <Navbar />
-      </div>
+      <Navbar />
       <Hero />
       <AboutUs />
       <FAQ />

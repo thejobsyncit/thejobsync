@@ -672,17 +672,122 @@ body {
   display: none !important;
 }
 
+/* --- Tablet & Medium Screens (max-width: 1024px) --- */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: var(--sidebar-collapsed);
+  }
+  .topbar {
+    left: var(--sidebar-collapsed) !important;
+  }
+  .main-content {
+    margin-left: var(--sidebar-collapsed) !important;
+  }
+}
+
+/* --- Mobile (max-width: 768px) --- */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
+    width: var(--sidebar-width);
   }
   .sidebar.open {
     transform: translateX(0);
   }
-  .topbar { left: 0 !important; }
-  .main-content { margin-left: 0 !important; }
+  .topbar {
+    left: 0 !important;
+    padding: 0 0.75rem;
+  }
+  .main-content {
+    margin-left: 0 !important;
+  }
   .mobile-menu-btn {
     display: flex !important;
+  }
+
+  /* Search input */
+  .search-input {
+    max-width: 100%;
+    font-size: 0.8125rem;
+    padding: 0.4375rem 0.75rem 0.4375rem 2.25rem;
+  }
+
+  /* Notification dropdown */
+  .notification-dropdown {
+    width: min(360px, calc(100vw - 2rem)) !important;
+    right: -60px !important;
+  }
+
+  /* User menu dropdown */
+  .user-menu-dropdown {
+    right: 0 !important;
+    width: 180px !important;
+  }
+
+  /* Hide user name/role text on mobile */
+  .topbar-user-info {
+    display: none !important;
+  }
+
+  /* Main content padding */
+  .main-content > div {
+    padding: 0.75rem !important;
+  }
+
+  /* Tables */
+  .table-container,
+  .responsive-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Stat cards grid */
+  .stat-card {
+    padding: 1rem;
+  }
+
+  /* Modal */
+  .modal-content {
+    width: 95%;
+    padding: 1.25rem;
+    margin: 0.5rem;
+  }
+
+  /* Tab list */
+  .tab-list {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+  }
+  .tab-item {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    padding: 0.4375rem 0.75rem;
+  }
+}
+
+/* --- Small Mobile (max-width: 480px) --- */
+@media (max-width: 480px) {
+  .topbar {
+    padding: 0 0.5rem;
+  }
+  .search-input {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.625rem 0.375rem 2rem;
+  }
+  .notification-dropdown {
+    position: fixed !important;
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    width: auto !important;
+    top: var(--topbar-height) !important;
+  }
+  .modal-content {
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+  }
+  .stat-card {
+    padding: 0.875rem;
   }
 }
 
@@ -698,3 +803,4 @@ body {
   stroke: var(--border) !important;
 }
 .recharts-text { fill: var(--muted-foreground) !important; font-size: 0.75rem; }
+

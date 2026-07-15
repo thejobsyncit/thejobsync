@@ -1,6 +1,5 @@
-﻿'use client';
+'use client';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import { ClipboardList, Database, UserPlus, Check, ArrowRight } from 'lucide-react';
 
 export default function Services() {
@@ -54,13 +53,9 @@ export default function Services() {
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {services.map((service, idx) => (
-            <motion.div 
+            <div 
               key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.2, duration: 0.6 }}
-              className="bg-white dark:bg-slate-800/80 rounded-[20px] p-8 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col border border-gray-100 dark:border-white/5"
+              className={`bg-white dark:bg-slate-800/80 rounded-[20px] p-8 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col border border-gray-100 dark:border-white/5`}
             >
               <div>{service.icon}</div>
               <div className="flex items-center gap-3 mb-6 flex-wrap">
@@ -85,7 +80,7 @@ export default function Services() {
                 View Plans
                 <ArrowRight size={16} strokeWidth={2.5} />
               </Link>
-            </motion.div>
+            </div>
           ))}
         </div>
 

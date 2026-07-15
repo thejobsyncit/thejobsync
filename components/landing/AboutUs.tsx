@@ -1,5 +1,4 @@
-﻿'use client';
-import { motion } from 'framer-motion';
+'use client';
 
 export default function AboutUs() {
   return (
@@ -8,35 +7,23 @@ export default function AboutUs() {
         
         {/* ABOUT US Top Section */}
         <div className="mb-24 max-w-5xl mx-auto">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+          <h2 
             className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-8 transition-colors duration-300"
           >
             About Us
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+          </h2>
+          <p 
             className="text-slate-600 dark:text-slate-400 leading-relaxed text-[15px] md:text-[17px] font-medium transition-colors duration-300"
           >
             At THEJOBSYNC.COM, we are redefining the future of recruitment. Our platform is built to digitize and streamline the entire hiring lifecycle, ensuring efficiency, transparency, and trust at every stage. From candidate placement to rebuttal management, we deliver a seamless, data-driven experience that empowers both employers and job seekers. By integrating advanced technology and AI-enhanced processes, THEJOBSYNC.COM transforms recruitment into a scalable, intelligent, and user-friendly ecosystem.
-          </motion.p>
+          </p>
         </div>
 
         {/* ABOUT OUR COMPANY Section */}
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           
           {/* Illustration Left */}
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+          <div 
             className="w-full lg:w-1/2"
           >
             <div className="bg-[#CAF0F8]/30 dark:bg-slate-800/50 rounded-[40px] p-8 flex justify-center items-center transition-colors duration-300">
@@ -47,14 +34,10 @@ export default function AboutUs() {
                 className="w-full max-w-md rounded-2xl shadow-xl mix-blend-multiply"
               />
             </div>
-          </motion.div>
+          </div>
 
           {/* Text Right */}
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+          <div 
             className="w-full lg:w-1/2"
           >
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-8 transition-colors duration-300">
@@ -71,7 +54,7 @@ export default function AboutUs() {
                 THEJOBSYNC.COM is more than a job portal—it is a complete recruitment ecosystem designed to bring top talent and top organizations together seamlessly.
               </p>
             </div>
-          </motion.div>
+          </div>
           
         </div>
       </div>

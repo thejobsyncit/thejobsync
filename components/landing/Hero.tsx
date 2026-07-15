@@ -1,8 +1,5 @@
 'use client';
-import { motion } from 'framer-motion';
 import { Search, Monitor, Building2, ChevronDown } from 'lucide-react';
-
-
 
 export default function Hero() {
 
@@ -19,43 +16,31 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Floating Circular Image */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="hidden lg:block absolute right-0 top-0 w-[400px] h-[400px] rounded-full border-[12px] border-white dark:border-slate-800 shadow-2xl overflow-hidden z-20 transition-colors duration-300"
+        <div 
+          className="hidden lg:block absolute right-0 top-0 w-[400px] h-[400px] rounded-full border-[12px] border-white dark:border-slate-800 shadow-2xl overflow-hidden z-20 transition-colors duration-300 animate-scale-in delay-2"
         >
           <img 
             src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" 
             alt="Professionals" 
             className="w-full h-full object-cover"
           />
-        </motion.div>
+        </div>
 
         <div className="text-center lg:text-left max-w-4xl mx-auto lg:mx-0 relative z-30">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
+          <h1 
             className="text-5xl md:text-6xl lg:text-[76px] font-extrabold text-slate-900 dark:text-white tracking-tight mb-6 leading-tight transition-colors duration-300"
           >
             Navigate your Jobs here!
-          </motion.h1>
+          </h1>
           
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+          <p 
             className="text-lg md:text-xl text-slate-500 dark:text-slate-400 italic font-medium max-w-2xl mb-12 mx-auto lg:mx-0 transition-colors duration-300"
           >
-            "Lakhs of Employers. Millions of Job seekers. Endless success \u2014 only on THEJOBSYNC.COM."
-          </motion.p>
+            "Lakhs of Employers. Millions of Job seekers. Endless success — only on THEJOBSYNC.COM."
+          </p>
           
           {/* Stats Bar */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
+          <div 
             className="flex flex-col sm:flex-row items-center justify-between gap-6 max-w-4xl mx-auto lg:mx-0 z-50 mt-4 bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-gray-100 dark:border-white/10 rounded-3xl p-6 shadow-2xl"
           >
             <div className="flex flex-col items-center sm:items-start flex-1 text-center sm:text-left">
@@ -76,7 +61,7 @@ export default function Hero() {
               <span className="text-3xl md:text-4xl font-extrabold text-indigo-600 dark:text-indigo-400">1,200+</span>
               <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-1 uppercase tracking-wider">Live Jobs</span>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
       

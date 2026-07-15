@@ -152,7 +152,7 @@ export default function ClientsPage() {
         </div>
       ) : (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
             {filtered.map((client, i) => (
               <div key={client.id} className={`card animate-fade-in-up delay-${Math.min(i + 1, 8)}`} style={{ padding: '1.25rem', position: 'relative' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.875rem' }}>

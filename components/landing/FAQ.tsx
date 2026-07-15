@@ -1,5 +1,4 @@
-﻿'use client';
-import { motion, AnimatePresence } from 'framer-motion';
+'use client';
 import { Home, Plus, Minus, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -58,23 +57,16 @@ export default function FAQ() {
 
       {/* Main FAQ Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+        <h2 
           className="text-3xl font-extrabold text-slate-900 dark:text-white mb-4 transition-colors duration-300"
         >
           How Can We Help You?
-        </motion.h2>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
+        </h2>
+        <p 
           className="text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto mb-12 transition-colors duration-300"
         >
           Find answers to the most common questions about THEJOBSYNC. Can't find what you're looking for? Contact our support team.
-        </motion.p>
+        </p>
 
         {/* Tabs */}
         <div className="flex flex-wrap justify-center gap-3 mb-16">
@@ -114,18 +106,14 @@ export default function FAQ() {
                   {openFaq === idx ? <Minus size={18} /> : <Plus size={18} />}
                 </span>
               </button>
-              <AnimatePresence>
-                {openFaq === idx && (
-                  <motion.div 
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="px-6 pb-6 text-slate-600 dark:text-slate-400 font-medium transition-colors duration-300"
-                  >
-                    {faq.answer}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              
+              {openFaq === idx && (
+                <div 
+                  className="px-6 pb-6 text-slate-600 dark:text-slate-400 font-medium transition-colors duration-300 animate-fade-in"
+                >
+                  {faq.answer}
+                </div>
+              )}
             </div>
           ))}
         </div>

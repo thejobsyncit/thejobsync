@@ -90,7 +90,7 @@ export default function Topbar({ sidebarCollapsed, onMobileMenuToggle }: TopbarP
           </button>
 
           {showNotifications && (
-            <div className="animate-scale-in" style={{
+            <div className="animate-scale-in notification-dropdown" style={{
               position: 'absolute', top: '100%', right: 0, marginTop: 8,
               width: 360, background: 'var(--surface)',
               border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)',
@@ -138,7 +138,7 @@ export default function Topbar({ sidebarCollapsed, onMobileMenuToggle }: TopbarP
             <div className="avatar avatar-sm" style={{ background: ROLE_COLORS[user.role] }}>
               {getInitials(user.name)}
             </div>
-            <div style={{ textAlign: 'left' }}>
+            <div className="topbar-user-info" style={{ textAlign: 'left' }}>
               <div style={{ fontSize: '0.8125rem', fontWeight: 500, color: 'var(--foreground)', whiteSpace: 'nowrap' }}>
                 {user.name}
               </div>
@@ -149,7 +149,7 @@ export default function Topbar({ sidebarCollapsed, onMobileMenuToggle }: TopbarP
           </button>
 
           {showUserMenu && (
-            <div className="animate-scale-in" style={{
+            <div className="animate-scale-in user-menu-dropdown" style={{
               position: 'absolute', top: '100%', right: 0, marginTop: 8,
               width: 200, background: 'var(--surface)',
               border: '1px solid var(--border)', borderRadius: 'var(--radius-md)',
