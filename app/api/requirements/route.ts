@@ -28,12 +28,25 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
-    // Parse JSON fields
+    // Defensive JSON parse helper
+    const safeParse = (str: string) => {
+      try {
+        const parsed = JSON.parse(str);
+        if (typeof parsed === 'string') {
+          return JSON.parse(parsed); // Handle double-stringified
+        }
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    };
+
+    // Parse JSON fields safely
     const parsed = requirements.map(r => ({
       ...r,
       clientName: r.client.companyName,
-      skills: JSON.parse(r.skills),
-      assignedRecruiters: JSON.parse(r.assignedRecruiters),
+      skills: safeParse(r.skills),
+      assignedRecruiters: safeParse(r.assignedRecruiters),
     }));
 
     return NextResponse.json(parsed);

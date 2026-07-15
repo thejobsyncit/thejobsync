@@ -32,9 +32,22 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
+    // Defensive JSON parse helper
+    const safeParse = (str: string) => {
+      try {
+        const parsed = JSON.parse(str);
+        if (typeof parsed === 'string') {
+          return JSON.parse(parsed); // Handle double-stringified
+        }
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    };
+
     const parsed = candidates.map(c => ({
       ...c,
-      skills: JSON.parse(c.skills),
+      skills: safeParse(c.skills),
       requirementTitle: c.requirement?.title || null,
     }));
 
