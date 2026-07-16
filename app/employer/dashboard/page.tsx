@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { useEmployerAuth } from '@/context/EmployerAuthContext';
 import {
   Building2, Briefcase, Users, Plus, LogOut,
-  MapPin, Clock, X, Check, AlertCircle, Search
+  MapPin, Clock, X, Check, AlertCircle, Search, User, FileText, Download
 } from 'lucide-react';
+import { generateInvoicePdf } from '@/lib/generateInvoicePdf';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DEPARTMENTS } from '@/lib/constants';
 
@@ -34,6 +35,10 @@ export default function EmployerDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [jobsLoading, setJobsLoading] = useState(true);
   const [showPostJob, setShowPostJob] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [invoicesLoading, setInvoicesLoading] = useState(false);
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState('');
   const [postSuccess, setPostSuccess] = useState(false);
@@ -134,6 +139,20 @@ export default function EmployerDashboard() {
     setPosting(false);
   };
 
+  const handleProfileOpen = async () => {
+    setShowProfile(true);
+    setInvoicesLoading(true);
+    try {
+      const res = await fetch('/api/employer/invoices');
+      const data = await res.json();
+      if (data.invoices) setInvoices(data.invoices);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setInvoicesLoading(false);
+    }
+  };
+
   const handleLogout = async () => {
     await logout();
     router.push('/employer/login');
@@ -167,6 +186,9 @@ export default function EmployerDashboard() {
             <Link href="/employer/candidates" className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-[#03045E] hover:bg-[#CAF0F8]/20 rounded-lg transition-colors flex items-center gap-1.5">
               <Search size={14} /> Candidates
             </Link>
+            <button onClick={handleProfileOpen} className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-[#03045E] hover:bg-[#CAF0F8]/20 rounded-lg transition-colors flex items-center gap-1.5">
+              <User size={14} /> Profile
+            </button>
           </nav>
           <button onClick={handleLogout}
             className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-red-500 transition-colors px-3 py-2 rounded-lg hover:bg-red-50">
@@ -593,6 +615,107 @@ export default function EmployerDashboard() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Profile & Invoices Side Panel */}
+      <AnimatePresence>
+        {showProfile && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40"
+              onClick={() => setShowProfile(false)}
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-slate-100">
+                <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                  <Building2 size={24} className="text-[#0077B6]" /> Company Profile
+                </h2>
+                <button
+                  onClick={() => setShowProfile(false)}
+                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6">
+                <div className="mb-8">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0077B6] to-[#00B4D8] text-white flex items-center justify-center text-3xl font-bold mb-4 shadow-md">
+                    {initials}
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-1">{employer.companyName}</h3>
+                  <p className="text-slate-500 mb-6">{employer.industry}</p>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Contact Person</div>
+                      <div className="font-semibold text-slate-800">{employer.contactPerson}</div>
+                    </div>
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Email</div>
+                      <div className="font-semibold text-slate-800">{employer.email}</div>
+                    </div>
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">GST Number</div>
+                      <div className="font-semibold text-slate-800">{employer.gstNumber}</div>
+                    </div>
+                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Address</div>
+                      <div className="font-semibold text-slate-800">{employer.address}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-4">
+                    <FileText size={20} className="text-[#0077B6]" /> Payment History
+                  </h4>
+                  
+                  {invoicesLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="w-6 h-6 border-2 border-[#0077B6] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  ) : invoices.length === 0 ? (
+                    <div className="text-center py-8 bg-slate-50 rounded-xl border border-slate-100">
+                      <p className="text-sm text-slate-500 font-medium">No payments yet</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {invoices.map((inv) => (
+                        <div key={inv.id} className="p-4 rounded-xl border border-slate-200 hover:border-[#0077B6]/30 transition-colors bg-white shadow-sm flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-slate-800 text-sm mb-0.5">{inv.packageName}</div>
+                            <div className="text-xs text-slate-500">{new Date(inv.paidAt).toLocaleDateString()}</div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="font-bold text-slate-900">₹{inv.totalAmount}</div>
+                            <button
+                              onClick={() => generateInvoicePdf(inv)}
+                              className="p-2 text-[#0077B6] bg-[#0077B6]/10 hover:bg-[#0077B6]/20 rounded-lg transition-colors"
+                              title="Download Invoice"
+                            >
+                              <Download size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 }

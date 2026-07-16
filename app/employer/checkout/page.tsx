@@ -65,7 +65,7 @@ export default function CheckoutPage() {
               alert('Payment Successful! Package activated.');
               router.push('/employer/dashboard');
             } else {
-              alert('Payment verification failed.');
+              alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
             }
           } catch (e) {
             alert('Error verifying payment.');

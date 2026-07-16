@@ -100,8 +100,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, subscription });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error verifying payment:', error);
-    return NextResponse.json({ error: 'Failed to verify payment' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to verify payment: ' + error.message, stack: error.stack }, { status: 500 });
   }
 }
