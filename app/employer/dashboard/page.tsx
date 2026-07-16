@@ -176,6 +176,69 @@ export default function EmployerDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+        {/* Active Plan Banner */}
+        {employer.subscriptions && employer.subscriptions.length > 0 ? (
+          <div className="mb-6 bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl p-5 md:p-6 shadow-lg text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide">Active Plan</span>
+                <h2 className="text-xl font-bold">{employer.subscriptions[0].planName}</h2>
+              </div>
+              <p className="text-blue-200 text-sm">
+                Expires on {new Date(employer.subscriptions[0].expiresAt).toLocaleDateString()}
+              </p>
+            </div>
+            
+            {employer.subscriptions[0].planType === 'job_posting' && (
+              <div className="bg-white/10 rounded-xl p-4 md:w-64">
+                <div className="flex justify-between text-sm mb-2 font-medium">
+                  <span>Job Posts Used</span>
+                  <span>{employer.subscriptions[0].jobsUsed} / {employer.subscriptions[0].jobsAllowed}</span>
+                </div>
+                <div className="w-full bg-black/20 rounded-full h-2">
+                  <div 
+                    className="bg-blue-400 h-2 rounded-full" 
+                    style={{ width: `${Math.min(100, (employer.subscriptions[0].jobsUsed / employer.subscriptions[0].jobsAllowed) * 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+            
+            {employer.subscriptions[0].planType === 'resdex' && (
+              <div className="bg-white/10 rounded-xl p-4 md:w-64">
+                <div className="flex justify-between text-sm mb-2 font-medium">
+                  <span>Resume Views</span>
+                  <span>{employer.subscriptions[0].resumeViewsUsed} / {employer.subscriptions[0].resumeViewsAllowed}</span>
+                </div>
+                <div className="w-full bg-black/20 rounded-full h-2">
+                  <div 
+                    className="bg-green-400 h-2 rounded-full" 
+                    style={{ width: `${Math.min(100, (employer.subscriptions[0].resumeViewsUsed / employer.subscriptions[0].resumeViewsAllowed) * 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-5 md:p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <AlertCircle size={18} className="text-amber-600" />
+                <h2 className="text-lg font-bold text-amber-900">No Active Package</h2>
+              </div>
+              <p className="text-amber-700 text-sm">
+                You need an active package to post jobs and search candidates.
+              </p>
+            </div>
+            <Link 
+              href="/pricing"
+              className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl transition-colors text-sm text-center"
+            >
+              Buy a Package
+            </Link>
+          </div>
+        )}
+
         {/* Welcome */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -185,8 +248,23 @@ export default function EmployerDashboard() {
             <p className="text-slate-500 text-sm mt-1">{employer.industry} · {employer.address}</p>
           </div>
           <button
-            onClick={() => { setShowPostJob(true); setPostError(''); setPostSuccess(false); }}
-            className="flex items-center gap-2 bg-gradient-to-r from-[#0077B6] to-[#00B4D8] text-white font-bold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg hover:from-sky-600 hover:to-indigo-700 transition-all text-sm"
+            onClick={() => {
+              const activeSub = employer.subscriptions?.find((s: any) => s.planType === 'job_posting');
+              if (!activeSub) {
+                alert('You need to purchase a Job Posting package first.');
+                router.push('/pricing');
+                return;
+              }
+              if (activeSub.jobsUsed >= activeSub.jobsAllowed) {
+                alert('You have reached your job posting limit for the current package. Please buy a new package.');
+                router.push('/pricing');
+                return;
+              }
+              setShowPostJob(true); 
+              setPostError(''); 
+              setPostSuccess(false);
+            }}
+            className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#0077B6] to-[#00B4D8] text-white font-bold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg hover:from-sky-600 hover:to-indigo-700 transition-all text-sm"
           >
             <Plus size={16} /> Post a Job
           </button>

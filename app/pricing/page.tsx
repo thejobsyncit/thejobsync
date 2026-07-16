@@ -46,13 +46,14 @@ export default function PricingPage() {
 
   const jobPostingPlansRow2 = [
     {
-      title: 'Single Post',
+      title: 'Trial Pack',
       popular: false,
-      price: { inr: '₹550', usd: '$7' },
+      price: { inr: '₹1', usd: '$1' },
       features: [
         '1 job posting',
         'Standard listing',
-        'Valid 30 days'
+        'Valid 30 days',
+        'First time users only'
       ]
     },
     {
@@ -171,9 +172,12 @@ export default function PricingPage() {
                     ))}
                   </ul>
 
-                  <button className={`w-full py-3 rounded-lg font-bold transition-colors ${plan.popular ? 'bg-[#0077B6] dark:bg-[#00B4D8] text-white dark:text-slate-900 hover:bg-[#023E8A] dark:hover:bg-[#90E0EF]' : 'bg-transparent border border-[#0077B6] dark:border-[#00B4D8] text-[#0077B6] dark:text-[#00B4D8] hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                  <Link 
+                    href={`/employer/checkout?plan=${encodeURIComponent(plan.title)}&amount=${plan.price.inr.replace(/[^0-9]/g, '')}`}
+                    className={`w-full py-3 rounded-lg font-bold text-center block transition-colors ${plan.popular ? 'bg-[#0077B6] dark:bg-[#00B4D8] text-white dark:text-slate-900 hover:bg-[#023E8A] dark:hover:bg-[#90E0EF]' : 'bg-transparent border border-[#0077B6] dark:border-[#00B4D8] text-[#0077B6] dark:text-[#00B4D8] hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                  >
                     Get Started
-                  </button>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -199,9 +203,12 @@ export default function PricingPage() {
                     ))}
                   </ul>
 
-                  <button className={`w-full py-3 rounded-lg font-bold transition-colors ${plan.popular ? 'bg-[#0077B6] dark:bg-[#00B4D8] text-white dark:text-slate-900 hover:bg-[#023E8A] dark:hover:bg-[#90E0EF]' : 'bg-transparent border border-[#0077B6] dark:border-[#00B4D8] text-[#0077B6] dark:text-[#00B4D8] hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
+                  <Link 
+                    href={`/employer/checkout?plan=${encodeURIComponent(plan.title)}&amount=${plan.price.inr.replace(/[^0-9]/g, '')}`}
+                    className={`w-full py-3 rounded-lg font-bold text-center block transition-colors ${plan.popular ? 'bg-[#0077B6] dark:bg-[#00B4D8] text-white dark:text-slate-900 hover:bg-[#023E8A] dark:hover:bg-[#90E0EF]' : 'bg-transparent border border-[#0077B6] dark:border-[#00B4D8] text-[#0077B6] dark:text-[#00B4D8] hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                  >
                     Get Started
-                  </button>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -244,9 +251,12 @@ export default function PricingPage() {
                   ))}
                 </ul>
 
-                <button className="w-full py-3 rounded-lg font-bold transition-colors bg-[#0077B6] dark:bg-[#00B4D8] text-white dark:text-slate-900 hover:bg-[#023E8A] dark:hover:bg-[#90E0EF]">
+                <Link 
+                  href={`/employer/checkout?plan=RESDEX Basic&amount=2999`}
+                  className="w-full py-3 rounded-lg font-bold text-center block transition-colors bg-[#0077B6] dark:bg-[#00B4D8] text-white dark:text-slate-900 hover:bg-[#023E8A] dark:hover:bg-[#90E0EF]"
+                >
                   Get Started
-                </button>
+                </Link>
               </div>
             </div>
           </section>

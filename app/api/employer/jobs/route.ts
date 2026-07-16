@@ -43,6 +43,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Title, description, location and field are required' }, { status: 400 });
     }
 
+    // Check subscription plan
+    const activeSubs = await (prisma as any).employerSubscription.findMany({
+      where: {
+        employerId,
+        status: 'active',
+        planType: 'job_posting',
+        expiresAt: { gt: new Date() }
+      },
+      orderBy: { createdAt: 'asc' } // Use the oldest valid one first
+    });
+
+    const activeSub = activeSubs.find((sub: any) => sub.jobsUsed < sub.jobsAllowed);
+
+    if (!activeSub) {
+      return NextResponse.json({ error: 'No active job posting package found or limits reached. Please purchase a new package.' }, { status: 403 });
+    }
+
     const job = await prisma.employerJob.create({
       data: {
         employerId,
@@ -57,6 +74,12 @@ export async function POST(req: NextRequest) {
         openings: openings || 1,
         status: 'active',
       },
+    });
+
+    // Increment jobs used in the subscription
+    await (prisma as any).employerSubscription.update({
+      where: { id: activeSub.id },
+      data: { jobsUsed: activeSub.jobsUsed + 1 }
     });
 
     // Bridge: Create Client and JobRequirement so it appears in CRM & Careers

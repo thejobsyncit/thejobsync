@@ -15,6 +15,7 @@ interface Employer {
   logoUrl?: string;
   website?: string;
   isVerified: boolean;
+  subscriptions?: any[];
 }
 
 interface EmployerAuthContextType {

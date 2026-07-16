@@ -479,6 +479,7 @@ model Employer {
 
   jobs EmployerJob[]
   savedCandidates EmployerSavedCandidate[]
+  subscriptions EmployerSubscription[]
 }
 
 model EmployerJob {
@@ -510,6 +511,29 @@ model EmployerSavedCandidate {
   candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
 
   @@unique([employerId, candidateAccountId])
+}
+
+model EmployerSubscription {
+  id                  String    @id @default(cuid())
+  employerId          String
+  planName            String    // e.g. "Hot Vacancy", "3-Job Pack"
+  planType            String    @default("job_posting") // job_posting | resdex
+  jobsAllowed         Int       @default(0)
+  jobsUsed            Int       @default(0)
+  resumeViewsAllowed  Int       @default(0)
+  resumeViewsUsed     Int       @default(0)
+  amount              Float
+  gstAmount           Float     @default(0)
+  totalAmount         Float
+  currency            String    @default("INR")
+  razorpayOrderId     String?
+  razorpayPaymentId   String?
+  razorpaySignature   String?
+  status              String    @default("active") // active | expired | pending
+  expiresAt           DateTime
+  createdAt           DateTime  @default(now())
+
+  employer Employer @relation(fields: [employerId], references: [id], onDelete: Cascade)
 }
 
 // ==================== PASSWORD RESET ====================

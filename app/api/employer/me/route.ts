@@ -24,6 +24,12 @@ export async function GET(req: NextRequest) {
         contactPerson: true, contactPhone: true, address: true,
         about: true, gstNumber: true, logoUrl: true, website: true,
         isVerified: true, createdAt: true,
+        subscriptions: {
+          where: {
+            status: 'active',
+            expiresAt: { gt: new Date() }
+          }
+        }
       },
     });
 
