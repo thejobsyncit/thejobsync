@@ -126,7 +126,7 @@ function EmployerLoginForm() {
         <div className="mt-8 text-center">
           <p className="text-white/60 text-sm">
             Don't have a company account?{' '}
-            <Link href="/employer/register" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">
+            <Link href="/post-job" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">
               Sign up
             </Link>
           </p>
