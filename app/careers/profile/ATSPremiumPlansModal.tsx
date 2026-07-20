@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Lock } from 'lucide-react';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
+import { useCandidateAuth } from '@/context/CandidateAuthContext';
 
 export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const router = useRouter();
+  const { candidate } = useCandidateAuth();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -75,7 +77,7 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
       const res = await fetch('/api/candidate/checkout/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: totalAmount, planName })
+        body: JSON.stringify({ amount: totalAmount, planName, candidateId: candidate?.id })
       });
       
       const order = await res.json();
@@ -104,6 +106,7 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
+                candidateId: candidate?.id
               })
             });
             
