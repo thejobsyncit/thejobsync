@@ -97,7 +97,14 @@ export function CandidateAuthProvider({ children }: { children: ReactNode }) {
       const data = await res.json();
       if (!res.ok) return { success: false, error: data.error || 'Login failed' };
       setCandidate(data);
-      localStorage.setItem('candidate_user', JSON.stringify(data));
+      try {
+        localStorage.setItem('candidate_user', JSON.stringify(data));
+      } catch (e) {
+        try {
+          const slim = { ...data, photoUrl: '', resumeUrl: '' };
+          localStorage.setItem('candidate_user', JSON.stringify(slim));
+        } catch(e2) {}
+      }
       refreshApplications(data.id);
       return { success: true };
     } catch {
