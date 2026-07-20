@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Users, Lock, Mail, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import ForgotPasswordModal from '@/components/ForgotPasswordModal';
+import CreateSuperAdminModal from '@/components/CreateSuperAdminModal';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+  const [isSuperAdminModalOpen, setIsSuperAdminModalOpen] = useState(false);
   const { login, logout, user, isLoading } = useAuth();
   const router = useRouter();
 
@@ -148,7 +150,17 @@ export default function LoginPage() {
               </button>
             </div>
             
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem' }}>
+              <button 
+                type="button" 
+                onClick={() => setIsSuperAdminModalOpen(true)}
+                style={{ 
+                  color: 'var(--primary)', fontSize: '0.8125rem', fontWeight: 500,
+                  background: 'none', border: 'none', cursor: 'pointer', padding: 0
+                }}
+              >
+                Create Super Admin
+              </button>
               <button 
                 type="button" 
                 onClick={() => setIsForgotModalOpen(true)}
@@ -237,6 +249,10 @@ export default function LoginPage() {
         isOpen={isForgotModalOpen} 
         onClose={() => setIsForgotModalOpen(false)} 
         role="user" 
+      />
+      <CreateSuperAdminModal
+        isOpen={isSuperAdminModalOpen}
+        onClose={() => setIsSuperAdminModalOpen(false)}
       />
     </div>
   );
