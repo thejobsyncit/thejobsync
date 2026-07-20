@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     const order = await razorpay.orders.create(options);
     
     // Create pending subscription
-    await prisma.candidateSubscription.create({
+    await (prisma as any).candidateSubscription.create({
       data: {
         candidateAccountId: candidateId,
         planName,

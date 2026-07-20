@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Find the pending subscription created during create-order
-    const subscription = await prisma.candidateSubscription.findFirst({
+    const subscription = await (prisma as any).candidateSubscription.findFirst({
       where: {
         razorpayOrderId: razorpay_order_id,
         candidateAccountId: candidateId
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Mark subscription as active
-    const activeSubscription = await prisma.candidateSubscription.update({
+    const activeSubscription = await (prisma as any).candidateSubscription.update({
       where: { id: subscription.id },
       data: {
         status: 'active',
@@ -62,11 +62,11 @@ export async function POST(req: NextRequest) {
     });
 
     // Generate Candidate Invoice
-    const candidate = await prisma.candidateAccount.findUnique({
+    const candidate = await (prisma as any).candidateAccount.findUnique({
       where: { id: candidateId }
     });
 
-    const inv = await prisma.candidateInvoice.create({
+    const inv = await (prisma as any).candidateInvoice.create({
       data: {
         invoiceNumber: `CINV-${Date.now()}`,
         candidateAccountId: candidateId,

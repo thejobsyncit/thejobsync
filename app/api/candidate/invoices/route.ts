@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const invoices = await prisma.candidateInvoice.findMany({
+    const invoices = await (prisma as any).candidateInvoice.findMany({
       where: {
         candidateAccountId: candidateId
       },
