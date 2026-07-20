@@ -55,15 +55,20 @@ export function CandidateAuthProvider({ children }: { children: ReactNode }) {
               try {
                 localStorage.setItem('candidate_user', JSON.stringify(data));
               } catch (e) {
-                // Quota exceeded due to large base64 strings
                 try {
                   const slim = { ...data, photoUrl: '', resumeUrl: '' };
                   localStorage.setItem('candidate_user', JSON.stringify(slim));
                 } catch(e2) {}
               }
+            } else {
+              setCandidate(null);
+              localStorage.removeItem('candidate_user');
             }
           })
-          .catch(() => {});
+          .catch(() => {
+             setCandidate(null);
+             localStorage.removeItem('candidate_user');
+          });
       } catch { 
         localStorage.removeItem('candidate_user'); 
       }
