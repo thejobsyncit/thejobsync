@@ -43,7 +43,30 @@ export function CandidateAuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem('candidate_user');
     if (stored) {
-      try { setCandidate(JSON.parse(stored)); } catch { localStorage.removeItem('candidate_user'); }
+      try { 
+        const parsed = JSON.parse(stored);
+        setCandidate(parsed);
+        // Fetch latest profile from DB to ensure it's up to date
+        fetch(`/api/candidate-auth/profile?id=${parsed.id}`)
+          .then(res => res.json())
+          .then(data => {
+            if (!data.error) {
+              setCandidate(data);
+              try {
+                localStorage.setItem('candidate_user', JSON.stringify(data));
+              } catch (e) {
+                // Quota exceeded due to large base64 strings
+                try {
+                  const slim = { ...data, photoUrl: '', resumeUrl: '' };
+                  localStorage.setItem('candidate_user', JSON.stringify(slim));
+                } catch(e2) {}
+              }
+            }
+          })
+          .catch(() => {});
+      } catch { 
+        localStorage.removeItem('candidate_user'); 
+      }
     }
     setIsLoading(false);
   }, []);
@@ -92,7 +115,15 @@ export function CandidateAuthProvider({ children }: { children: ReactNode }) {
     setCandidate(prev => {
       if (!prev) return prev;
       const updated = { ...prev, ...data };
-      localStorage.setItem('candidate_user', JSON.stringify(updated));
+      try {
+        localStorage.setItem('candidate_user', JSON.stringify(updated));
+      } catch (e) {
+        // Handle localStorage quota limits
+        try {
+          const slim = { ...updated, photoUrl: '', resumeUrl: '' };
+          localStorage.setItem('candidate_user', JSON.stringify(slim));
+        } catch(e2) {}
+      }
       return updated;
     });
   }, []);
