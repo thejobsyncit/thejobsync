@@ -7,7 +7,13 @@ export async function GET(request: NextRequest) {
   const id = searchParams.get('id');
   if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
-  const account = await (prisma as any).candidateAccount.findUnique({ where: { id } });
+  const account = await (prisma as any).candidateAccount.findUnique({ 
+    where: { id },
+    include: {
+      subscriptions: true,
+      invoices: true
+    }
+  });
   if (!account) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   const { password: _, ...safeAccount } = account;
   return NextResponse.json(safeAccount);

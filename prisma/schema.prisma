@@ -323,6 +323,8 @@ model CandidateAccount {
   savedJobs    CandidateSavedJob[]
   messages     CandidateMessage[]
   savedByEmployers EmployerSavedCandidate[]
+  subscriptions  CandidateSubscription[]
+  invoices       CandidateInvoice[]
 }
 
 model CandidateApplication {
@@ -357,6 +359,41 @@ model CandidateMessage {
   message            String
   isRead             Boolean          @default(false)
   sentAt             DateTime         @default(now())
+
+  candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
+}
+
+model CandidateSubscription {
+  id                  String    @id @default(cuid())
+  candidateAccountId  String
+  planName            String    // "JS Basic Resume", "JS Pro Resume", "JS Company Reference", "JS Company Assistance"
+  amount              Float
+  gstAmount           Float     @default(0)
+  totalAmount         Float
+  currency            String    @default("INR")
+  razorpayOrderId     String?
+  razorpayPaymentId   String?
+  razorpaySignature   String?
+  status              String    @default("pending") // pending | active | expired
+  expiresAt           DateTime
+  createdAt           DateTime  @default(now())
+
+  candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
+}
+
+model CandidateInvoice {
+  id                 String   @id @default(cuid())
+  invoiceNumber      String   @unique
+  candidateAccountId String
+  candidateName      String
+  email              String
+  planName           String
+  amount             Float
+  gstAmount          Float    @default(0)
+  totalAmount        Float
+  status             String   @default("pending") // pending | paid | cancelled
+  paidAt             DateTime?
+  createdAt          DateTime @default(now())
 
   candidateAccount CandidateAccount @relation(fields: [candidateAccountId], references: [id], onDelete: Cascade)
 }

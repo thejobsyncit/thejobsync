@@ -3,7 +3,25 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const invoices = await (prisma as any).invoice.findMany({ orderBy: { createdAt: 'desc' } });
+    const employerInvoices = await (prisma as any).invoice.findMany({ orderBy: { createdAt: 'desc' } });
+    const candidateInvoices = await prisma.candidateInvoice.findMany({ orderBy: { createdAt: 'desc' } });
+    
+    const normalizedEmployerInvoices = employerInvoices.map((inv: any) => ({
+      ...inv,
+      type: 'Employer',
+      clientName: inv.companyName
+    }));
+    
+    const normalizedCandidateInvoices = candidateInvoices.map((inv: any) => ({
+      ...inv,
+      type: 'Candidate',
+      clientName: inv.candidateName,
+      packageName: inv.planName,
+      companyName: 'N/A'
+    }));
+
+    const invoices = [...normalizedEmployerInvoices, ...normalizedCandidateInvoices].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
     return NextResponse.json(invoices);
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });
@@ -12,11 +30,20 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { id, status } = await request.json();
-    const invoice = await (prisma as any).invoice.update({
-      where: { id },
-      data: { status, ...(status === 'paid' ? { paidAt: new Date() } : {}) },
-    });
+    const { id, status, type } = await request.json();
+    
+    let invoice;
+    if (type === 'Candidate') {
+      invoice = await prisma.candidateInvoice.update({
+        where: { id },
+        data: { status, ...(status === 'paid' ? { paidAt: new Date() } : {}) },
+      });
+    } else {
+      invoice = await (prisma as any).invoice.update({
+        where: { id },
+        data: { status, ...(status === 'paid' ? { paidAt: new Date() } : {}) },
+      });
+    }
 
     if (status === 'paid' && invoice.email) {
       prisma.employer.findUnique({

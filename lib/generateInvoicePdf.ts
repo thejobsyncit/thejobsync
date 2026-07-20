@@ -3,7 +3,9 @@ import autoTable from 'jspdf-autotable';
 
 interface InvoiceData {
   invoiceNumber: string;
-  companyName: string;
+  companyName?: string;
+  clientName?: string;
+  type?: string;
   email: string;
   packageName: string;
   amount: number;
@@ -25,7 +27,7 @@ export const generateInvoicePdf = (invoice: InvoiceData) => {
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
   doc.setFont('helvetica', 'normal');
-  doc.text('Employer Portal', 14, 26);
+  doc.text(invoice.type === 'Candidate' ? 'Candidate Portal' : 'Employer Portal', 14, 26);
   doc.text('Email: info@thejobsync.com', 14, 32);
 
   // Invoice Title
@@ -48,7 +50,7 @@ export const generateInvoicePdf = (invoice: InvoiceData) => {
   doc.text('Billed To:', 14, 55);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Company: ${invoice.companyName}`, 14, 62);
+  doc.text(`${invoice.type === 'Candidate' ? 'Name' : 'Company'}: ${invoice.clientName || invoice.companyName}`, 14, 62);
   doc.text(`Email: ${invoice.email}`, 14, 68);
 
   // Table

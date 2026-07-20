@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check } from 'lucide-react';
+import { X, Check, Lock } from 'lucide-react';
+import Script from 'next/script';
+import { useRouter } from 'next/navigation';
 
 export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
   if (!isOpen) return null;
 
   const plans = [
     {
-      name: 'JS Pro Resume',
-      price: '₹99',
+      name: 'JS Basic Resume',
+      price: '₹1',
+      rawPrice: 1,
       features: [
+        '1 ATS Resume Template',
+        'Download as PDF',
+        'Valid 30 days'
+      ],
+      isPopular: false
+    },
+    {
+      name: 'JS Pro Resume',
+      price: '₹49',
+      rawPrice: 49,
+      features: [
+        '3 ATS Resume Templates',
         'Dynamic resume builder',
         'Profile subscription',
         'Valid 30 days'
@@ -19,6 +37,7 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
     {
       name: 'JS Company Reference',
       price: '₹495',
+      rawPrice: 495,
       features: [
         'Up to 5 no-login company contact details',
         'Matched to your profile description',
@@ -29,6 +48,7 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
     {
       name: 'JS Company Assistance',
       price: '₹990',
+      rawPrice: 990,
       features: [
         'Up to 10 no-login company contact details',
         'With client details for each company',
@@ -39,8 +59,87 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
     }
   ];
 
+  const handlePayment = async (planName: string, baseAmount: number) => {
+    setLoadingPlan(planName);
+    try {
+      const gstAmount = baseAmount * 0.18;
+      const totalAmount = baseAmount + gstAmount;
+
+      // 1. Create order
+      const res = await fetch('/api/candidate/checkout/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: totalAmount, planName })
+      });
+      
+      const order = await res.json();
+      
+      if (order.error) {
+        alert(order.error);
+        setLoadingPlan(null);
+        return;
+      }
+
+      // 2. Open Razorpay
+      const options = {
+        key: order.keyId,
+        amount: order.amount,
+        currency: 'INR',
+        name: 'The jobsync Candidates',
+        description: `Payment for ${planName} Plan`,
+        order_id: order.orderId,
+        handler: async function (response: any) {
+          // 3. Verify payment
+          try {
+            const verifyRes = await fetch('/api/candidate/checkout/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              })
+            });
+            
+            const verifyData = await verifyRes.json();
+            
+            if (verifyData.success) {
+              alert('Payment Successful! Your plan is now active.');
+              onClose();
+              window.location.reload(); // Reload to refresh profile access
+            } else {
+              alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
+            }
+          } catch (e) {
+            alert('Error verifying payment.');
+          }
+        },
+        prefill: {
+          name: '',
+          email: '',
+          contact: ''
+        },
+        theme: {
+          color: '#0077B6'
+        }
+      };
+      
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any) {
+        alert(`Payment Failed: ${response.error.description}`);
+      });
+      rzp.open();
+      
+    } catch (error) {
+      alert('Error initiating checkout. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <AnimatePresence>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
         <motion.div 
           initial={{ opacity: 0 }} 
@@ -111,15 +210,24 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
                 </div>
 
                 <button 
-                  onClick={() => alert(`Redirecting to payment gateway for ${plan.name}...`)}
+                  onClick={() => handlePayment(plan.name, plan.rawPrice)}
+                  disabled={loadingPlan === plan.name}
                   style={{ 
                     width: '100%', background: '#03045E', color: 'white', border: 'none', 
                     padding: '1rem', borderRadius: 12, fontWeight: 700, fontSize: '1rem', 
-                    cursor: 'pointer', transition: 'background 0.2s' 
+                    cursor: loadingPlan === plan.name ? 'wait' : 'pointer', transition: 'background 0.2s',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                    opacity: loadingPlan === plan.name ? 0.7 : 1
                   }}
                   className="hover:bg-blue-800"
                 >
-                  Get Started
+                  {loadingPlan === plan.name ? (
+                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Lock size={16} /> Get Started
+                    </>
+                  )}
                 </button>
               </div>
             ))}

@@ -11,6 +11,7 @@ import { usePortalTheme } from '@/context/PortalThemeContext';
 import { toast } from 'react-hot-toast';
 import { getAllStates, getDistricts } from 'india-state-district';
 import { DEPARTMENTS, SALARY_RANGES } from '@/lib/constants';
+import ResumeBuilder from '@/components/candidate/ResumeBuilder';
 
 const getINPUT = (isDark: boolean) => ({
   width: '100%', border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, borderRadius: 12,
@@ -98,6 +99,10 @@ export default function CandidateProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [showATSModal, setShowATSModal] = useState(false);
+  const [showResumeBuilder, setShowResumeBuilder] = useState(false);
+
+  const activeSubscription = (candidate as any)?.subscriptions?.find((sub: any) => sub.status === 'active' && new Date(sub.expiresAt) > new Date());
+  const canAccessATS = activeSubscription?.planName === 'JS Basic Resume' || activeSubscription?.planName === 'JS Pro Resume' || activeSubscription?.planName?.includes('Company');
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push('/careers/login');
@@ -631,7 +636,13 @@ export default function CandidateProfilePage() {
         </button>
 
         <button
-          onClick={() => setShowATSModal(true)}
+          onClick={() => {
+            if (canAccessATS) {
+              setShowResumeBuilder(true);
+            } else {
+              setShowATSModal(true);
+            }
+          }}
           style={{
             background: 'linear-gradient(135deg, #0077B6, #0077B6)', color: 'white', border: 'none',
             padding: '1rem 2rem', borderRadius: 16, fontSize: '1.05rem', fontWeight: 700,
@@ -645,8 +656,46 @@ export default function CandidateProfilePage() {
         </button>
       </div>
 
+      {/* Invoices Section */}
+      {(candidate as any)?.invoices && (candidate as any).invoices.length > 0 && (
+        <div style={{ marginTop: '4rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: isDark ? 'white' : '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+             <FileText size={24} color="#00B4D8" /> My Invoices
+          </h2>
+          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'white', borderRadius: 24, padding: '2rem', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, overflowX: 'auto' }}>
+            <table style={{ width: '100%', minWidth: 600, borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, textAlign: 'left', color: isDark ? '#94a3b8' : '#64748b' }}>
+                  <th style={{ padding: '1rem', fontWeight: 600 }}>Date</th>
+                  <th style={{ padding: '1rem', fontWeight: 600 }}>Invoice No.</th>
+                  <th style={{ padding: '1rem', fontWeight: 600 }}>Plan Name</th>
+                  <th style={{ padding: '1rem', fontWeight: 600 }}>Amount</th>
+                  <th style={{ padding: '1rem', fontWeight: 600 }}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(candidate as any).invoices.map((inv: any) => (
+                  <tr key={inv.id} style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` }}>
+                    <td style={{ padding: '1rem', color: isDark ? '#e2e8f0' : '#334155' }}>{new Date(inv.createdAt).toLocaleDateString()}</td>
+                    <td style={{ padding: '1rem', color: isDark ? '#e2e8f0' : '#334155' }}>{inv.invoiceNumber}</td>
+                    <td style={{ padding: '1rem', color: isDark ? '#e2e8f0' : '#334155', fontWeight: 500 }}>{inv.planName}</td>
+                    <td style={{ padding: '1rem', color: isDark ? '#e2e8f0' : '#334155' }}>₹{inv.totalAmount}</td>
+                    <td style={{ padding: '1rem' }}>
+                      <span style={{ padding: '4px 8px', borderRadius: 12, fontSize: '0.8rem', fontWeight: 700, background: inv.status === 'paid' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)', color: inv.status === 'paid' ? '#10b981' : '#f59e0b' }}>
+                        {inv.status.toUpperCase()}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       <PrintableEnrollmentForm candidate={form} />
       <ATSPremiumPlansModal isOpen={showATSModal} onClose={() => setShowATSModal(false)} />
+      {showResumeBuilder && <ResumeBuilder candidate={form} plan={activeSubscription?.planName || ''} onClose={() => setShowResumeBuilder(false)} />}
 
     </DashboardLayout>
   );
