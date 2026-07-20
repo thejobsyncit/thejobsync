@@ -27,6 +27,26 @@ export async function PUT(request: NextRequest) {
       where: { id },
       data: updateData
     });
+
+    // Sync updates to the CRM Candidate table so admins see the latest resume/profile
+    if (updated.email) {
+      await prisma.candidate.updateMany({
+        where: { email: updated.email },
+        data: {
+          name: updated.name,
+          phone: updated.phone,
+          skills: updated.skills,
+          experience: updated.experience || 'No experience',
+          education: updated.education || 'Not specified',
+          location: updated.location || 'Not specified',
+          currentCompany: updated.currentCompany,
+          currentRole: updated.currentRole,
+          expectedSalary: updated.expectedSalary,
+          resumeUrl: updated.resumeUrl,
+        }
+      });
+    }
+
     const { password: _, ...safeAccount } = updated;
     return NextResponse.json(safeAccount);
   } catch (error) {
