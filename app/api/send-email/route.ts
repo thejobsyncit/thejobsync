@@ -12,13 +12,13 @@ export async function POST(req: NextRequest) {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD?.replace(/\s+/g, ''),
+        user: process.env.SMTP_EMAIL || process.env.SMTP_USER,
+        pass: (process.env.SMTP_PASSWORD || process.env.SMTP_PASS)?.replace(/\s+/g, ''),
       },
     });
 
     const mailOptions = {
-      from: process.env.SMTP_EMAIL,
+      from: process.env.SMTP_EMAIL || process.env.SMTP_USER,
       to: toEmail,
       subject: subject,
       text: message,
