@@ -17,14 +17,12 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'photos');
-    await mkdir(uploadDir, { recursive: true });
+    
+    // Convert to base64 data URI for serverless environments (Vercel)
+    const base64Str = buffer.toString('base64');
+    const dataUri = `data:${file.type};base64,${base64Str}`;
 
-    const ext = file.name.split('.').pop() || 'jpg';
-    const filename = `photo_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    await writeFile(path.join(uploadDir, filename), buffer);
-
-    return NextResponse.json({ url: `/uploads/photos/${filename}` });
+    return NextResponse.json({ url: dataUri });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({ error: 'Upload failed' }, { status: 500 });

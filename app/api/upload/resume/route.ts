@@ -32,12 +32,10 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'resumes');
-    await mkdir(uploadDir, { recursive: true });
-
-    const ext = file.name.split('.').pop() || 'pdf';
-    const filename = `resume_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    await writeFile(path.join(uploadDir, filename), buffer);
+    
+    // Convert to base64 data URI for serverless environments (Vercel)
+    const base64Str = buffer.toString('base64');
+    const dataUri = `data:${file.type};base64,${base64Str}`;
 
     let extractedData: any = { skillsArr: [], email: '', phone: '' };
 
@@ -88,7 +86,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ 
-      url: `/uploads/resumes/${filename}`, 
+      url: dataUri, 
       name: file.name,
       extractedData
     });

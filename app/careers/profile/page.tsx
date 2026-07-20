@@ -586,7 +586,7 @@ export default function CandidateProfilePage() {
                     <div style={{ fontSize: '0.9rem', fontWeight: 700, color: isDark ? '#e0f2fe' : '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {form.resumeFileName || 'Resume uploaded'}
                     </div>
-                    <a href={form.resumeUrl} target="_blank" rel="noreferrer" style={{ fontSize: '0.8rem', color: isDark ? '#00B4D8' : '#0077B6', textDecoration: 'none', fontWeight: 600 }} className="hover:underline">View File</a>
+                    <a href={form.resumeUrl} download={form.resumeFileName || 'Resume'} style={{ fontSize: '0.8rem', color: isDark ? '#00B4D8' : '#0077B6', textDecoration: 'none', fontWeight: 600 }} className="hover:underline">Download File</a>
                   </div>
                   <button onClick={() => setForm({ ...form, resumeUrl: '', resumeFileName: '' })} style={{ background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)', border: 'none', borderRadius: 8, padding: 6, cursor: 'pointer', color: '#94a3b8' }} className={isDark ? "hover:text-white" : "hover:text-black"}>
                     <X size={16} />
