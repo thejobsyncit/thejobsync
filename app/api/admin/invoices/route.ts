@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET() {
   try {
     const employerInvoices = await (prisma as any).invoice.findMany({ orderBy: { createdAt: 'desc' } });
-    const candidateInvoices = await prisma.candidateInvoice.findMany({ orderBy: { createdAt: 'desc' } });
+    const candidateInvoices = await (prisma as any).candidateInvoice.findMany({ orderBy: { createdAt: 'desc' } });
     
     const normalizedEmployerInvoices = employerInvoices.map((inv: any) => ({
       ...inv,
@@ -34,7 +34,7 @@ export async function PUT(request: NextRequest) {
     
     let invoice;
     if (type === 'Candidate') {
-      invoice = await prisma.candidateInvoice.update({
+      invoice = await (prisma as any).candidateInvoice.update({
         where: { id },
         data: { status, ...(status === 'paid' ? { paidAt: new Date() } : {}) },
       });
