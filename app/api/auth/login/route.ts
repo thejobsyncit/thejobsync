@@ -14,7 +14,20 @@ export async function POST(request: NextRequest) {
       where: { email: email.toLowerCase().trim(), isActive: true },
     });
 
-    if (!user || user.password !== password.trim()) {
+    if (!user) {
+      return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 });
+    }
+
+    let isPasswordValid = false;
+    // Check if it's a bcrypt hash
+    if (user.password && (user.password.startsWith('$2a$') || user.password.startsWith('$2b$'))) {
+      const { compare } = require('bcryptjs');
+      isPasswordValid = await compare(password.trim(), user.password);
+    } else {
+      isPasswordValid = user.password === password.trim();
+    }
+
+    if (!isPasswordValid) {
       return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 });
     }
 
