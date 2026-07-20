@@ -18,8 +18,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ManpowerCRM — Recruitment Management System",
-  description: "Comprehensive manpower recruitment and CRM management platform for managing the complete recruitment lifecycle.",
+  title: "Gojobsync — Recruitment Management System",
+  description: "Comprehensive Gojobsync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
+  icons: {
+    icon: "/loooo.jpeg",
+  },
+  openGraph: {
+    title: "Gojobsync — Recruitment Management System",
+    description: "Comprehensive Gojobsync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
+    url: "https://www.gojobsync.com",
+    siteName: "Gojobsync",
+    images: [
+      {
+        url: "/loooo.jpeg",
+        width: 800,
+        height: 600,
+        alt: "Gojobsync Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
                 <p>Log in to your candidate portal to view more details and apply!</p>
                 <br/>
                 <p>Best Regards,</p>
-                <p><strong>HR Team</strong><br/>ManpowerCRM</p>
+                <p><strong>HR Team</strong><br/>Gojobsync</p>
               </div>
             `
           }));
