@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Lock } from 'lucide-react';
 import Script from 'next/script';
@@ -7,8 +8,13 @@ import { useRouter } from 'next/navigation';
 export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const router = useRouter();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
 
   const plans = [
     {
@@ -137,7 +143,7 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
     }
   };
 
-  return (
+  const modalContent = (
     <AnimatePresence>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
@@ -236,4 +242,6 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
       </div>
     </AnimatePresence>
   );
+
+  return createPortal(modalContent, document.body);
 }

@@ -1,5 +1,6 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Download, FileText, X } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -9,6 +10,13 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
   const [downloading, setDownloading] = useState(false);
 
   const canAccessModern = plan === 'JS Pro Resume' || plan === 'JS Company Reference' || plan === 'JS Company Assistance';
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
   
   const handleDownload = async () => {
     setDownloading(true);
@@ -38,7 +46,7 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
     }
   };
 
-  return (
+  const builderContent = (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: '#0f172a', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <div style={{ padding: '1rem 2rem', background: 'rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
@@ -252,4 +260,6 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
       </div>
     </div>
   );
+
+  return createPortal(builderContent, document.body);
 }
