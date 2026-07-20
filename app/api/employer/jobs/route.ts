@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
 
         const host = req.headers.get('host');
         const protocol = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (host ? `${protocol}://${host}` : 'http://localhost:3000');
+        const baseUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000');
         const jobUrl = `${baseUrl}/careers`;
         const companyName = employer?.companyName || 'A Company';
         const skillsList = Array.isArray(skills) ? skills.join(', ') : (skills || 'Not specified');
