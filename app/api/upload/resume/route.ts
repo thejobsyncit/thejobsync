@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { prisma } from '@/lib/db';
 // PDF parsing requires CJS require in Next.js Turbopack
 // Polyfill DOMMatrix for pdf-parse inside Next.js node environment
 if (typeof global !== 'undefined' && !(global as any).DOMMatrix) {
@@ -39,7 +38,6 @@ export async function POST(request: NextRequest) {
     const dataUri = `data:${file.type};base64,${base64Str}`;
 
     if (candidateId) {
-      const { prisma } = require('@/lib/db');
       await (prisma as any).candidateAccount.update({
         where: { id: candidateId },
         data: { resumeUrl: dataUri }

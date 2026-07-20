@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { prisma } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,18 +23,10 @@ export async function POST(request: NextRequest) {
     const dataUri = `data:${file.type};base64,${base64Str}`;
 
     if (candidateId) {
-      const { prisma } = require('@/lib/db');
       await (prisma as any).candidateAccount.update({
         where: { id: candidateId },
         data: { photoUrl: dataUri }
       });
-      const acc = await (prisma as any).candidateAccount.findUnique({ where: { id: candidateId } });
-      if (acc?.email) {
-        await prisma.candidate.updateMany({
-          where: { email: acc.email },
-          data: { photoUrl: dataUri }
-        });
-      }
     }
 
     return NextResponse.json({ url: dataUri });
