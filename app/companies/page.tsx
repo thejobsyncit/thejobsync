@@ -75,11 +75,11 @@ export default function CompaniesPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-white font-sans overflow-x-hidden pt-20">
+    <main className="min-h-screen bg-white dark:bg-[#010a18] font-sans overflow-x-hidden pt-20 transition-colors duration-300">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative bg-white pt-16 pb-32">
+      <section className="relative bg-white dark:bg-[#010a18] pt-16 pb-32 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-4xl md:text-6xl font-extrabold text-[#03045E] dark:text-[#CAF0F8] tracking-tight mb-4">
             Navigate your Job posts here!
@@ -110,25 +110,25 @@ export default function CompaniesPage() {
       </section>
 
       {/* Breadcrumbs & About Companies */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white dark:bg-[#010a18] transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <div className="text-sm text-gray-500 mb-12 flex items-center gap-2 border-b border-gray-100 pb-4">
-            <Link href="/" className="hover:text-[#03045E]">Home</Link>
+            <Link href="/" className="hover:text-[#03045E] dark:hover:text-[#00B4D8]">Home</Link>
             <span>›</span>
-            <span className="text-[#0a1f44] font-semibold">Companies</span>
+            <span className="text-[#0a1f44] dark:text-white font-semibold">Companies</span>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             {/* Left Text Column */}
             <div>
-              <div className="flex items-center gap-2 text-sm font-bold text-[#03045E] uppercase tracking-wider mb-4">
-                <div className="w-4 h-4 rounded-full border-2 border-[#03045E] flex items-center justify-center">
-                  <span className="w-1.5 h-1.5 bg-[#03045E] rounded-full"></span>
+              <div className="flex items-center gap-2 text-sm font-bold text-[#03045E] dark:text-[#00B4D8] uppercase tracking-wider mb-4">
+                <div className="w-4 h-4 rounded-full border-2 border-[#03045E] dark:border-[#00B4D8] flex items-center justify-center">
+                  <span className="w-1.5 h-1.5 bg-[#03045E] dark:bg-[#00B4D8] rounded-full"></span>
                 </div>
                 About Companies on The jobsync
               </div>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-[#0a1f44] leading-tight mb-6">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-[#0a1f44] dark:text-white leading-tight mb-6 transition-colors duration-300">
                 Where Talent Meets<br/>Industry
               </h2>
               <div className="space-y-6 text-gray-600 text-lg leading-relaxed mb-8">
@@ -141,10 +141,10 @@ export default function CompaniesPage() {
               </div>
 
               {/* Alert Box */}
-              <div className="bg-blue-50 border-l-4 border-[#03045E] rounded-r-xl p-6 flex gap-4 shadow-sm">
+              <div className="bg-blue-50 dark:bg-[#0077B6]/10 border-l-4 border-[#03045E] dark:border-[#00B4D8] rounded-r-xl p-6 flex gap-4 shadow-sm">
                 <Lightbulb className="text-yellow-500 flex-shrink-0" size={24} />
-                <p className="text-[#0a1f44] font-medium text-sm leading-relaxed">
-                  <span className="font-bold">Did you know?</span> Companies on The jobsync receive applications from over 140 countries, giving employers access to a truly global talent pool — and giving candidates access to international opportunities, all from one platform.
+                <p className="text-[#0a1f44] dark:text-gray-300 font-medium text-sm leading-relaxed">
+                  <span className="font-bold dark:text-white">Did you know?</span> Companies on The jobsync receive applications from over 140 countries, giving employers access to a truly global talent pool — and giving candidates access to international opportunities, all from one platform.
                 </p>
               </div>
             </div>
@@ -171,13 +171,13 @@ export default function CompaniesPage() {
       </section>
 
       {/* Industry Sectors Section */}
-      <section className="py-24 bg-[#f8fafc]">
+      <section className="py-24 bg-[#f8fafc] dark:bg-[#01122a] transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 bg-blue-50 text-[#03045E] font-bold text-xs tracking-widest uppercase rounded-full mb-4">
+            <span className="inline-block px-4 py-1.5 bg-blue-50 dark:bg-[#0077B6]/10 text-[#03045E] dark:text-[#00B4D8] font-bold text-xs tracking-widest uppercase rounded-full mb-4 transition-colors duration-300">
               Industry Sectors
             </span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#0a1f44] mb-6">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#0a1f44] dark:text-white mb-6 transition-colors duration-300">
               All Major Industry Sectors
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">
@@ -193,19 +193,19 @@ export default function CompaniesPage() {
                   I
                 </div>
                 <div>
-                  <h3 className="text-2xl font-extrabold text-[#0a1f44]">Primary Sector (Raw Materials)</h3>
+                  <h3 className="text-2xl font-extrabold text-[#0a1f44] dark:text-white transition-colors duration-300">Primary Sector (Raw Materials)</h3>
                   <p className="text-gray-500 text-sm mt-1">This sector involves the extraction and production of raw materials and natural resources.</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {primarySectors.map((sector) => (
-                  <div key={sector.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow group">
+                  <div key={sector.id} className="bg-white dark:bg-[#011a3b] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-white/5 hover:shadow-lg dark:hover:shadow-[#0077B6]/20 transition-all duration-300 group">
                     <div className="h-48 overflow-hidden">
                       <img src={sector.image} alt={sector.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="p-6">
                       <span className="text-[#0077B6] text-xs font-bold tracking-wider mb-2 block">{sector.id}</span>
-                      <h4 className="text-[#0a1f44] font-bold text-lg mb-2">{sector.title}</h4>
+                      <h4 className="text-[#0a1f44] dark:text-white font-bold text-lg mb-2 transition-colors duration-300">{sector.title}</h4>
                       <p className="text-gray-500 text-sm line-clamp-2">{sector.description}</p>
                     </div>
                   </div>
@@ -220,7 +220,7 @@ export default function CompaniesPage() {
                   II
                 </div>
                 <div>
-                  <h3 className="text-2xl font-extrabold text-[#0a1f44]">Secondary Sector (Manufacturing & Construction)</h3>
+                  <h3 className="text-2xl font-extrabold text-[#0a1f44] dark:text-white transition-colors duration-300">Secondary Sector (Manufacturing & Construction)</h3>
                   <p className="text-gray-500 text-sm mt-1">This sector processes raw materials into finished goods and includes the construction industry.</p>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export default function CompaniesPage() {
                   III
                 </div>
                 <div>
-                  <h3 className="text-2xl font-extrabold text-[#0a1f44]">Tertiary Sector (Services)</h3>
+                  <h3 className="text-2xl font-extrabold text-[#0a1f44] dark:text-white transition-colors duration-300">Tertiary Sector (Services)</h3>
                   <p className="text-gray-500 text-sm mt-1">Known as the service sector, this area provides services to consumers and businesses.</p>
                 </div>
               </div>
@@ -274,7 +274,7 @@ export default function CompaniesPage() {
                   IV
                 </div>
                 <div>
-                  <h3 className="text-2xl font-extrabold text-[#0a1f44]">Quaternary Sector (Knowledge & Information)</h3>
+                  <h3 className="text-2xl font-extrabold text-[#0a1f44] dark:text-white transition-colors duration-300">Quaternary Sector (Knowledge & Information)</h3>
                   <p className="text-gray-500 text-sm mt-1">This sector is information and knowledge-based, focusing on intellectual activities.</p>
                 </div>
               </div>
@@ -298,29 +298,29 @@ export default function CompaniesPage() {
       </section>
 
       {/* Partner Companies Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white dark:bg-[#010a18] transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="inline-block px-4 py-1.5 bg-blue-50 text-[#03045E] font-bold text-xs tracking-widest uppercase rounded-full mb-4">
-            TIED-UP COMPANIES
-          </span>
-          <h2 className="text-4xl font-extrabold text-[#0a1f44] mb-6">Our Partner Companies</h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg mb-16">
+            <span className="inline-block px-4 py-1.5 bg-blue-50 dark:bg-[#0077B6]/10 text-[#03045E] dark:text-[#00B4D8] font-bold text-xs tracking-widest uppercase rounded-full mb-4 transition-colors duration-300">
+              TIED-UP COMPANIES
+            </span>
+            <h2 className="text-4xl font-extrabold text-[#0a1f44] dark:text-white mb-6 transition-colors duration-300">Our Partner Companies</h2>
+          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg mb-16">
             Leading organisations across every industry have partnered with The jobsync to find the best talent.
           </p>
 
           <div className="relative overflow-hidden w-full mb-16 select-none flex flex-col gap-6">
             {/* Gradient overlays for smooth fading edges */}
-            <div className="absolute top-0 left-0 w-20 md:w-40 h-full bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
-            <div className="absolute top-0 right-0 w-20 md:w-40 h-full bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute top-0 left-0 w-20 md:w-40 h-full bg-gradient-to-r from-white dark:from-[#010a18] to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
+            <div className="absolute top-0 right-0 w-20 md:w-40 h-full bg-gradient-to-l from-white dark:from-[#010a18] to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
             
             {/* Row 1 Marquee */}
             <div className="flex w-max animate-marquee space-x-6 group hover:[animation-play-state:paused]">
               {[...row1Partners, ...row1Partners, ...row1Partners, ...row1Partners].map((partner, idx) => (
-                <div key={`r1-${idx}`} className="bg-white border border-gray-100 rounded-3xl p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow w-44 flex-shrink-0 cursor-pointer group/card">
+                <div key={`r1-${idx}`} className="bg-white dark:bg-[#011a3b] border border-gray-100 dark:border-white/5 rounded-3xl p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-all w-44 flex-shrink-0 cursor-pointer group/card">
                   <div className={`w-14 h-14 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm mb-4 group-hover/card:scale-110 transition-transform ${partner.color}`}>
                     {partner.code}
                   </div>
-                  <span className="text-sm font-bold text-gray-600 text-center">{partner.name}</span>
+                  <span className="text-sm font-bold text-gray-600 dark:text-gray-300 text-center">{partner.name}</span>
                 </div>
               ))}
             </div>
@@ -328,7 +328,7 @@ export default function CompaniesPage() {
             {/* Row 2 Marquee - Reverse Scroll */}
             <div className="flex w-max animate-marquee space-x-6 group hover:[animation-play-state:paused]" style={{ animationDirection: 'reverse' }}>
               {[...row2Partners, ...row2Partners, ...row2Partners, ...row2Partners].map((partner, idx) => (
-                <div key={`r2-${idx}`} className="bg-white border border-gray-100 rounded-3xl p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-shadow w-44 flex-shrink-0 cursor-pointer group/card">
+                <div key={`r2-${idx}`} className="bg-white dark:bg-[#011a3b] border border-gray-100 dark:border-white/5 rounded-3xl p-5 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-all w-44 flex-shrink-0 cursor-pointer group/card">
                   <div className={`w-14 h-14 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm mb-4 group-hover/card:scale-110 transition-transform ${partner.color}`}>
                     {partner.code}
                   </div>
