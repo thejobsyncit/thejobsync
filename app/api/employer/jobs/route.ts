@@ -132,8 +132,11 @@ export async function POST(req: NextRequest) {
 
         if (candidates.length === 0) return;
 
+        const host = req.headers.get('host');
+        const protocol = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (host ? `${protocol}://${host}` : 'http://localhost:3000');
+        const jobUrl = `${baseUrl}/careers`;
         const companyName = employer?.companyName || 'A Company';
-        const jobUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/careers`;
         const skillsList = Array.isArray(skills) ? skills.join(', ') : (skills || 'Not specified');
 
         const html = `
