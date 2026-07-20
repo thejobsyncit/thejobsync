@@ -8,6 +8,31 @@ import { validateForm, validateRequired, validateEmail, validatePhone } from '@/
 import { useAuth } from '@/context/AuthContext';
 import { canEditModule } from '@/lib/permissions';
 
+const openResume = (url: string | null | undefined, e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (!url) return;
+  
+  if (url.startsWith('data:')) {
+    try {
+      const arr = url.split(',');
+      const mime = arr[0].match(/:(.*?);/)?.[1] || 'application/pdf';
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      const blob = new Blob([u8arr], { type: mime });
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+    } catch (err) {
+      console.error('Error opening resume', err);
+      window.open(url, '_blank');
+    }
+  } else {
+    window.open(url, '_blank');
+  }
+};
+
 const STATUS_COLORS: Record<string, string> = {
   new: '#0077B6',
   shortlisted: '#00B4D8',
@@ -409,7 +434,7 @@ export default function CandidatesPage() {
                   </button>
                   <a href={`tel:${candidate.phone}`} className="btn btn-secondary btn-sm" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none' }}><Phone size={13} /> Call</a>
                   {candidate.resumeUrl ? (
-                    <a href={candidate.resumeUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none' }}><FileText size={13} /> Resume</a>
+                    <button onClick={(e) => openResume(candidate.resumeUrl, e)} className="btn btn-primary btn-sm" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none', border: 'none' }}><FileText size={13} /> Resume</button>
                   ) : (
                     <button className="btn btn-secondary btn-sm" disabled style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, opacity: 0.5, cursor: 'not-allowed' }}><FileText size={13} /> No Resume</button>
                   )}
@@ -706,9 +731,9 @@ export default function CandidatesPage() {
                 <Phone size={15} /> Call
               </a>
               {viewingCandidate.resumeUrl ? (
-                <a href={viewingCandidate.resumeUrl} target="_blank" rel="noreferrer" className="btn btn-secondary" style={{ flex: '1 1 100px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none' }}>
+                <button onClick={(e) => openResume(viewingCandidate.resumeUrl, e)} className="btn btn-secondary" style={{ flex: '1 1 100px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none', border: '1px solid var(--border)' }}>
                   <FileText size={15} /> Resume
-                </a>
+                </button>
               ) : (
                 <button className="btn btn-secondary" disabled style={{ flex: '1 1 100px', opacity: 0.5 }}>
                   <FileText size={15} /> No Resume

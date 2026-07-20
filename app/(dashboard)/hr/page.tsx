@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
@@ -57,6 +57,31 @@ export default function HRPage() {
       }
     } catch {
       toast.error('Error updating candidate');
+    }
+  };
+
+  const openResume = (url: string | null | undefined, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!url) return;
+    
+    if (url.startsWith('data:')) {
+      try {
+        const arr = url.split(',');
+        const mime = arr[0].match(/:(.*?);/)?.[1] || 'application/pdf';
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) u8arr[n] = bstr.charCodeAt(n);
+        const blob = new Blob([u8arr], { type: mime });
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+      } catch (err) {
+        console.error('Error opening resume', err);
+        window.open(url, '_blank');
+      }
+    } else {
+      window.open(url, '_blank');
     }
   };
 
@@ -146,9 +171,9 @@ export default function HRPage() {
                 <Mail size={14} /> Mail
               </a>
               {c.resumeUrl ? (
-                <a href={c.resumeUrl} target="_blank" rel="noreferrer" className="flex-1 btn btn-secondary btn-sm flex items-center justify-center gap-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-100">
+                <button onClick={(e) => openResume(c.resumeUrl, e)} className="flex-1 btn btn-secondary btn-sm flex items-center justify-center gap-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-100">
                   <FileText size={14} /> Resume
-                </a>
+                </button>
               ) : (
                 <button disabled className="flex-1 btn btn-secondary btn-sm flex items-center justify-center gap-1.5 opacity-50 cursor-not-allowed">
                   <FileText size={14} /> No Resume
