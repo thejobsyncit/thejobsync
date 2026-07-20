@@ -155,7 +155,7 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           style={{ 
             position: 'relative', background: '#0f172a', borderRadius: 24, 
-            width: '100%', maxWidth: 1000, border: '1px solid rgba(255,255,255,0.1)',
+            width: '100%', maxWidth: 1300, border: '1px solid rgba(255,255,255,0.1)',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', overflow: 'hidden'
           }}
         >
@@ -176,7 +176,7 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
           </div>
 
           {/* Pricing Cards */}
-          <div style={{ padding: '2.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', background: '#0f172a' }}>
+          <div style={{ padding: '2.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', background: '#0f172a' }}>
             {plans.map((plan, idx) => (
               <div 
                 key={plan.name} 
