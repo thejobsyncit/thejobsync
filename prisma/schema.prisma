@@ -102,6 +102,7 @@ model Candidate {
   currentCompany  String?
   currentRole     String?
   expectedSalary  String?
+  languages       String?
   location        String
   resumeUrl       String?
   status          String   @default("new") // new | shortlisted | interview_scheduled | interviewed | selected | rejected | offered | joined | withdrawn
@@ -308,6 +309,7 @@ model CandidateAccount {
   skills         String    @default("[]") // JSON array
   experience     String?
   education      String?
+  languages      String?
   location       String?
   resumeUrl      String?
   photoUrl       String?

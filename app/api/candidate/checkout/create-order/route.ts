@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         currency: 'INR',
         razorpayOrderId: order.id,
         status: 'pending',
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+        expiresAt: new Date(Date.now() + (planName === 'JS Basic Resume' ? 2 : 30) * 24 * 60 * 60 * 1000)
       }
     });
 

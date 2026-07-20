@@ -12,6 +12,7 @@ interface CandidateUser {
   skills: string;
   experience?: string;
   education?: string;
+  languages?: string;
   location?: string;
   currentRole?: string;
   currentCompany?: string;

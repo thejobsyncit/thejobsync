@@ -90,6 +90,7 @@ export default function CandidateProfilePage() {
     locState: '', locDistrict: '', locCity: '', locAddress: '', currentCompany: '', currentRole: '', expectedSalary: '',
     preferredRoles: '', resumeUrl: '', resumeFileName: '', photoUrl: '',
     skillsArr: [],
+    languages: [],
     educations: [{ degree: '', college: '', year: '', cgpa: '' }],
     experiences: [{ company: '', role: '', from: '', to: '', current: false }],
   });
@@ -146,6 +147,13 @@ export default function CandidateProfilePage() {
       parsedLoc.city = candidate.location || '';
     }
 
+    let languages = [];
+    try {
+      if (candidate.languages) {
+        languages = JSON.parse(candidate.languages);
+      }
+    } catch {}
+
     setForm({
       name: candidate.name || '',
       email: candidate.email || '',
@@ -164,6 +172,7 @@ export default function CandidateProfilePage() {
       photoUrl: (candidate as any).photoUrl || '',
       resumeFileName: '',
       skillsArr,
+      languages,
       educations,
       experiences,
     });
@@ -201,6 +210,14 @@ export default function CandidateProfilePage() {
     const updated = [...form.experiences];
     updated[i] = { ...updated[i], [field]: val };
     setForm({ ...form, experiences: updated });
+  };
+
+  const addLanguage = () => setForm({ ...form, languages: [...form.languages, { language: '', proficiency: 'Intermediate' }] });
+  const removeLanguage = (i: number) => setForm({ ...form, languages: form.languages.filter((_: any, idx: number) => idx !== i) });
+  const updateLanguage = (i: number, field: string, val: any) => {
+    const updated = [...form.languages];
+    updated[i] = { ...updated[i], [field]: val };
+    setForm({ ...form, languages: updated });
   };
 
   const addEducation = () => setForm({ ...form, educations: [...form.educations, { degree: '', college: '', year: '', cgpa: '' }] });
@@ -297,6 +314,7 @@ export default function CandidateProfilePage() {
         resumeUrl: form.resumeUrl === '' ? '' : undefined,
         photoUrl: form.photoUrl === '' ? '' : undefined,
         skills: JSON.stringify(form.skillsArr),
+        languages: JSON.stringify(form.languages),
         education: JSON.stringify(form.educations),
         experience: JSON.stringify(form.experiences),
       };
@@ -537,6 +555,35 @@ export default function CandidateProfilePage() {
               ))}
               {form.skillsArr.length === 0 && <p style={{ color: '#64748b', fontSize: '0.9rem' }}>No skills added yet.</p>}
             </div>
+          </Section>
+
+          {/* Languages */}
+          <Section title="Languages" icon={<Star size={20} color="#38bdf8" />}>
+            {form.languages.map((lang: any, i: number) => (
+              <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                <div style={{ flex: 1 }}>
+                  <Field label="Language">
+                    <input style={getINPUT(isDark)} value={lang.language} onChange={e => updateLanguage(i, 'language', e.target.value)} placeholder="e.g. English, Hindi, Tamil" className="focus:border-[#0077B6]" />
+                  </Field>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <Field label="Proficiency">
+                    <select style={getINPUT(isDark)} value={lang.proficiency} onChange={e => updateLanguage(i, 'proficiency', e.target.value)} className="focus:border-[#0077B6] appearance-none">
+                      <option value="Basic">Basic</option>
+                      <option value="Intermediate">Intermediate</option>
+                      <option value="Fluent">Fluent / Advanced</option>
+                      <option value="Native">Native / Bilingual</option>
+                    </select>
+                  </Field>
+                </div>
+                <button onClick={() => removeLanguage(i)} style={{ marginTop: 28, background: 'rgba(239, 68, 68, 0.1)', border: 'none', borderRadius: 12, padding: '12px', cursor: 'pointer', height: 46 }}>
+                  <Trash2 size={20} color="#ef4444" />
+                </button>
+              </div>
+            ))}
+            <button onClick={addLanguage} style={{ display: 'flex', alignItems: 'center', gap: 8, border: `1px dashed ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`, borderRadius: 12, padding: '1rem', background: 'transparent', color: '#00B4D8', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', width: '100%', justifyContent: 'center' }} className={isDark ? "hover:bg-white/5" : "hover:bg-black/5"}>
+              <Plus size={18} /> Add Language
+            </button>
           </Section>
         </div>
 

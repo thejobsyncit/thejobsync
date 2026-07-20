@@ -4,12 +4,16 @@ import { createPortal } from 'react-dom';
 import { Download, FileText, X } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import ClassicTemplate from './resume-templates/ClassicTemplate';
+import ModernTemplate from './resume-templates/ModernTemplate';
+import MinimalistTemplate from './resume-templates/MinimalistTemplate';
 
 export default function ResumeBuilder({ candidate, plan, onClose }: { candidate: any, plan: string, onClose: () => void }) {
   const [template, setTemplate] = useState('classic');
+  const [themeColor, setThemeColor] = useState('#0077B6'); // Default theme color
   const [downloading, setDownloading] = useState(false);
 
-  const canAccessModern = plan === 'JS Pro Resume' || plan === 'JS Company Reference' || plan === 'JS Company Assistance';
+  const canAccessModern = plan === 'JS Pro Resume' || plan === 'JS Company Reference' || plan === 'JS Company Assistance' || plan === 'JS Basic Resume';
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -44,6 +48,20 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
     } finally {
       setDownloading(false);
     }
+  };
+
+  const parsedData = {
+    name: candidate.name || '',
+    email: candidate.email || '',
+    phone: candidate.phone || '',
+    location: candidate.locCity && candidate.locState ? `${candidate.locCity}, ${candidate.locState}` : (candidate.location || ''),
+    headline: candidate.headline || '',
+    summary: candidate.summary || '',
+    skills: candidate.skillsArr || [],
+    languages: candidate.languages || [],
+    education: candidate.educations || [],
+    experience: candidate.experiences || [],
+    themeColor: themeColor
   };
 
   const builderContent = (
@@ -100,161 +118,31 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
               <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 4 }}>Sleek and typography-focused</div>
             </button>
           </div>
+
+          {(template === 'modern' || template === 'minimalist') && (
+            <div style={{ marginTop: '2rem' }}>
+              <h3 style={{ color: '#94a3b8', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem' }}>Theme Color</h3>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {['#0077B6', '#ea580c', '#16a34a', '#dc2626', '#9333ea', '#eab308', '#2563eb', '#111827'].map(color => (
+                  <button
+                    key={color}
+                    onClick={() => setThemeColor(color)}
+                    style={{ width: '32px', height: '32px', borderRadius: '50%', background: color, border: themeColor === color ? '3px solid white' : '2px solid transparent', cursor: 'pointer' }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Preview Area */}
         <div style={{ flex: 1, padding: '2rem', overflowY: 'auto', display: 'flex', justifyContent: 'center', background: '#e2e8f0' }}>
-           <div id="resume-preview-container" style={{ width: '210mm', minHeight: '297mm', background: 'white', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', padding: '2rem', boxSizing: 'border-box' }}>
-              {/* Simple inline rendering for now, can be extracted to separate components later */}
+           <div id="resume-preview-container" style={{ width: '210mm', minHeight: '297mm', background: 'white', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
               
-              {template === 'classic' && (
-                <div style={{ fontFamily: 'Arial, sans-serif', color: '#333' }}>
-                  <div style={{ textAlign: 'center', borderBottom: '2px solid #333', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
-                    <h1 style={{ margin: '0 0 0.5rem 0', fontSize: '2.5rem', color: '#000' }}>{candidate.name}</h1>
-                    <div style={{ fontSize: '1rem', color: '#555' }}>
-                      {candidate.email} | {candidate.phone} {candidate.location && `| ${candidate.location}`}
-                    </div>
-                  </div>
-                  
-                  {candidate.summary && (
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid #ccc', textTransform: 'uppercase', paddingBottom: '0.25rem', marginBottom: '0.5rem', color: '#000' }}>Summary</h2>
-                      <p style={{ margin: 0, lineHeight: 1.6 }}>{candidate.summary}</p>
-                    </div>
-                  )}
-
-                  {candidate.skills && (
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid #ccc', textTransform: 'uppercase', paddingBottom: '0.25rem', marginBottom: '0.5rem', color: '#000' }}>Skills</h2>
-                      <p style={{ margin: 0, lineHeight: 1.6 }}>
-                        {Array.isArray(candidate.skills) ? candidate.skills.join(', ') : candidate.skills}
-                      </p>
-                    </div>
-                  )}
-
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid #ccc', textTransform: 'uppercase', paddingBottom: '0.25rem', marginBottom: '0.5rem', color: '#000' }}>Experience</h2>
-                    {/* Add map for experience here */}
-                    {candidate.experience ? (
-                      <div style={{ marginBottom: '1rem' }}>
-                         <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
-                            <span>{candidate.currentRole || 'Role'}</span>
-                            <span>Present</span>
-                         </div>
-                         <div style={{ fontStyle: 'italic', marginBottom: '0.5rem' }}>{candidate.currentCompany || 'Company'}</div>
-                      </div>
-                    ) : <p>No experience listed.</p>}
-                  </div>
-
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <h2 style={{ fontSize: '1.25rem', borderBottom: '1px solid #ccc', textTransform: 'uppercase', paddingBottom: '0.25rem', marginBottom: '0.5rem', color: '#000' }}>Education</h2>
-                    {/* Add map for education here */}
-                     {candidate.education ? (
-                      <div style={{ marginBottom: '1rem' }}>
-                         <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
-                            <span>Degree / Details</span>
-                         </div>
-                         <div style={{ fontStyle: 'italic', marginBottom: '0.5rem' }}>Institution Name</div>
-                      </div>
-                    ) : <p>No education listed.</p>}
-                  </div>
-                </div>
-              )}
-
-              {template === 'modern' && (
-                <div style={{ fontFamily: '"Helvetica Neue", Helvetica, sans-serif', color: '#444' }}>
-                  <div style={{ display: 'flex', background: '#0077B6', color: 'white', padding: '2rem', margin: '-2rem -2rem 2rem -2rem' }}>
-                     <div style={{ flex: 1 }}>
-                        <h1 style={{ margin: '0 0 0.5rem 0', fontSize: '3rem', fontWeight: 300 }}>{candidate.name}</h1>
-                        <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 400, opacity: 0.9 }}>{candidate.headline || candidate.currentRole || 'Professional'}</h2>
-                     </div>
-                     <div style={{ textAlign: 'right', fontSize: '0.9rem', opacity: 0.9, display: 'flex', flexDirection: 'column', gap: '0.25rem', justifyContent: 'flex-end' }}>
-                        <div>{candidate.email}</div>
-                        <div>{candidate.phone}</div>
-                        {candidate.location && <div>{candidate.location}</div>}
-                     </div>
-                  </div>
-                  
-                  {/* Rest of modern template body */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
-                     {/* Left Column */}
-                     <div>
-                        {candidate.skills && (
-                          <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ color: '#0077B6', textTransform: 'uppercase', borderBottom: '2px solid #0077B6', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Expertise</h3>
-                            <ul style={{ paddingLeft: '1.2rem', margin: 0, lineHeight: 1.8 }}>
-                               {(Array.isArray(candidate.skills) ? candidate.skills : [candidate.skills]).map((s:any, i:number) => (
-                                 <li key={i}>{s}</li>
-                               ))}
-                            </ul>
-                          </div>
-                        )}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ color: '#0077B6', textTransform: 'uppercase', borderBottom: '2px solid #0077B6', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Education</h3>
-                            <div style={{ fontWeight: 'bold' }}>Degree Name</div>
-                            <div style={{ fontSize: '0.9rem', color: '#666' }}>Institution Name</div>
-                        </div>
-                     </div>
-                     {/* Right Column */}
-                     <div>
-                        {candidate.summary && (
-                          <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ color: '#0077B6', textTransform: 'uppercase', borderBottom: '2px solid #0077B6', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Profile</h3>
-                            <p style={{ margin: 0, lineHeight: 1.6 }}>{candidate.summary}</p>
-                          </div>
-                        )}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <h3 style={{ color: '#0077B6', textTransform: 'uppercase', borderBottom: '2px solid #0077B6', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Experience</h3>
-                            <div style={{ marginBottom: '1.5rem' }}>
-                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.25rem' }}>
-                                  <strong style={{ fontSize: '1.1rem' }}>{candidate.currentRole || 'Role Name'}</strong>
-                                  <span style={{ fontSize: '0.85rem', color: '#666', fontWeight: 600 }}>Present</span>
-                               </div>
-                               <div style={{ color: '#0077B6', fontWeight: 500, marginBottom: '0.5rem' }}>{candidate.currentCompany || 'Company Name'}</div>
-                               <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.6 }}>Detailed description of responsibilities and achievements in this role will go here. Pulled from candidate database.</p>
-                            </div>
-                        </div>
-                     </div>
-                  </div>
-                </div>
-              )}
-
-              {template === 'minimalist' && (
-                <div style={{ fontFamily: 'Georgia, serif', color: '#222' }}>
-                  <div style={{ textAlign: 'left', marginBottom: '2rem' }}>
-                    <h1 style={{ margin: '0 0 0.25rem 0', fontSize: '2.5rem', letterSpacing: '1px' }}>{candidate.name}</h1>
-                    <div style={{ fontSize: '0.9rem', color: '#666', letterSpacing: '0.5px' }}>
-                      {candidate.email} &nbsp; | &nbsp; {candidate.phone}
-                    </div>
-                  </div>
-                  
-                  {candidate.summary && (
-                    <div style={{ marginBottom: '2rem' }}>
-                      <p style={{ margin: 0, lineHeight: 1.8, fontSize: '1rem' }}>{candidate.summary}</p>
-                    </div>
-                  )}
-
-                  <div style={{ marginBottom: '2rem' }}>
-                    <h2 style={{ fontSize: '1.1rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1rem', color: '#000' }}>Experience</h2>
-                    <div style={{ marginBottom: '1.5rem' }}>
-                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                          <strong style={{ fontSize: '1.05rem' }}>{candidate.currentRole || 'Role Name'}, {candidate.currentCompany || 'Company'}</strong>
-                          <span style={{ fontSize: '0.9rem', color: '#666' }}>Present</span>
-                       </div>
-                       <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.6, color: '#444' }}>Key achievements and tasks for this specific role. The minimalist template focuses heavily on typography and clean spacing over colors and borders.</p>
-                    </div>
-                  </div>
-                  
-                  {candidate.skills && (
-                    <div style={{ marginBottom: '2rem' }}>
-                      <h2 style={{ fontSize: '1.1rem', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1rem', color: '#000' }}>Skills</h2>
-                      <p style={{ margin: 0, lineHeight: 1.8, fontSize: '0.95rem' }}>
-                        {Array.isArray(candidate.skills) ? candidate.skills.join(' • ') : candidate.skills}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
+              {template === 'classic' && <ClassicTemplate data={parsedData} />}
+              {template === 'modern' && <ModernTemplate data={parsedData} />}
+              {template === 'minimalist' && <MinimalistTemplate data={parsedData} />}
+              
            </div>
         </div>
       </div>

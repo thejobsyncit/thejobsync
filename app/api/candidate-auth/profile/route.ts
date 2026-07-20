@@ -44,6 +44,7 @@ export async function PUT(request: NextRequest) {
           skills: updated.skills,
           experience: updated.experience || 'No experience',
           education: updated.education || 'Not specified',
+          languages: updated.languages || '[]',
           location: updated.location || 'Not specified',
           currentCompany: updated.currentCompany,
           currentRole: updated.currentRole,
