@@ -15,7 +15,7 @@ export default function Services() {
       link: '/pricing#job_posting'
     },
     {
-      title: 'RESDEX \u2013 Resume Database',
+      title: 'RESDEX – Resume Database',
       icon: <Database className="text-gray-800 mb-4" size={32} />,
       features: [
         'Search The jobsync\'s extensive resume database',
@@ -46,7 +46,7 @@ export default function Services() {
           <h3 className="text-[#0077B6] dark:text-[#00B4D8] font-bold text-xs tracking-widest uppercase mb-4 transition-colors duration-300">Our Services</h3>
           <h2 className="text-3xl md:text-[40px] font-extrabold text-slate-900 dark:text-white mb-6 transition-colors duration-300">Three Ways to Hire Smarter</h2>
           <p className="text-slate-500 dark:text-slate-400 font-medium transition-colors duration-300">
-            From single job postings to full-service hiring assistance \u2014 pick the path that fits how your team grows.
+            From single job postings to full-service hiring assistance — pick the path that fits how your team grows.
           </p>
         </div>
 

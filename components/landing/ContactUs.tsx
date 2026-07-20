@@ -10,7 +10,7 @@ export default function ContactUs() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Contact Us</h1>
-            <p className="text-gray-300 font-medium">We'd love to hear from you \u2014 reach out anytime</p>
+            <p className="text-gray-300 font-medium">We'd love to hear from you — reach out anytime</p>
           </div>
           <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full text-sm font-medium border border-white/10">
             <Link href="/" className="flex items-center gap-1 hover:text-white text-gray-300 transition-colors">
@@ -35,7 +35,7 @@ export default function ContactUs() {
           <p 
             className="text-slate-500 dark:text-slate-400 font-medium transition-colors duration-300"
           >
-            Have a question, feedback, or need support? Fill in the form below or reach us directly \u2014 our team typically responds within 24 hours.
+            Have a question, feedback, or need support? Fill in the form below or reach us directly — our team typically responds within 24 hours.
           </p>
         </div>
 
@@ -158,15 +158,15 @@ export default function ContactUs() {
               
               <div className="space-y-4 mb-8 text-sm font-medium">
                 <div className="flex justify-between items-center border-b border-gray-50 dark:border-white/5 pb-4 transition-colors duration-300">
-                  <span className="text-slate-500 dark:text-slate-400">Monday \u2013 Friday</span>
+                  <span className="text-slate-500 dark:text-slate-400">Monday – Friday</span>
                   <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-bold">
-                    9:00 AM \u2013 6:00 PM 
+                    9:00 AM – 6:00 PM 
                     <span className="bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400 text-[10px] px-2 py-0.5 rounded-full uppercase">Open</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center border-b border-gray-50 dark:border-white/5 pb-4 transition-colors duration-300">
                   <span className="text-slate-500 dark:text-slate-400">Saturday</span>
-                  <span className="text-slate-800 dark:text-slate-200 font-bold">9:00 AM \u2013 4:00 PM</span>
+                  <span className="text-slate-800 dark:text-slate-200 font-bold">9:00 AM – 4:00 PM</span>
                 </div>
                 <div className="flex justify-between items-center border-b border-gray-50 dark:border-white/5 pb-4 transition-colors duration-300">
                   <span className="text-slate-500 dark:text-slate-400">Sunday</span>

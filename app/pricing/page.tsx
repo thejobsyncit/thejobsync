@@ -218,7 +218,7 @@ export default function PricingPage() {
           <section id="resume_access" className="bg-white dark:bg-slate-800 rounded-3xl p-8 md:p-12 shadow-xl border border-gray-100 dark:border-white/10 transition-colors duration-300">
             <div className="mb-12">
               <h3 className="text-[#0077B6] dark:text-[#00B4D8] font-bold text-sm tracking-widest uppercase mb-4 transition-colors duration-300">Employers</h3>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4 transition-colors duration-300">RESDEX \u2013 Resume Database</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4 transition-colors duration-300">RESDEX – Resume Database</h2>
               <p className="text-slate-500 dark:text-slate-400 font-medium transition-colors duration-300">Search The jobsync's extensive database. Filter by location, skills and experience.</p>
             </div>
 
