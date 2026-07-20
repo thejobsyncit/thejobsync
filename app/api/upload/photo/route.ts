@@ -17,10 +17,26 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
+    const candidateId = formData.get('candidateId') as string | null;
     
     // Convert to base64 data URI for serverless environments (Vercel)
     const base64Str = buffer.toString('base64');
     const dataUri = `data:${file.type};base64,${base64Str}`;
+
+    if (candidateId) {
+      const { prisma } = require('@/lib/db');
+      await (prisma as any).candidateAccount.update({
+        where: { id: candidateId },
+        data: { photoUrl: dataUri }
+      });
+      const acc = await (prisma as any).candidateAccount.findUnique({ where: { id: candidateId } });
+      if (acc?.email) {
+        await prisma.candidate.updateMany({
+          where: { email: acc.email },
+          data: { photoUrl: dataUri }
+        });
+      }
+    }
 
     return NextResponse.json({ url: dataUri });
   } catch (error) {

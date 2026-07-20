@@ -213,6 +213,7 @@ export default function CandidateProfilePage() {
     try {
       const fd = new FormData();
       fd.append('file', file);
+      if (candidate?.id) fd.append('candidateId', candidate.id);
       const res = await fetch('/api/upload/resume', { method: 'POST', body: fd });
       if (res.ok) {
         const { url, name, extractedData } = await res.json();
@@ -260,6 +261,7 @@ export default function CandidateProfilePage() {
     try {
       const fd = new FormData();
       fd.append('file', file);
+      if (candidate?.id) fd.append('candidateId', candidate.id);
       const res = await fetch('/api/upload/photo', { method: 'POST', body: fd });
       if (res.ok) {
         const { url } = await res.json();
@@ -287,8 +289,8 @@ export default function CandidateProfilePage() {
         currentRole: form.currentRole,
         expectedSalary: form.expectedSalary,
         preferredRoles: form.preferredRoles,
-        resumeUrl: form.resumeUrl,
-        photoUrl: form.photoUrl,
+        resumeUrl: form.resumeUrl === '' ? '' : undefined,
+        photoUrl: form.photoUrl === '' ? '' : undefined,
         skills: JSON.stringify(form.skillsArr),
         education: JSON.stringify(form.educations),
         experience: JSON.stringify(form.experiences),
@@ -301,7 +303,13 @@ export default function CandidateProfilePage() {
         updateProfile(updated);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(`Failed to save profile: ${errorData.error || res.statusText || 'Unknown error'}`);
       }
+    } catch (err) {
+      console.error(err);
+      alert('An unexpected error occurred while saving profile.');
     } finally { setSaving(false); }
   };
 
