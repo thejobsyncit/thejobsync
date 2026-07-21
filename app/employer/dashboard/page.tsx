@@ -6,20 +6,24 @@ import Link from 'next/link';
 import { useEmployerAuth } from '@/context/EmployerAuthContext';
 import {
   Building2, Briefcase, Users, Plus, LogOut,
-  MapPin, Clock, X, Check, AlertCircle, Search, User, FileText, Download
+  MapPin, Clock, X, Check, AlertCircle, Search, User, FileText, Download, Edit2
 } from 'lucide-react';
 import { generateInvoicePdf } from '@/lib/generateInvoicePdf';
+import { Country, State, City } from 'country-state-city';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DEPARTMENTS, DEPARTMENT_ROLES, DEPARTMENT_PLACEHOLDERS } from '@/lib/constants';
 
 interface Job {
   id: string;
   title: string;
+  description: string;
   field: string;
   location: string;
   jobType: string;
   salaryRange: string;
   experience: string;
+  skills: any;
+  openings: number;
   status: string;
   createdAt: string;
 }
@@ -45,9 +49,15 @@ export default function EmployerDashboard() {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
 
+  const [showEditJob, setShowEditJob] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [editSuccess, setEditSuccess] = useState(false);
+  const [editJob, setEditJob] = useState<any>(null);
+
   const [newJob, setNewJob] = useState({
     title: '', description: '', skills: '', experience: '',
-    location: '', salaryRange: '', jobType: 'full-time', field: '', role: '', customField: '', customRole: '', openings: 1,
+    locCountry: 'IN', locState: '', locDistrict: '', locCity: '', salaryRange: '', jobType: 'full-time', field: '', role: '', customField: '', customRole: '', openings: 1,
   });
 
   useEffect(() => {
@@ -120,13 +130,22 @@ export default function EmployerDashboard() {
       const finalRole = newJob.role === 'Other' ? newJob.customRole : newJob.role;
       const combinedField = finalRole ? `${finalField} | ${finalRole}` : finalField;
 
+      const cObj = Country.getCountryByCode(newJob.locCountry);
+      const sObj = State.getStateByCodeAndCountry(newJob.locState, newJob.locCountry);
+      const locationJson = JSON.stringify({
+        country: cObj ? cObj.name : newJob.locCountry,
+        state: sObj ? sObj.name : newJob.locState,
+        district: newJob.locDistrict,
+        city: newJob.locCity
+      });
       const res = await fetch('/api/employer/jobs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...newJob,
+          location: locationJson,
           field: combinedField,
-          skills: newJob.skills.split(',').map((s) => s.trim()).filter(Boolean),
+          skills: newJob.skills.split(',').map((s: string) => s.trim()).filter(Boolean),
         }),
       });
       const data = await res.json();
@@ -136,7 +155,7 @@ export default function EmployerDashboard() {
         setPostSuccess(true);
         setNewJob({
           title: '', description: '', skills: '', experience: '',
-          location: '', salaryRange: '', jobType: 'full-time', field: '', role: '', customField: '', customRole: '', openings: 1,
+          locCountry: 'IN', locState: '', locDistrict: '', locCity: '', salaryRange: '', jobType: 'full-time', field: '', role: '', customField: '', customRole: '', openings: 1,
         });
         fetchJobs();
         setTimeout(() => { setShowPostJob(false); setPostSuccess(false); }, 1500);
@@ -145,6 +164,51 @@ export default function EmployerDashboard() {
       setPostError('Network error. Please try again.');
     }
     setPosting(false);
+  };
+
+  
+  const handleUpdateJob = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEditing(true);
+    setEditError('');
+    try {
+      const finalField = editJob.field === 'Other' ? editJob.customField : editJob.field;
+      const finalRole = editJob.role === 'Other' ? editJob.customRole : editJob.role;
+      const combinedField = finalRole ? `${finalField} | ${finalRole}` : finalField;
+
+      const cObj = Country.getCountryByCode(editJob.locCountry);
+      const sObj = State.getStateByCodeAndCountry(editJob.locState, editJob.locCountry);
+      const locationJson = JSON.stringify({
+        country: cObj ? cObj.name : editJob.locCountry,
+        state: sObj ? sObj.name : editJob.locState,
+        district: editJob.locDistrict,
+        city: editJob.locCity
+      });
+      
+      const skillsArray = Array.isArray(editJob.skills) ? editJob.skills : (typeof editJob.skills === 'string' ? editJob.skills.split(',').map((s: string) => s.trim()).filter(Boolean) : []);
+
+      const res = await fetch('/api/employer/jobs', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...editJob,
+          location: locationJson,
+          field: combinedField,
+          skills: skillsArray,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setEditError(data.error || 'Failed to update job');
+      } else {
+        setEditSuccess(true);
+        fetchJobs();
+        setTimeout(() => { setShowEditJob(false); setEditSuccess(false); }, 1500);
+      }
+    } catch {
+      setEditError('Network error. Please try again.');
+    }
+    setEditing(false);
   };
 
   const handleProfileOpen = async () => {
@@ -373,14 +437,55 @@ export default function EmployerDashboard() {
                     <span className="text-xs text-slate-400 whitespace-nowrap mt-1">
                       {new Date(job.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                     </span>
-                    <button 
-                      onClick={(e) => handleDeleteJob(job.id, e)}
-                      disabled={deletingJobId === job.id}
-                      className="text-slate-400 hover:text-red-500 transition-colors p-1.5 rounded hover:bg-red-50 opacity-0 group-hover:opacity-100 disabled:opacity-50"
-                      title="Delete Job"
-                    >
-                      {deletingJobId === job.id ? <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"/> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          let locParsed = { country: '', state: '', district: '', city: '' };
+                          try {
+                            if (job.location && job.location.startsWith('{')) {
+                                locParsed = JSON.parse(job.location);
+                            } else {
+                                locParsed.city = job.location; // fallback
+                            }
+                          } catch(err) {}
+                          
+                          let countryCode = 'IN';
+                          if (locParsed.country) {
+                             const found = Country.getAllCountries().find(c => c.name === locParsed.country || c.isoCode === locParsed.country);
+                             if (found) countryCode = found.isoCode;
+                          }
+                          
+                          let stateCode = '';
+                          if (locParsed.state) {
+                             const found = State.getStatesOfCountry(countryCode).find(s => s.name === locParsed.state || s.isoCode === locParsed.state);
+                             if (found) stateCode = found.isoCode;
+                          }
+                          
+                          setEditJob({
+                            ...job,
+                            locCountry: countryCode,
+                            locState: stateCode,
+                            locDistrict: locParsed.district || '',
+                            locCity: locParsed.city || '',
+                            skills: Array.isArray(job.skills) ? job.skills.join(', ') : (job.skills || ''),
+                          });
+                          setShowEditJob(true);
+                        }}
+                        className="text-slate-400 hover:text-blue-500 transition-colors p-1.5 rounded hover:bg-blue-50 opacity-0 group-hover:opacity-100"
+                        title="Edit Job"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button 
+                        onClick={(e) => handleDeleteJob(job.id, e)}
+                        disabled={deletingJobId === job.id}
+                        className="text-slate-400 hover:text-red-500 transition-colors p-1.5 rounded hover:bg-red-50 opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                        title="Delete Job"
+                      >
+                        {deletingJobId === job.id ? <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"/> : <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -490,6 +595,118 @@ export default function EmployerDashboard() {
         )}
       </AnimatePresence>
 
+      
+      {/* Edit Job Modal */}
+      <AnimatePresence>
+        {showEditJob && editJob && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowEditJob(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+              <div className="sticky top-0 bg-white border-b border-slate-100 p-6 flex justify-between items-center z-10">
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">Edit Job</h2>
+                  <p className="text-sm text-slate-500">Update the job details</p>
+                </div>
+                <button onClick={() => setShowEditJob(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-500"><X size={20} /></button>
+              </div>
+
+              <div className="p-6">
+                {editError && <div className="mb-6 p-4 bg-red-50 text-red-700 text-sm rounded-xl flex items-center gap-2"><AlertCircle size={16} />{editError}</div>}
+                {editSuccess && <div className="mb-6 p-4 bg-emerald-50 text-emerald-700 text-sm rounded-xl flex items-center gap-2"><Check size={16} />Job updated successfully!</div>}
+
+                <form onSubmit={handleUpdateJob} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Job Title *</label>
+                      <input type="text" required placeholder="e.g. Senior Manager"
+                        className={INPUT_CLS}
+                        value={editJob.title} onChange={(e) => setEditJob((p: any) => ({ ...p, title: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Job Type</label>
+                      <div className="flex bg-slate-100 p-1 rounded-xl">
+                        {['full-time', 'part-time', 'contract'].map(t => (
+                          <button key={t} type="button" onClick={() => setEditJob((p: any) => ({ ...p, jobType: t }))}
+                            className={`flex-1 py-2 text-sm font-medium rounded-lg capitalize transition-colors ${editJob.jobType === t ? 'bg-white text-[#0077B6] shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>
+                            {t.replace('-', ' ')}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Job Description *</label>
+                    <textarea required rows={4} placeholder="Describe the role, responsibilities, and ideal candidate..."
+                      className={`${INPUT_CLS} resize-none`}
+                      value={editJob.description} onChange={(e) => setEditJob((p: any) => ({ ...p, description: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Openings *</label>
+                      <input type="number" min="1" required className={INPUT_CLS}
+                        value={editJob.openings || 1} onChange={(e) => setEditJob((p: any) => ({ ...p, openings: parseInt(e.target.value) || 1 }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Required Skills *</label>
+                      <input type="text" placeholder="Skill 1, Skill 2, Skill 3..."
+                        className={INPUT_CLS}
+                        value={editJob.skills} onChange={(e) => setEditJob((p: any) => ({ ...p, skills: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Location *</label>
+                                          <div className="flex gap-2">
+                      <select required className={INPUT_CLS} value={editJob.locCountry} onChange={e => setEditJob((p: any) => ({ ...p, locCountry: e.target.value, locState: '', locCity: '' }))}>
+                        <option value="">Select Country</option>
+                        {Country.getAllCountries().map(c => <option key={c.isoCode} value={c.isoCode}>{c.name}</option>)}
+                      </select>
+                      <select required className={INPUT_CLS} value={editJob.locState} onChange={e => setEditJob((p: any) => ({ ...p, locState: e.target.value, locCity: '' }))}>
+                        <option value="">Select State</option>
+                        {editJob.locCountry ? State.getStatesOfCountry(editJob.locCountry).map(s => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>) : null}
+                      </select>
+                    </div>
+                    <div className="flex gap-2 mt-2">
+                      <input type="text" placeholder="District (Optional)" className={INPUT_CLS} value={editJob.locDistrict} onChange={e => setEditJob((p: any) => ({ ...p, locDistrict: e.target.value }))} />
+                      {editJob.locState ? (
+                        <select required className={INPUT_CLS} value={editJob.locCity} onChange={e => setEditJob((p: any) => ({ ...p, locCity: e.target.value }))}>
+                          <option value="">Select City</option>
+                          {City.getCitiesOfState(editJob.locCountry, editJob.locState).map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                        </select>
+                      ) : (
+                        <input type="text" required placeholder="City" className={INPUT_CLS} value={editJob.locCity} onChange={e => setEditJob((p: any) => ({ ...p, locCity: e.target.value }))} />
+                      )}
+                    </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Experience Required *</label>
+                      <input type="text" required placeholder="e.g. 2-5 Years"
+                        className={INPUT_CLS}
+                        value={editJob.experience} onChange={(e) => setEditJob((p: any) => ({ ...p, experience: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-4 border-t border-slate-100">
+                    <button type="submit" disabled={editing}
+                      className="px-8 py-3 bg-[#03045E] text-white rounded-xl font-bold hover:bg-blue-900 transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
+                      {editing ? 'Updating...' : 'Update Job'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Post Job Modal */}
       <AnimatePresence>
         {showPostJob && (
@@ -527,12 +744,12 @@ export default function EmployerDashboard() {
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">Job Title *</label>
                       <input type="text" required placeholder={DEPARTMENT_PLACEHOLDERS[newJob.field]?.title || 'e.g. Senior Manager'}
-                        value={newJob.title} onChange={(e) => setNewJob(p => ({ ...p, title: e.target.value }))}
+                        value={newJob.title} onChange={(e) => setNewJob((p: any) => ({ ...p, title: e.target.value }))}
                         className={INPUT_CLS} />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">Field / Domain *</label>
-                      <select required value={newJob.field} onChange={(e) => setNewJob(p => ({ ...p, field: e.target.value, role: '', customField: '', customRole: '' }))}
+                      <select required value={newJob.field} onChange={(e) => setNewJob((p: any) => ({ ...p, field: e.target.value, role: '', customField: '', customRole: '' }))}
                         className={INPUT_CLS}>
                         <option value="">Select field</option>
                         {FIELDS.map(f => <option key={f} value={f}>{f}</option>)}
@@ -546,7 +763,7 @@ export default function EmployerDashboard() {
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1.5">Specify Domain *</label>
                         <input type="text" required placeholder="e.g. Graphic Design"
-                          value={newJob.customField} onChange={(e) => setNewJob(p => ({ ...p, customField: e.target.value }))}
+                          value={newJob.customField} onChange={(e) => setNewJob((p: any) => ({ ...p, customField: e.target.value }))}
                           className={INPUT_CLS} />
                       </div>
                     )}
@@ -554,7 +771,7 @@ export default function EmployerDashboard() {
                     {newJob.field && newJob.field !== 'Other' && (
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1.5">Role *</label>
-                        <select required value={newJob.role} onChange={(e) => setNewJob(p => ({ ...p, role: e.target.value, customRole: '' }))}
+                        <select required value={newJob.role} onChange={(e) => setNewJob((p: any) => ({ ...p, role: e.target.value, customRole: '' }))}
                           className={INPUT_CLS}>
                           <option value="">Select Role</option>
                           {(DEPARTMENT_ROLES[newJob.field] || []).map(r => <option key={r} value={r}>{r}</option>)}
@@ -567,7 +784,7 @@ export default function EmployerDashboard() {
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1.5">Specify Role *</label>
                         <input type="text" required placeholder="e.g. UI Designer"
-                          value={newJob.customRole} onChange={(e) => setNewJob(p => ({ ...p, customRole: e.target.value }))}
+                          value={newJob.customRole} onChange={(e) => setNewJob((p: any) => ({ ...p, customRole: e.target.value }))}
                           className={INPUT_CLS} />
                       </div>
                     )}
@@ -577,13 +794,13 @@ export default function EmployerDashboard() {
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">Job Description *</label>
                       <textarea required rows={4} placeholder="Describe the role, responsibilities and requirements..."
-                        value={newJob.description} onChange={(e) => setNewJob(p => ({ ...p, description: e.target.value }))}
+                        value={newJob.description} onChange={(e) => setNewJob((p: any) => ({ ...p, description: e.target.value }))}
                         className={`${INPUT_CLS} resize-none`} />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">Number of Openings *</label>
                       <input type="number" min="1" required placeholder="e.g. 5"
-                        value={newJob.openings} onChange={(e) => setNewJob(p => ({ ...p, openings: parseInt(e.target.value) || 1 }))}
+                        value={newJob.openings} onChange={(e) => setNewJob((p: any) => ({ ...p, openings: parseInt(e.target.value) || 1 }))}
                         className={INPUT_CLS} />
                     </div>
                   </div>
@@ -591,27 +808,45 @@ export default function EmployerDashboard() {
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1.5">Skills Required (comma-separated)</label>
                     <input type="text" placeholder={DEPARTMENT_PLACEHOLDERS[newJob.field]?.skills || 'Skill 1, Skill 2, Skill 3...'}
-                      value={newJob.skills} onChange={(e) => setNewJob(p => ({ ...p, skills: e.target.value }))}
+                      value={newJob.skills} onChange={(e) => setNewJob((p: any) => ({ ...p, skills: e.target.value }))}
                       className={INPUT_CLS} />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">Location *</label>
-                      <input type="text" required placeholder="Chennai, Remote..."
-                        value={newJob.location} onChange={(e) => setNewJob(p => ({ ...p, location: e.target.value }))}
-                        className={INPUT_CLS} />
+                      <div className="flex gap-2 mb-2">
+                        <select required className={INPUT_CLS} value={newJob.locCountry} onChange={e => setNewJob((p: any) => ({ ...p, locCountry: e.target.value, locState: '', locCity: '' }))}>
+                          <option value="">Country</option>
+                          {Country.getAllCountries().map(c => <option key={c.isoCode} value={c.isoCode}>{c.name}</option>)}
+                        </select>
+                        <select required className={INPUT_CLS} value={newJob.locState} onChange={e => setNewJob((p: any) => ({ ...p, locState: e.target.value, locCity: '' }))}>
+                          <option value="">State</option>
+                          {newJob.locCountry ? State.getStatesOfCountry(newJob.locCountry).map(s => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>) : null}
+                        </select>
+                      </div>
+                      <div className="flex gap-2">
+                        <input type="text" placeholder="District" className={INPUT_CLS} value={newJob.locDistrict} onChange={e => setNewJob((p: any) => ({ ...p, locDistrict: e.target.value }))} />
+                        {newJob.locState ? (
+                          <select required className={INPUT_CLS} value={newJob.locCity} onChange={e => setNewJob((p: any) => ({ ...p, locCity: e.target.value }))}>
+                            <option value="">City</option>
+                            {City.getCitiesOfState(newJob.locCountry, newJob.locState).map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                          </select>
+                        ) : (
+                          <input type="text" required placeholder="City" className={INPUT_CLS} value={newJob.locCity} onChange={e => setNewJob((p: any) => ({ ...p, locCity: e.target.value }))} />
+                        )}
+                      </div>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">Experience</label>
                       <input type="text" placeholder="2-4 years"
-                        value={newJob.experience} onChange={(e) => setNewJob(p => ({ ...p, experience: e.target.value }))}
+                        value={newJob.experience} onChange={(e) => setNewJob((p: any) => ({ ...p, experience: e.target.value }))}
                         className={INPUT_CLS} />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1.5">Salary Range</label>
                       <input type="text" placeholder="₹8L - ₹12L"
-                        value={newJob.salaryRange} onChange={(e) => setNewJob(p => ({ ...p, salaryRange: e.target.value }))}
+                        value={newJob.salaryRange} onChange={(e) => setNewJob((p: any) => ({ ...p, salaryRange: e.target.value }))}
                         className={INPUT_CLS} />
                     </div>
                   </div>
@@ -621,7 +856,7 @@ export default function EmployerDashboard() {
                     <div className="flex gap-2 flex-wrap">
                       {['full-time', 'part-time', 'contract', 'internship'].map((t) => (
                         <button type="button" key={t}
-                          onClick={() => setNewJob(p => ({ ...p, jobType: t }))}
+                          onClick={() => setNewJob((p: any) => ({ ...p, jobType: t }))}
                           className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-all ${
                             newJob.jobType === t
                               ? 'bg-[#0077B6] text-white border-[#0077B6]'

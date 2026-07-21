@@ -565,7 +565,7 @@ function JobCard({ job, candidate, delay = 0, isRecommended = false, isDark = tr
   const hue = job.client?.companyName ? [...job.client.companyName].reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360 : 200;
 
   const jLocation = job.location?.startsWith('{') 
-    ? (() => { try { const l = JSON.parse(job.location); return [l.city, l.district, l.state].filter(Boolean).join(', '); } catch { return job.location; } })()
+    ? (() => { try { const l = JSON.parse(job.location); return [l.city, l.district, l.state, l.country].filter(Boolean).join(', '); } catch { return job.location; } })()
     : job.location;
 
   return (

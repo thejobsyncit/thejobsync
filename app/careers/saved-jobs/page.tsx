@@ -86,7 +86,7 @@ export default function SavedJobsPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '1.5rem', flex: 1 }}>
-                  {job.location && <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MapPin size={16} color="#64748b" />{job.location}</span>}
+                  {job.location && <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MapPin size={16} color="#64748b" />{job.location.startsWith('{') ? (() => { try { const l = JSON.parse(job.location); return [l.city, l.district, l.state, l.country].filter(Boolean).join(', '); } catch { return job.location; } })() : job.location}</span>}
                   {job.salaryRange && <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><DollarSign size={16} color="#64748b" />{job.salaryRange}</span>}
                   {job.experience && <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Briefcase size={16} color="#64748b" />{job.experience}</span>}
                 </div>

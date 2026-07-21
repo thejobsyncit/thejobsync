@@ -75,7 +75,7 @@ export default async function CompanyProfilePage({ params }: { params: Promise<{
                     <div>
                       <h3 style={{ fontWeight: 800, color: 'white', fontSize: '1.15rem', marginBottom: 6 }} className="group-hover:text-[#00B4D8] transition-colors">{job.title}</h3>
                       <div style={{ fontSize: '0.9rem', color: '#94a3b8', display: 'flex', gap: 12 }}>
-                        <span>{job.location}</span>
+                        <span>{job.location?.startsWith('{') ? (() => { try { const l = JSON.parse(job.location); return [l.city, l.district, l.state, l.country].filter(Boolean).join(', '); } catch { return job.location; } })() : job.location}</span>
                         <span>•</span>
                         <span>{job.experience}</span>
                       </div>

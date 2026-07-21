@@ -286,3 +286,74 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function PUT(req: NextRequest) {
+  const employerId = await getEmployerId(req);
+  if (!employerId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+
+  try {
+    const data = await req.json();
+    const { id, title, description, skills, experience, location, salaryRange, jobType, field, openings } = data;
+
+    if (!id) return NextResponse.json({ error: 'Job ID is required' }, { status: 400 });
+    if (!title || !description || !location || !field) {
+      return NextResponse.json({ error: 'Title, description, location and field are required' }, { status: 400 });
+    }
+
+    const existingJob = await prisma.employerJob.findUnique({ where: { id } });
+    if (!existingJob || existingJob.employerId !== employerId) {
+      return NextResponse.json({ error: 'Job not found or unauthorized' }, { status: 403 });
+    }
+
+    const updatedJob = await prisma.employerJob.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        skills: JSON.stringify(Array.isArray(skills) ? skills : []),
+        experience: experience || 'Any',
+        location,
+        salaryRange: salaryRange || 'Negotiable',
+        jobType: jobType || 'full-time',
+        field,
+        openings: openings || 1,
+      },
+    });
+
+    // Also update the bridged JobRequirement if it exists
+    try {
+      const employer = await prisma.employer.findUnique({ where: { id: employerId } });
+      if (employer) {
+        const client = await prisma.client.findFirst({ where: { email: employer.email } });
+        if (client) {
+          const requirements = await prisma.jobRequirement.findMany({
+            where: { clientId: client.id, title: existingJob.title },
+            orderBy: { createdAt: 'desc' },
+            take: 1
+          });
+          if (requirements.length > 0) {
+            await prisma.jobRequirement.update({
+              where: { id: requirements[0].id },
+              data: {
+                title,
+                description,
+                skills: JSON.stringify(Array.isArray(skills) ? skills : []),
+                experience: experience || 'Any',
+                positions: openings || 1,
+                location,
+                salaryRange: salaryRange || 'Negotiable',
+              }
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to update bridged requirement', e);
+    }
+
+    return NextResponse.json({ success: true, job: updatedJob });
+  } catch (err) {
+    console.error('update job error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
