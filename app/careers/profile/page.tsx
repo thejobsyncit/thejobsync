@@ -759,7 +759,7 @@ export default function CandidateProfilePage() {
 
       <PrintableEnrollmentForm candidate={form} />
       <ATSPremiumPlansModal isOpen={showATSModal} onClose={() => setShowATSModal(false)} />
-      {showResumeBuilder && <ResumeBuilder candidate={form} plan={activeSubscription?.planName || ''} onClose={() => setShowResumeBuilder(false)} />}
+      {showResumeBuilder && <ResumeBuilder candidate={form} plan={activeSubscription?.planName || ''} onClose={() => setShowResumeBuilder(false)} onUpgrade={() => setShowATSModal(true)} />}
 
     </DashboardLayout>
   );

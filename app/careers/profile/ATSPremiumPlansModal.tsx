@@ -148,8 +148,8 @@ export default function ATSPremiumPlansModal({ isOpen, onClose }: { isOpen: bool
 
   const modalContent = (
     <AnimatePresence>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-      <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+      <Script key="script" src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+      <div key="modal" style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
         <motion.div 
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
