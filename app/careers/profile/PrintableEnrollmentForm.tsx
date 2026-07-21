@@ -71,7 +71,18 @@ export default function PrintableEnrollmentForm({ candidate }: { candidate: any 
           <p><span className="label">Name:</span> {candidate.name || 'Not specified'}</p>
           <p><span className="label">Email:</span> {candidate.email || 'Not specified'}</p>
           <p><span className="label">Phone:</span> {candidate.phone || 'Not specified'}</p>
-          <p><span className="label">Location:</span> {candidate.location || 'Not specified'}</p>
+          <p><span className="label">Location:</span> {(() => {
+            if (!candidate.location) return 'Not specified';
+            try {
+              if (candidate.location.startsWith('{')) {
+                const loc = JSON.parse(candidate.location);
+                return [loc.address, loc.city, loc.district, loc.state].filter(Boolean).join(', ');
+              }
+              return candidate.location;
+            } catch {
+              return candidate.location;
+            }
+          })()}</p>
         </div>
         <div>
           <h2>Professional Summary</h2>

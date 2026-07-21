@@ -72,14 +72,58 @@ export default function SACandidatesPage() {
                 <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Phone</p><p className="text-sm font-medium text-gray-800">{viewResume.phone}</p></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Experience</p><p className="text-sm font-medium text-gray-800">{viewResume.experience}</p></div>
-                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Education</p><p className="text-sm font-medium text-gray-800">{viewResume.education}</p></div>
+                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Experience</p>
+                  <div className="text-sm font-medium text-gray-800">
+                    {(() => {
+                      if (!viewResume.experience) return 'No experience';
+                      try {
+                        if (viewResume.experience.startsWith('[')) {
+                          const exps = JSON.parse(viewResume.experience);
+                          if (exps.length && exps[0].role) return `${exps[0].role} at ${exps[0].company}`;
+                        }
+                        return viewResume.experience;
+                      } catch { return viewResume.experience; }
+                    })()}
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Education</p>
+                  <div className="text-sm font-medium text-gray-800">
+                    {(() => {
+                      if (!viewResume.education) return 'Not specified';
+                      try {
+                        if (viewResume.education.startsWith('[')) {
+                          const edus = JSON.parse(viewResume.education);
+                          if (edus.length && edus[0].degree) return `${edus[0].degree} from ${edus[0].college}`;
+                        }
+                        return viewResume.education;
+                      } catch { return viewResume.education; }
+                    })()}
+                  </div>
+                </div>
               </div>
-              <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Location</p><p className="text-sm font-medium text-gray-800">{viewResume.location}</p></div>
+              <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Location</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {(() => {
+                    if (!viewResume.location) return 'Not specified';
+                    try {
+                      if (viewResume.location.startsWith('{')) {
+                        const loc = JSON.parse(viewResume.location);
+                        return [loc.address, loc.city, loc.district, loc.state].filter(Boolean).join(', ');
+                      }
+                      return viewResume.location;
+                    } catch { return viewResume.location; }
+                  })()}
+                </p>
+              </div>
               <div className="bg-gray-50 p-3 rounded-lg">
                 <p className="text-xs text-gray-500 mb-2">Skills</p>
                 <div className="flex flex-wrap gap-2">
-                  {(() => { try { return JSON.parse(viewResume.skills); } catch { return [viewResume.skills]; } })().map((skill: string, i: number) => (
+                  {(() => { 
+                    try { 
+                      const parsed = JSON.parse(viewResume.skills); 
+                      return Array.isArray(parsed) ? parsed : [viewResume.skills];
+                    } catch { return viewResume.skills ? [viewResume.skills] : []; } 
+                  })().map((skill: string, i: number) => (
                     <span key={i} className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{skill}</span>
                   ))}
                 </div>

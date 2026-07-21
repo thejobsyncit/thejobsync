@@ -146,11 +146,19 @@ export default function CandidateRegistrationsChart() {
                       </div>
                     </td>
                     <td className="p-4 text-slate-600">
-                      {c.location ? (
-                        <span className="flex items-center gap-1"><MapPin size={14} className="text-slate-400"/> {c.location}</span>
-                      ) : (
-                        <span className="text-slate-400 italic">Not specified</span>
-                      )}
+                      {(() => {
+                        if (!c.location) return <span className="text-slate-400 italic">Not specified</span>;
+                        try {
+                          if (c.location.startsWith('{')) {
+                            const loc = JSON.parse(c.location);
+                            const parts = [loc.city, loc.district, loc.state].filter(Boolean);
+                            return <span className="flex items-center gap-1"><MapPin size={14} className="text-slate-400"/> {parts.join(', ')}</span>;
+                          }
+                          return <span className="flex items-center gap-1"><MapPin size={14} className="text-slate-400"/> {c.location}</span>;
+                        } catch (e) {
+                          return <span className="flex items-center gap-1"><MapPin size={14} className="text-slate-400"/> {c.location}</span>;
+                        }
+                      })()}
                     </td>
                     <td className="p-4">
                       <div className="font-mono text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded truncate max-w-[150px]" title="Password Hidden">
