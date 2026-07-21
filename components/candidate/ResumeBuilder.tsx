@@ -14,6 +14,7 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
   const [downloading, setDownloading] = useState(false);
 
   const canAccessModern = plan === 'JS Pro Resume' || plan === 'JS Company Reference' || plan === 'JS Company Assistance';
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -21,6 +22,78 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
   }, []);
 
   if (!mounted) return null;
+
+  const UpgradeModal = () => (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 99999,
+      background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
+    }}>
+      <div style={{
+        background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: '24px', padding: '2.5rem', maxWidth: 520, width: '100%',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.5)'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>🔒</div>
+          <h2 style={{ color: 'white', fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>Pro Template</h2>
+          <p style={{ color: '#94a3b8', fontSize: '0.95rem', lineHeight: 1.6 }}>
+            This template is available only on <strong style={{ color: '#00B4D8' }}>JS Pro Resume</strong> and above plans.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+          {[
+            { name: 'JS Basic Resume', price: '₹299', color: '#0077B6', desc: 'Classic template + ATS optimization' },
+            { name: 'JS Pro Resume', price: '₹599', color: '#9333ea', desc: 'All templates + Priority support', highlight: true },
+            { name: 'JS Company Reference', price: '₹999', color: '#16a34a', desc: 'All Pro features + Company referral' },
+          ].map(p => (
+            <div key={p.name} onClick={() => { setShowUpgradeModal(false); onClose(); window.location.href = '/careers/pricing'; }}
+              style={{
+                background: p.highlight ? 'rgba(147,51,234,0.15)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${p.highlight ? '#9333ea' : 'rgba(255,255,255,0.08)'}`,
+                borderRadius: '14px', padding: '1rem 1.25rem', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                transition: 'all 0.2s'
+              }}
+            >
+              <div>
+                {p.highlight && <div style={{ fontSize: '0.65rem', background: '#9333ea', color: 'white', padding: '2px 8px', borderRadius: 10, fontWeight: 700, display: 'inline-block', marginBottom: 4 }}>RECOMMENDED</div>}
+                <div style={{ color: 'white', fontWeight: 700, fontSize: '0.95rem' }}>{p.name}</div>
+                <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginTop: 2 }}>{p.desc}</div>
+              </div>
+              <div style={{ color: p.color, fontWeight: 800, fontSize: '1.1rem', whiteSpace: 'nowrap', marginLeft: '1rem' }}>{p.price}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button
+            onClick={() => setShowUpgradeModal(false)}
+            style={{
+              flex: 1, padding: '0.875rem', borderRadius: '12px',
+              background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
+              color: 'white', fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem'
+            }}
+          >
+            ← Go Back
+          </button>
+          <button
+            onClick={() => { setShowUpgradeModal(false); onClose(); window.location.href = '/careers/pricing'; }}
+            style={{
+              flex: 2, padding: '0.875rem', borderRadius: '12px',
+              background: 'linear-gradient(135deg, #9333ea, #7c3aed)', border: 'none',
+              color: 'white', fontWeight: 700, cursor: 'pointer', fontSize: '0.95rem',
+              boxShadow: '0 4px 15px rgba(147,51,234,0.4)'
+            }}
+          >
+            View Plans →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
   
   const handleDownload = async () => {
     setDownloading(true);
@@ -101,7 +174,7 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
             </button>
 
             <button 
-              onClick={() => canAccessModern ? setTemplate('modern') : alert('Upgrade to JS Pro Resume to access this template.')}
+              onClick={() => canAccessModern ? setTemplate('modern') : setShowUpgradeModal(true)}
               style={{ background: template === 'modern' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'modern' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: canAccessModern ? 'pointer' : 'not-allowed', opacity: canAccessModern ? 1 : 0.5, position: 'relative' }}
             >
               {!canAccessModern && <div style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: 'white', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 10, fontWeight: 'bold' }}>PRO</div>}
@@ -110,7 +183,7 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
             </button>
             
             <button 
-              onClick={() => canAccessModern ? setTemplate('minimalist') : alert('Upgrade to JS Pro Resume to access this template.')}
+              onClick={() => canAccessModern ? setTemplate('minimalist') : setShowUpgradeModal(true)}
               style={{ background: template === 'minimalist' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'minimalist' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: canAccessModern ? 'pointer' : 'not-allowed', opacity: canAccessModern ? 1 : 0.5, position: 'relative' }}
             >
               {!canAccessModern && <div style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: 'white', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 10, fontWeight: 'bold' }}>PRO</div>}
@@ -149,5 +222,11 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
     </div>
   );
 
-  return createPortal(builderContent, document.body);
+  return createPortal(
+    <>
+      {showUpgradeModal && <UpgradeModal />}
+      {builderContent}
+    </>, 
+    document.body
+  );
 }
