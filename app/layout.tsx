@@ -18,13 +18,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gojobsync — Recruitment Management System",
+  title: "Gojobsync",
   description: "Comprehensive Gojobsync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
   icons: {
     icon: "/loooo.jpeg",
   },
   openGraph: {
-    title: "Gojobsync — Recruitment Management System",
+    title: "Gojobsync",
     description: "Comprehensive Gojobsync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
     url: "https://www.gojobsync.com",
     siteName: "Gojobsync",
