@@ -128,6 +128,24 @@ export default function SACandidatesPage() {
                   ))}
                 </div>
               </div>
+              {viewResume.languages && (() => {
+                try {
+                  const langs = JSON.parse(viewResume.languages);
+                  if (!Array.isArray(langs) || langs.length === 0) return null;
+                  return (
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-xs text-gray-500 mb-2">Languages</p>
+                      <div className="flex flex-wrap gap-2">
+                        {langs.map((l: any, i: number) => (
+                          <span key={i} className="px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                            {l.language} <span className="text-purple-400">· {l.proficiency}</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                } catch { return null; }
+              })()}
               <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Status</p><span className={`px-2.5 py-1 rounded-full text-xs font-medium ${viewResume.status === 'selected' ? 'bg-green-100 text-green-700' : viewResume.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>{viewResume.status}</span></div>
             </div>
             {viewResume.resumeUrl && (

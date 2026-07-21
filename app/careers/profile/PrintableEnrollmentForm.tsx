@@ -126,7 +126,28 @@ export default function PrintableEnrollmentForm({ candidate }: { candidate: any 
             ))}
           </div>
         </div>
-      )}
+      )}\n\n      {(() => {
+        const langs = (() => {
+          try {
+            const l = candidate.languages || candidate.languagesArr;
+            if (!l) return [];
+            if (Array.isArray(l)) return l;
+            const parsed = JSON.parse(l);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch { return []; }
+        })();
+        if (langs.length === 0) return null;
+        return (
+          <div className="print-section">
+            <h2>Languages</h2>
+            <div>
+              {langs.map((l: any, i: number) => (
+                <span key={i} className="tag">{l.language} - {l.proficiency}</span>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {candidate.summary && (
         <div className="print-section">

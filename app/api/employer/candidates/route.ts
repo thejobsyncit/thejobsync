@@ -142,7 +142,7 @@ export async function GET(req: NextRequest) {
         headline: true, skills: true, experience: true,
         education: true, location: true, currentCompany: true,
         currentRole: true, expectedSalary: true, preferredRoles: true,
-        photoUrl: true, createdAt: true,
+        photoUrl: true, createdAt: true, languages: true,
       },
       orderBy: { createdAt: 'desc' },
       skip,

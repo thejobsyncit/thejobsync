@@ -29,6 +29,7 @@ interface Candidate {
   photoUrl?: string | null;
   createdAt: string;
   isSaved?: boolean;
+  languages?: string | null;
 }
 
 function parseLocation(loc: string | null): { state: string; district: string; city: string; address: string } {
@@ -773,6 +774,25 @@ export default function EmployerCandidatesPage() {
                     })()}
                   </div>
                 </div>
+
+                {selectedCandidate.languages && (() => {
+                  try {
+                    const langs = JSON.parse(selectedCandidate.languages);
+                    if (!Array.isArray(langs) || langs.length === 0) return null;
+                    return (
+                      <div className="mt-6">
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Languages</div>
+                        <div className="flex flex-wrap gap-2">
+                          {langs.map((l: any, i: number) => (
+                            <span key={i} className="px-3 py-1.5 bg-purple-50 border border-purple-100 text-purple-700 text-xs font-bold rounded-lg">
+                              {l.language} <span className="text-purple-400 font-normal">· {l.proficiency}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  } catch { return null; }
+                })()}
               </div>
 
               <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 rounded-b-2xl">
