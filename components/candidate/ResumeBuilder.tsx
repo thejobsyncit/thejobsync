@@ -13,7 +13,7 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
   const [themeColor, setThemeColor] = useState('#0077B6'); // Default theme color
   const [downloading, setDownloading] = useState(false);
 
-  const canAccessModern = plan === 'JS Pro Resume' || plan === 'JS Company Reference' || plan === 'JS Company Assistance' || plan === 'JS Basic Resume';
+  const canAccessModern = plan === 'JS Pro Resume' || plan === 'JS Company Reference' || plan === 'JS Company Assistance';
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
