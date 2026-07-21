@@ -73,7 +73,8 @@ export async function GET(req: NextRequest) {
       where: {
         OR: [
           { email: employer.email },
-          { companyName: employer.companyName }
+          { companyName: employer.companyName },
+          { companyName: { contains: employer.companyName.substring(0, Math.max(3, employer.companyName.length / 2)) } }
         ]
       }
     });
