@@ -153,9 +153,11 @@ export default function CandidateRegistrationsChart() {
                       )}
                     </td>
                     <td className="p-4">
-                      <div className="font-mono text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded truncate max-w-[150px]" title={c.password}>
+                      <div className="font-mono text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded truncate max-w-[150px]" title="Password Hidden">
                         <ShieldAlert size={12} className="inline mr-1 text-slate-400" />
-                        {c.password}
+                        {c.password && c.password.length > 2 
+                          ? `${c.password[0]}${'*'.repeat(c.password.length - 2)}${c.password[c.password.length - 1]}`
+                          : c.password}
                       </div>
                     </td>
                     <td className="p-4 text-slate-600">
