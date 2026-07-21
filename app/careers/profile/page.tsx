@@ -668,6 +668,23 @@ export default function CandidateProfilePage() {
 
       {/* Action Buttons */}
       <div style={{ marginTop: '3rem', display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center', borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, paddingTop: '3rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {saved && <motion.span initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} style={{ color: '#34d399', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle size={18} /> Saved!</motion.span>}
+          <button
+            onClick={handleSave} disabled={saving}
+            style={{
+              background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none',
+              padding: '1rem 2rem', borderRadius: 16, fontSize: '1.05rem', fontWeight: 700,
+              display: 'flex', alignItems: 'center', gap: 10, cursor: saving ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
+              boxShadow: '0 10px 25px rgba(16,185,129,0.3)'
+            }}
+            className="hover:scale-105"
+          >
+            <Save size={20} />
+            {saving ? 'Saving...' : 'Save Profile'}
+          </button>
+        </div>
+
         <button
           onClick={() => window.print()}
           style={{
