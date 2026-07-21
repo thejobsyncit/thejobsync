@@ -47,7 +47,7 @@ export default function CareersPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/requirements?status=open').then(r => r.json()),
+      fetch('/api/requirements?status=open', { cache: 'no-store' }).then(r => r.json()),
       fetch('/api/clients').then(r => r.json()),
     ]).then(([reqs, clients]) => {
       const clientMap: Record<string, any> = {};
