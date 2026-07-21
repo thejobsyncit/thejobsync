@@ -36,7 +36,8 @@ export default function SACandidatesPage() {
         </div>
       </div>
       <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[800px]">
           <thead className="bg-gray-50 border-b"><tr><th className="text-left p-4 text-xs font-semibold text-gray-500 uppercase">Name</th><th className="text-left p-4 text-xs font-semibold text-gray-500 uppercase">Email</th><th className="text-left p-4 text-xs font-semibold text-gray-500 uppercase">Phone</th><th className="text-left p-4 text-xs font-semibold text-gray-500 uppercase">Location</th><th className="text-left p-4 text-xs font-semibold text-gray-500 uppercase">Status</th><th className="text-left p-4 text-xs font-semibold text-gray-500 uppercase">Resume</th><th className="text-left p-4 text-xs font-semibold text-gray-500 uppercase">Actions</th></tr></thead>
           <tbody>
             {filtered.length === 0 ? <tr><td colSpan={7} className="p-8 text-center text-gray-400">No candidates</td></tr> : filtered.map(c => (
@@ -44,7 +45,16 @@ export default function SACandidatesPage() {
                 <td className="p-4 text-sm font-medium text-gray-800">{c.name}</td>
                 <td className="p-4 text-sm text-gray-600">{c.email}</td>
                 <td className="p-4 text-sm text-gray-600">{c.phone}</td>
-                <td className="p-4 text-sm text-gray-600">{c.location}</td>
+                <td className="p-4 text-sm text-gray-600 whitespace-nowrap">{(() => {
+                  if (!c.location) return '-';
+                  try {
+                    if (c.location.startsWith('{')) {
+                      const loc = JSON.parse(c.location);
+                      return [loc.city, loc.district, loc.state].filter(Boolean).join(', ') || c.location;
+                    }
+                  } catch {}
+                  return c.location;
+                })()}</td>
                 <td className="p-4" onClick={(e) => e.stopPropagation()}><select value={c.status} onChange={e => updateStatus(c.id, e.target.value)} className="text-xs border rounded-lg p-1.5 bg-white"><option value="new">New</option><option value="shortlisted">Shortlisted</option><option value="selected">Selected</option><option value="rejected">Rejected</option></select></td>
                 <td className="p-4" onClick={(e) => e.stopPropagation()}><button onClick={() => setViewResume(c)} className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100"><Eye size={14} /> View</button></td>
                 <td className="p-4" onClick={(e) => e.stopPropagation()}><button onClick={() => handleDelete(c.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button></td>
@@ -52,6 +62,7 @@ export default function SACandidatesPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* View Resume Modal */}
