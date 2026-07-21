@@ -44,6 +44,10 @@ export default function SuperAdminERPLayout({
                 <Users size={18} />
                 <span className="text-sm font-medium">Candidates</span>
               </Link>
+              <Link href="/superadmin-erp/candidate-registrations" className="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-colors">
+                <BarChart size={18} />
+                <span className="text-sm font-medium">Candidate Stats</span>
+              </Link>
             </nav>
           </div>
 

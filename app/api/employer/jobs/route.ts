@@ -263,7 +263,14 @@ export async function DELETE(req: NextRequest) {
     try {
       const employer = await prisma.employer.findUnique({ where: { id: employerId } });
       if (employer) {
-        const client = await prisma.client.findFirst({ where: { email: employer.email } });
+        const client = await prisma.client.findFirst({ 
+          where: { 
+            OR: [
+              { email: employer.email },
+              { companyName: employer.companyName }
+            ]
+          } 
+        });
         if (client) {
           // Find the requirement with the same title created for this client
           const requirements = await prisma.jobRequirement.findMany({
@@ -324,7 +331,14 @@ export async function PUT(req: NextRequest) {
     try {
       const employer = await prisma.employer.findUnique({ where: { id: employerId } });
       if (employer) {
-        const client = await prisma.client.findFirst({ where: { email: employer.email } });
+        const client = await prisma.client.findFirst({ 
+          where: { 
+            OR: [
+              { email: employer.email },
+              { companyName: employer.companyName }
+            ]
+          } 
+        });
         if (client) {
           const requirements = await prisma.jobRequirement.findMany({
             where: { clientId: client.id, title: existingJob.title },
