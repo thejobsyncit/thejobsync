@@ -63,6 +63,40 @@ export async function GET(req: NextRequest) {
     andConditions.push({ location: { contains: location } });
   }
 
+  const appliedParam = searchParams.get('applied') === 'true';
+  let appliedIdsSet = new Set<string>();
+  
+  // Fetch employer to link to Client and find JobRequirements
+  const employer = await prisma.employer.findUnique({ where: { id: employerId } });
+  if (employer) {
+    const clients = await prisma.client.findMany({
+      where: {
+        OR: [
+          { email: employer.email },
+          { companyName: employer.companyName }
+        ]
+      }
+    });
+    const clientIds = clients.map(c => c.id);
+    
+    const requirements = await prisma.jobRequirement.findMany({
+      where: { clientId: { in: clientIds } },
+      select: { id: true }
+    });
+    const reqIds = requirements.map(r => r.id);
+    
+    const applications = await prisma.candidateApplication.findMany({
+      where: { requirementId: { in: reqIds } },
+      select: { candidateAccountId: true }
+    });
+    
+    appliedIdsSet = new Set(applications.map(a => a.candidateAccountId));
+  }
+
+  if (appliedParam) {
+    andConditions.push({ id: { in: Array.from(appliedIdsSet) } });
+  }
+
   const salary = searchParams.get('salary') || '';
   if (salary) {
     // Always match the exact dropdown range string (new candidates)
@@ -124,7 +158,8 @@ export async function GET(req: NextRequest) {
 
   const formattedCandidates = candidates.map(c => ({
     ...c,
-    isSaved: savedIds.has(c.id)
+    isSaved: savedIds.has(c.id),
+    hasApplied: appliedIdsSet.has(c.id)
   }));
 
   return NextResponse.json({

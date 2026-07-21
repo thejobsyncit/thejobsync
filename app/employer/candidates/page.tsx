@@ -156,6 +156,7 @@ export default function EmployerCandidatesPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
+  const [showAppliedOnly, setShowAppliedOnly] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
@@ -221,7 +222,15 @@ export default function EmployerCandidatesPage() {
     setFetching(true);
     try {
       const fieldQuery = role && role !== 'Other' ? getRoleKeywords(role) : getDeptKeywords(field);
-      const query = new URLSearchParams({ search, field: fieldQuery, location: locationText, salary, page: page.toString() });
+      const query = new URLSearchParams({ 
+        search, 
+        field: fieldQuery, 
+        location: locationText, 
+        salary, 
+        page: page.toString() 
+      });
+      if (showAppliedOnly) query.append('applied', 'true');
+
       const res = await fetch(`/api/employer/candidates?${query.toString()}`);
       if (res.ok) {
         const data = await res.json();
@@ -233,7 +242,7 @@ export default function EmployerCandidatesPage() {
       console.error(err);
     }
     setFetching(false);
-  }, [search, field, role, locationText, salary, page]);
+  }, [search, field, role, locationText, salary, page, showAppliedOnly]);
 
   const handleToggleSave = async (id: string, currentlySaved: boolean, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -338,6 +347,16 @@ export default function EmployerCandidatesPage() {
               className="flex items-center gap-2 font-bold px-4 py-2.5 rounded-xl shadow-sm transition-colors text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
             >
               <Filter size={16} /> {sidebarOpen ? 'Hide Filters' : 'Show Filters'}
+            </button>
+            <button
+              onClick={() => {
+                setShowAppliedOnly(!showAppliedOnly);
+                setPage(1); // Reset page on toggle
+              }}
+              className={`flex items-center gap-2 font-bold px-4 py-2.5 rounded-xl shadow-sm transition-colors text-sm ${showAppliedOnly ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'}`}
+            >
+              <Briefcase size={16} className={showAppliedOnly ? "text-indigo-700" : ""} />
+              {showAppliedOnly ? "Showing Applied" : "Show Applied"}
             </button>
             <button
               onClick={() => setShowSavedOnly(!showSavedOnly)}
@@ -587,6 +606,11 @@ export default function EmployerCandidatesPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
+                          {(candidate as any).hasApplied && (
+                            <span className="text-[10px] font-bold px-2 py-1 bg-indigo-100 text-indigo-700 rounded-lg flex items-center gap-1 uppercase tracking-wider">
+                              <Briefcase size={12} /> Applied
+                            </span>
+                          )}
                           <button
                             onClick={(e) => handleToggleSave(candidate.id, !!candidate.isSaved, e)}
                             className={`p-2 rounded-lg transition-colors ${candidate.isSaved ? 'bg-pink-50 text-pink-500 hover:bg-pink-100' : 'bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}
