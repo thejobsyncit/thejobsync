@@ -43,17 +43,18 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
           {[
-            { name: 'JS Basic Resume', price: '₹299', color: '#0077B6', desc: 'Classic template + ATS optimization' },
-            { name: 'JS Pro Resume', price: '₹599', color: '#9333ea', desc: 'All templates + Priority support', highlight: true },
-            { name: 'JS Company Reference', price: '₹999', color: '#16a34a', desc: 'All Pro features + Company referral' },
+            { name: 'JS Basic Resume', price: '₹1', color: '#0077B6', desc: '1 Classic ATS Template · Download PDF · Valid 30 days' },
+            { name: 'JS Pro Resume', price: '₹49', color: '#9333ea', desc: '3 ATS Templates + Dynamic resume builder · Valid 30 days', highlight: true },
+            { name: 'JS Company Reference', price: '₹495', color: '#16a34a', desc: 'Up to 5 company contact details matched to your profile' },
+            { name: 'JS Company Assistance', price: '₹990', color: '#f59e0b', desc: 'Up to 10 company contacts + Assistant profile matching' },
           ].map(p => (
             <div key={p.name} onClick={() => { setShowUpgradeModal(false); onClose(); window.location.href = '/careers/pricing'; }}
               style={{
                 background: p.highlight ? 'rgba(147,51,234,0.15)' : 'rgba(255,255,255,0.05)',
                 border: `1px solid ${p.highlight ? '#9333ea' : 'rgba(255,255,255,0.08)'}`,
-                borderRadius: '14px', padding: '1rem 1.25rem', cursor: 'pointer',
+                borderRadius: '14px', padding: '0.875rem 1.25rem', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 transition: 'all 0.2s'
               }}
@@ -61,7 +62,7 @@ export default function ResumeBuilder({ candidate, plan, onClose }: { candidate:
               <div>
                 {p.highlight && <div style={{ fontSize: '0.65rem', background: '#9333ea', color: 'white', padding: '2px 8px', borderRadius: 10, fontWeight: 700, display: 'inline-block', marginBottom: 4 }}>RECOMMENDED</div>}
                 <div style={{ color: 'white', fontWeight: 700, fontSize: '0.95rem' }}>{p.name}</div>
-                <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginTop: 2 }}>{p.desc}</div>
+                <div style={{ color: '#94a3b8', fontSize: '0.78rem', marginTop: 2 }}>{p.desc}</div>
               </div>
               <div style={{ color: p.color, fontWeight: 800, fontSize: '1.1rem', whiteSpace: 'nowrap', marginLeft: '1rem' }}>{p.price}</div>
             </div>
