@@ -14,6 +14,7 @@ export default function ResumeBuilder({ candidate, plan, onClose, onUpgrade }: {
   const [themeColor, setThemeColor] = useState('#0077B6'); // Default theme color
   const [downloading, setDownloading] = useState(false);
 
+  const canAccessModern = plan === 'JS Pro Resume' || plan === 'JS Company Reference' || plan === 'JS Company Assistance';
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -103,25 +104,28 @@ export default function ResumeBuilder({ candidate, plan, onClose, onUpgrade }: {
             </button>
 
             <button 
-              onClick={() => setTemplate('modern')}
-              style={{ background: template === 'modern' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'modern' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: 'pointer' }}
+              onClick={() => canAccessModern ? setTemplate('modern') : onUpgrade?.()}
+              style={{ background: template === 'modern' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'modern' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: canAccessModern ? 'pointer' : 'not-allowed', opacity: canAccessModern ? 1 : 0.5, position: 'relative' }}
             >
+              {!canAccessModern && <div style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: 'white', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 10, fontWeight: 'bold' }}>PRO</div>}
               <strong>Modern Template</strong>
               <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 4 }}>Clean, two-column layout</div>
             </button>
             
             <button 
-              onClick={() => setTemplate('minimalist')}
-              style={{ background: template === 'minimalist' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'minimalist' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: 'pointer' }}
+              onClick={() => canAccessModern ? setTemplate('minimalist') : onUpgrade?.()}
+              style={{ background: template === 'minimalist' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'minimalist' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: canAccessModern ? 'pointer' : 'not-allowed', opacity: canAccessModern ? 1 : 0.5, position: 'relative' }}
             >
+              {!canAccessModern && <div style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: 'white', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 10, fontWeight: 'bold' }}>PRO</div>}
               <strong>Minimalist Template</strong>
               <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 4 }}>Sleek and typography-focused</div>
             </button>
 
             <button 
-              onClick={() => setTemplate('professional')}
-              style={{ background: template === 'professional' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'professional' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: 'pointer' }}
+              onClick={() => canAccessModern ? setTemplate('professional') : onUpgrade?.()}
+              style={{ background: template === 'professional' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'professional' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: canAccessModern ? 'pointer' : 'not-allowed', opacity: canAccessModern ? 1 : 0.5, position: 'relative' }}
             >
+              {!canAccessModern && <div style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: 'white', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 10, fontWeight: 'bold' }}>PRO</div>}
               <strong>Professional Template</strong>
               <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 4 }}>Clean and formal ATS design</div>
             </button>
