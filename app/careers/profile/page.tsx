@@ -361,7 +361,7 @@ export default function CandidateProfilePage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Basic Information */}
           <Section title="Basic Information" icon={<User size={20} color="#38bdf8" />}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginBottom: '1rem' }}>
+            <div className="profile-photo-wrap" style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginBottom: '1rem' }}>
               <div style={{ position: 'relative' }}>
                 <div
                   onClick={() => photoRef.current?.click()}
@@ -675,13 +675,14 @@ export default function CandidateProfilePage() {
           {saved && <motion.span initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} style={{ color: '#34d399', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}><CheckCircle size={18} /> Saved!</motion.span>}
           <button
             onClick={handleSave} disabled={saving}
+            className="profile-action-btn hover:scale-105"
             style={{
               background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none',
               padding: '1rem 2rem', borderRadius: 16, fontSize: '1.05rem', fontWeight: 700,
               display: 'flex', alignItems: 'center', gap: 10, cursor: saving ? 'not-allowed' : 'pointer', transition: 'all 0.2s',
-              boxShadow: '0 10px 25px rgba(16,185,129,0.3)'
+              boxShadow: '0 10px 25px rgba(16,185,129,0.3)',
+              textAlign: 'center', justifyContent: 'center', maxWidth: '100%'
             }}
-            className="hover:scale-105"
           >
             <Save size={20} />
             {saving ? 'Saving...' : 'Save Profile'}
@@ -690,13 +691,14 @@ export default function CandidateProfilePage() {
 
         <button
           onClick={() => window.print()}
+          className={`profile-action-btn ${isDark ? "hover:bg-white/10 hover:-translate-y-1" : "hover:bg-black/5 hover:-translate-y-1"}`}
           style={{
             background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)', color: isDark ? 'white' : '#0f172a', border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
             padding: '1rem 2rem', borderRadius: 16, fontSize: '1.05rem', fontWeight: 700,
             display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', transition: 'all 0.2s',
-            boxShadow: isDark ? '0 10px 25px rgba(0,0,0,0.2)' : '0 10px 25px rgba(0,0,0,0.05)'
+            boxShadow: isDark ? '0 10px 25px rgba(0,0,0,0.2)' : '0 10px 25px rgba(0,0,0,0.05)',
+            textAlign: 'center', justifyContent: 'center', maxWidth: '100%'
           }}
-          className={isDark ? "hover:bg-white/10 hover:-translate-y-1" : "hover:bg-black/5 hover:-translate-y-1"}
         >
           <Download size={20} color="#38bdf8" />
           Save Profile Enrollment Form
@@ -710,13 +712,14 @@ export default function CandidateProfilePage() {
               setShowATSModal(true);
             }
           }}
+          className="profile-action-btn hover:scale-105"
           style={{
             background: 'linear-gradient(135deg, #0077B6, #0077B6)', color: 'white', border: 'none',
             padding: '1rem 2rem', borderRadius: 16, fontSize: '1.05rem', fontWeight: 700,
             display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', transition: 'all 0.2s',
-            boxShadow: '0 10px 25px rgba(59,130,246,0.3)'
+            boxShadow: '0 10px 25px rgba(59,130,246,0.3)',
+            textAlign: 'center', justifyContent: 'center', maxWidth: '100%'
           }}
-          className="hover:scale-105"
         >
           <FileText size={20} />
           Create ATS Friendly Resume
@@ -725,11 +728,11 @@ export default function CandidateProfilePage() {
 
       {/* Invoices Section */}
       {(candidate as any)?.invoices && (candidate as any).invoices.length > 0 && (
-        <div style={{ marginTop: '4rem' }}>
+        <div style={{ marginTop: '4rem', width: '100%', maxWidth: '100vw' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: isDark ? 'white' : '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: 10 }}>
              <FileText size={24} color="#00B4D8" /> My Invoices
           </h2>
-          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'white', borderRadius: 24, padding: '2rem', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, overflowX: 'auto' }}>
+          <div className="invoices-wrap" style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'white', borderRadius: 24, padding: '2rem', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, overflowX: 'auto', maxWidth: '100%' }}>
             <table style={{ width: '100%', minWidth: 600, borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, textAlign: 'left', color: isDark ? '#94a3b8' : '#64748b' }}>
@@ -790,6 +793,25 @@ export default function CandidateProfilePage() {
           }
           .profile-section-card {
             padding: 1.5rem !important;
+          }
+          .profile-photo-wrap {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+          }
+          /* Fix any potential wide inputs */
+          input, select, textarea {
+            max-width: 100%;
+          }
+          .profile-action-btn {
+            font-size: 0.9rem !important;
+            padding: 0.75rem 1rem !important;
+            width: 100%;
+            margin-bottom: 0.5rem;
+          }
+          .invoices-wrap {
+            padding: 1rem !important;
+            border-radius: 12px !important;
           }
         }
       `}</style>
