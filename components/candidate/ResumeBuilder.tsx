@@ -7,6 +7,7 @@ import jsPDF from 'jspdf';
 import ClassicTemplate from './resume-templates/ClassicTemplate';
 import ModernTemplate from './resume-templates/ModernTemplate';
 import MinimalistTemplate from './resume-templates/MinimalistTemplate';
+import ProfessionalTemplate from './resume-templates/ProfessionalTemplate';
 
 export default function ResumeBuilder({ candidate, plan, onClose, onUpgrade }: { candidate: any, plan: string, onClose: () => void, onUpgrade?: () => void }) {
   const [template, setTemplate] = useState('classic');
@@ -119,9 +120,18 @@ export default function ResumeBuilder({ candidate, plan, onClose, onUpgrade }: {
               <strong>Minimalist Template</strong>
               <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 4 }}>Sleek and typography-focused</div>
             </button>
+
+            <button 
+              onClick={() => canAccessModern ? setTemplate('professional') : onUpgrade?.()}
+              style={{ background: template === 'professional' ? 'rgba(0,119,182,0.2)' : 'rgba(255,255,255,0.05)', border: `1px solid ${template === 'professional' ? '#0077B6' : 'rgba(255,255,255,0.1)'}`, padding: '1rem', borderRadius: '12px', color: 'white', textAlign: 'left', cursor: canAccessModern ? 'pointer' : 'not-allowed', opacity: canAccessModern ? 1 : 0.5, position: 'relative' }}
+            >
+              {!canAccessModern && <div style={{ position: 'absolute', top: 10, right: 10, background: '#ef4444', color: 'white', fontSize: '0.65rem', padding: '2px 6px', borderRadius: 10, fontWeight: 'bold' }}>PRO</div>}
+              <strong>Professional Template</strong>
+              <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 4 }}>Clean and formal ATS design</div>
+            </button>
           </div>
 
-          {(template === 'modern' || template === 'minimalist') && (
+          {(template === 'modern' || template === 'minimalist' || template === 'professional') && (
             <div style={{ marginTop: '2rem' }}>
               <h3 style={{ color: '#94a3b8', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1rem' }}>Theme Color</h3>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -144,6 +154,7 @@ export default function ResumeBuilder({ candidate, plan, onClose, onUpgrade }: {
               {template === 'classic' && <ClassicTemplate data={parsedData} />}
               {template === 'modern' && <ModernTemplate data={parsedData} />}
               {template === 'minimalist' && <MinimalistTemplate data={parsedData} />}
+              {template === 'professional' && <ProfessionalTemplate data={parsedData} />}
               
            </div>
         </div>
