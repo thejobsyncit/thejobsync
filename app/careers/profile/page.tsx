@@ -102,7 +102,10 @@ export default function CandidateProfilePage() {
   const [showATSModal, setShowATSModal] = useState(false);
   const [showResumeBuilder, setShowResumeBuilder] = useState(false);
 
-  const activeSubscription = (candidate as any)?.subscriptions?.find((sub: any) => sub.status === 'active' && new Date(sub.expiresAt) > new Date());
+  const activeSubscriptions = ((candidate as any)?.subscriptions || [])
+    .filter((sub: any) => sub.status === 'active' && new Date(sub.expiresAt) > new Date())
+    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const activeSubscription = activeSubscriptions[0];
   const canAccessATS = activeSubscription?.planName === 'JS Basic Resume' || activeSubscription?.planName === 'JS Pro Resume' || activeSubscription?.planName?.includes('Company');
 
   useEffect(() => {
