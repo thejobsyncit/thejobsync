@@ -502,14 +502,14 @@ export default function CareersPage() {
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Hide desktop nav on mobile */
         @media(max-width:768px) { 
           .hidden-mobile { display: none !important; } 
         }
         input::placeholder { color: #64748b; }
         
-        .brand-text {
-          display: inline;
-        }
+        .brand-text { display: inline; }
         .search-input-container {
           border-right: 1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'};
         }
@@ -519,15 +519,43 @@ export default function CareersPage() {
           gap: 1rem !important;
         }
         
-        @media(max-width: 640px) {
-          .brand-text {
-            display: none !important;
-          }
+        @media(max-width: 768px) {
+          /* Hero section */
+          section[style*="paddingTop: '140px'"],
+          section { padding-left: 1rem !important; padding-right: 1rem !important; }
+          
+          /* Search box — stack inputs vertically */
           .search-input-container {
             border-right: none !important;
             border-bottom: 1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'} !important;
-            padding-bottom: 1rem !important;
+            padding-bottom: 0.75rem !important;
+            flex: 1 1 100% !important;
           }
+
+          /* Job grids — single column */
+          [style*="minmax(350px"] {
+            grid-template-columns: 1fr !important;
+          }
+          [style*="minmax(320px"] {
+            grid-template-columns: 1fr !important;
+          }
+          [style*="minmax(280px"] {
+            grid-template-columns: 1fr !important;
+          }
+          [style*="minmax(190px"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+
+          /* Footer */
+          .footer-content {
+            flex-direction: column !important;
+            text-align: center !important;
+            justify-content: center !important;
+          }
+        }
+
+        @media(max-width: 640px) {
+          .brand-text { display: none !important; }
           .stats-grid {
             grid-template-columns: repeat(2, 1fr) !important;
             gap: 0.75rem !important;
@@ -537,6 +565,23 @@ export default function CareersPage() {
             flex-direction: column !important;
             text-align: center !important;
             justify-content: center !important;
+          }
+          /* Category cards — 2 per row on small phones */
+          [style*="minmax(190px"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.75rem !important;
+          }
+          /* Job apply button full width on tiny screens */
+          [style*="linear-gradient(135deg, #0ea5e9"] {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+
+        @media(max-width: 400px) {
+          .stats-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 0.5rem !important;
           }
         }
       `}</style>

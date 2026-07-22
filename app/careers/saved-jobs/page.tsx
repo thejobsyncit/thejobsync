@@ -62,7 +62,7 @@ export default function SavedJobsPage() {
           <Link href="/careers" style={{ background: 'linear-gradient(135deg,#0ea5e9,#0077B6)', color: 'white', padding: '1rem 2.5rem', borderRadius: 12, textDecoration: 'none', fontWeight: 800, fontSize: '1.05rem', boxShadow: '0 10px 20px rgba(14,165,233,0.3)' }} className="hover:scale-105 inline-block transition-transform">Explore Jobs</Link>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
+        <div className="saved-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
           {savedJobs.map((saved, i) => {
             const job = saved.requirement;
             const hue = job?.client?.companyName ? [...job.client.companyName].reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360 : 200;
@@ -91,7 +91,7 @@ export default function SavedJobsPage() {
                   {job.experience && <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Briefcase size={16} color="#64748b" />{job.experience}</span>}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, paddingTop: '1.25rem' }}>
+                <div className="saved-card-footer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, paddingTop: '1.25rem' }}>
                   <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <Clock size={12} /> Saved {new Date(saved.savedAt).toLocaleDateString()}
                   </span>
@@ -107,6 +107,11 @@ export default function SavedJobsPage() {
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        @media (max-width: 768px) {
+          .saved-grid { grid-template-columns: 1fr !important; }
+          .saved-card-footer { flex-wrap: wrap !important; gap: 0.75rem !important; }
+          .saved-card-footer a { flex: 1 !important; text-align: center !important; justify-content: center !important; }
+        }
       `}</style>
     </DashboardLayout>
   );

@@ -81,7 +81,7 @@ export default function MyApplicationsPage() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
+      <div className="apps-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
         {[
           { label: 'Total Applied', value: stats.total, color: '#00B4D8' },
           { label: 'In Progress', value: stats.shortlisted, color: '#fb923c' },
@@ -116,9 +116,9 @@ export default function MyApplicationsPage() {
             const hue = job?.client?.companyName ? [...job.client.companyName].reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360 : 200;
 
             return (
-              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} key={app.id} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, borderRadius: 20, padding: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', flexWrap: 'wrap' }} className="hover:bg-[#0077B6]/5 transition-colors">
-                <div style={{ flex: 1, minWidth: 300 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: '1rem' }}>
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} key={app.id} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, borderRadius: 20, padding: '1.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', flexWrap: 'wrap' }} className="app-card hover:bg-[#0077B6]/5 transition-colors">
+                <div className="app-card-left" style={{ flex: 1, minWidth: 300 }}>
+                  <div className="app-card-header" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: '1rem' }}>
                     <div style={{ width: 52, height: 52, borderRadius: 14, background: `hsl(${hue}, 70%, 15%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.25rem', color: `hsl(${hue}, 80%, 70%)`, flexShrink: 0, border: `1px solid hsl(${hue}, 50%, 25%)` }}>
                       {(job?.client?.companyName || 'J')[0]}
                     </div>
@@ -131,7 +131,7 @@ export default function MyApplicationsPage() {
                   </div>
 
                   {job && (
-                    <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: isDark ? '#cbd5e1' : '#475569' }}>
+                    <div className="app-meta" style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: isDark ? '#cbd5e1' : '#475569' }}>
                       {job.location && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={14} color="#64748b" />{job.location.startsWith('{') ? (() => { try { const l = JSON.parse(job.location); return [l.city, l.district, l.state, l.country].filter(Boolean).join(', '); } catch { return job.location; } })() : job.location}</span>}
                       {job.salaryRange && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><DollarSign size={14} color="#64748b" />{job.salaryRange}</span>}
                       {job.experience && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Briefcase size={14} color="#64748b" />{job.experience}</span>}
@@ -144,7 +144,7 @@ export default function MyApplicationsPage() {
                 </div>
 
                 {/* Status Section */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem', minWidth: 200 }}>
+                <div className="app-card-right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.75rem', minWidth: 200 }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 8, background: s.bg, color: s.color, border: `1px solid ${s.color}40`, borderRadius: 12, padding: '0.5rem 1.25rem', fontSize: '0.9rem', fontWeight: 700, whiteSpace: 'nowrap' }}>
                     {s.icon}{s.label}
                   </span>
@@ -153,7 +153,7 @@ export default function MyApplicationsPage() {
                     <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Awaiting HR review</span>
                   )}
                   {app.status === 'offered' && (
-                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: 8 }}>
+                    <div className="offer-btns" style={{ display: 'flex', gap: '0.5rem', marginTop: 8 }}>
                       <button 
                         onClick={() => handleRejectOffer(app.id)}
                         style={{ background: 'transparent', color: '#f87171', padding: '0.75rem 1.25rem', borderRadius: 10, fontSize: '0.9rem', fontWeight: 800, border: '1px solid #f87171', cursor: 'pointer' }}
@@ -178,6 +178,18 @@ export default function MyApplicationsPage() {
       )}
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 768px) {
+          .apps-stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+          .app-card { flex-direction: column !important; align-items: flex-start !important; gap: 1rem !important; padding: 1.25rem !important; }
+          .app-card-left { min-width: unset !important; width: 100% !important; }
+          .app-card-right { align-items: flex-start !important; min-width: unset !important; width: 100% !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 0.75rem !important; }
+          .app-meta { flex-wrap: wrap !important; gap: 0.75rem !important; }
+          .offer-btns { flex-direction: row !important; flex-wrap: wrap !important; }
+        }
+        @media (max-width: 480px) {
+          .apps-stats-grid { grid-template-columns: 1fr 1fr !important; gap: 0.75rem !important; }
+          .app-card-header { flex-wrap: wrap !important; }
+        }
       `}</style>
     </DashboardLayout>
   );

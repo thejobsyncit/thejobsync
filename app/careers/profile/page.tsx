@@ -343,7 +343,7 @@ export default function CandidateProfilePage() {
 
   return (
     <DashboardLayout>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem' }}>
+      <div className="profile-header-wrap" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem' }}>
         <div>
           <h1 style={{ fontSize: '2rem', fontWeight: 900, color: isDark ? 'white' : '#0f172a', marginBottom: 8, letterSpacing: '-0.5px' }}>My Profile</h1>
           <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: '1rem' }}>Complete your profile to get better job recommendations.</p>
@@ -356,7 +356,7 @@ export default function CandidateProfilePage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem', alignItems: 'start' }}>
+      <div className="profile-layout-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem', alignItems: 'start' }}>
         {/* Left: Form sections */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Basic Information */}
@@ -764,6 +764,35 @@ export default function CandidateProfilePage() {
       <ATSPremiumPlansModal isOpen={showATSModal} onClose={() => setShowATSModal(false)} />
       {showResumeBuilder && <ResumeBuilder candidate={form} plan={activeSubscription?.planName || ''} onClose={() => setShowResumeBuilder(false)} onUpgrade={() => setShowATSModal(true)} />}
 
+      <style>{`
+        @media (max-width: 1024px) {
+          .profile-layout-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .profile-field-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .profile-header-wrap {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1rem;
+          }
+          .profile-header-wrap > div:last-child {
+            width: 100%;
+            flex-direction: column;
+            align-items: stretch !important;
+          }
+          .profile-header-wrap > div:last-child button {
+            width: 100%;
+            justify-content: center;
+          }
+          .profile-section-card {
+            padding: 1.5rem !important;
+          }
+        }
+      `}</style>
     </DashboardLayout>
   );
 }
@@ -771,7 +800,7 @@ export default function CandidateProfilePage() {
 function Section({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   const { isDark } = usePortalTheme();
   return (
-    <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', borderRadius: 24, padding: '2.5rem', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}` }}>
+    <div className="profile-section-card" style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', borderRadius: 24, padding: '2.5rem', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}` }}>
       <h2 style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: '1.35rem', fontWeight: 800, color: isDark ? 'white' : '#0f172a', marginBottom: '2rem', paddingBottom: '1.25rem', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}` }}>
         {icon}{title}
       </h2>
@@ -781,7 +810,7 @@ function Section({ title, icon, children }: { title: string; icon: React.ReactNo
 }
 
 function Grid2({ children }: { children: React.ReactNode }) {
-  return <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>{children}</div>;
+  return <div className="profile-field-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>{children}</div>;
 }
 
 function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {

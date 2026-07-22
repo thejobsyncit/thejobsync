@@ -149,7 +149,7 @@ export default function InterviewsPage() {
 
   return (
     <div onClick={() => setOpenDropdownId(null)}>
-      <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="crm-page-header animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Interview Management</h1>
           <p style={{ color: 'var(--muted-foreground)', fontSize: '0.875rem' }}>Schedule and track all interviews</p>
@@ -161,7 +161,7 @@ export default function InterviewsPage() {
         )}
       </div>
 
-      <div className="animate-fade-in delay-1" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+      <div className="crm-filter-bar animate-fade-in delay-1" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flex: '1 1 240px' }}>
           <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
           <input className="input" style={{ paddingLeft: '2.5rem' }} placeholder="Search interviews..." value={search} onChange={e => setSearch(e.target.value)} />

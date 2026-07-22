@@ -266,7 +266,7 @@ export default function CandidatesPage() {
 
   return (
     <div onClick={() => setOpenDropdownId(null)}>
-      <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="crm-page-header animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Candidate Management</h1>
           <p style={{ color: 'var(--muted-foreground)', fontSize: '0.875rem' }}>Browse and manage candidate profiles</p>
@@ -278,7 +278,7 @@ export default function CandidatesPage() {
         )}
       </div>
 
-      <div className="animate-fade-in delay-1" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="crm-filter-bar animate-fade-in delay-1" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
         <div style={{ position: 'relative', flex: '1 1 240px' }}>
           <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
           <input className="input" style={{ paddingLeft: '2.5rem' }} placeholder="Search by name, skill, or email..." value={search} onChange={e => setSearch(e.target.value)} />
