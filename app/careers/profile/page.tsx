@@ -356,7 +356,7 @@ export default function CandidateProfilePage() {
         </div>
       </div>
 
-      <div className="profile-layout-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem', alignItems: 'start' }}>
+      <div className="profile-layout-grid" style={{ gap: '2rem', alignItems: 'start' }}>
         {/* Left: Form sections */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* Basic Information */}
@@ -768,6 +768,15 @@ export default function CandidateProfilePage() {
       {showResumeBuilder && <ResumeBuilder candidate={form} plan={activeSubscription?.planName || ''} onClose={() => setShowResumeBuilder(false)} onUpgrade={() => setShowATSModal(true)} />}
 
       <style>{`
+        .profile-layout-grid {
+          display: grid;
+          grid-template-columns: 1fr 340px;
+        }
+        .profile-field-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+        
         @media (max-width: 1024px) {
           .profile-layout-grid {
             grid-template-columns: 1fr !important;
@@ -832,7 +841,7 @@ function Section({ title, icon, children }: { title: string; icon: React.ReactNo
 }
 
 function Grid2({ children }: { children: React.ReactNode }) {
-  return <div className="profile-field-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>{children}</div>;
+  return <div className="profile-field-grid" style={{ gap: '1.5rem' }}>{children}</div>;
 }
 
 function Field({ label, children, full }: { label: string; children: React.ReactNode; full?: boolean }) {
