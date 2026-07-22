@@ -342,7 +342,7 @@ export default function EmployerCandidatesPage() {
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Candidate Database</h1>
             <p className="text-slate-500 text-sm mt-1">Search and filter to find the perfect fit for your roles.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="flex items-center gap-2 font-bold px-4 py-2.5 rounded-xl shadow-sm transition-colors text-sm bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -377,11 +377,11 @@ export default function EmployerCandidatesPage() {
         </div>
 
         {/* Main Layout: Sidebar + Content */}
-        <div className="flex gap-6 items-start">
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
 
           {/* Sidebar Filters */}
           {sidebarOpen && (
-            <aside className="w-72 shrink-0 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm sticky top-24">
+            <aside className="w-full lg:w-72 shrink-0 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm sticky top-24 z-10">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-extrabold text-slate-800 text-base flex items-center gap-2">
                   <Filter size={16} className="text-[#0077B6]" /> Filters
