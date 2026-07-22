@@ -384,7 +384,7 @@ export default function CareersPage() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 350px), 1fr))', gap: '1.5rem' }}>
             {recommendedJobs.slice(0, 3).map((job, idx) => (
               <JobCard key={job.id} job={job} candidate={candidate} delay={idx * 0.1} isRecommended={true} isDark={isDark} />
             ))}
@@ -448,7 +448,7 @@ export default function CareersPage() {
             <p style={{ fontSize: '1.1rem', fontWeight: 500 }}>Syncing Jobs...</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 380px), 1fr))', gap: '1.5rem' }}>
             <AnimatePresence>
               {filtered.map((job, idx) => (
                 <JobCard key={job.id} job={job} candidate={candidate} delay={Math.min(idx * 0.05, 0.5)} isDark={isDark} />
