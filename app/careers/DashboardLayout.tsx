@@ -141,6 +141,44 @@ export default function CandidateDashboardLayout({ children }: { children: React
         </motion.div>
       </main>
 
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="candidate-bottom-nav" style={{
+        display: 'none',
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 64,
+        background: isDark ? 'rgba(15,23,42,0.98)' : 'rgba(255,255,255,0.98)',
+        borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+        zIndex: 40,
+        backdropFilter: 'blur(12px)',
+        padding: '0 0.5rem',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+      }}>
+        {navItems.map(item => {
+          const active = pathname === item.href;
+          return (
+            <Link key={item.href} href={item.href} style={{ textDecoration: 'none', flex: 1 }} onClick={() => setMobileOpen(false)}>
+              <div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: 3, padding: '0.5rem 0', borderRadius: 10,
+                color: active ? '#00B4D8' : (isDark ? '#64748b' : '#94a3b8'),
+                transition: 'all 0.2s',
+              }}>
+                <span style={{ fontSize: active ? '1.1em' : '1em', transition: 'all 0.2s' }}>{item.icon}</span>
+                <span style={{ fontSize: '0.65rem', fontWeight: active ? 700 : 500, letterSpacing: '0.01em' }}>
+                  {item.label.replace('My ', '')}
+                </span>
+                {active && <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#00B4D8' }} />}
+              </div>
+            </Link>
+          );
+        })}
+      </nav>
+
       <style>{`
         @media (max-width: 992px) {
           .candidate-sidebar {
@@ -159,6 +197,20 @@ export default function CandidateDashboardLayout({ children }: { children: React
           .candidate-main {
             margin-left: 0 !important;
             padding-top: 64px !important;
+            padding-bottom: 72px !important;
+          }
+          .candidate-bottom-nav {
+            display: flex !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .candidate-main > div {
+            padding: 1rem !important;
+          }
+        }
+        @media (max-width: 400px) {
+          .candidate-main > div {
+            padding: 0.75rem !important;
           }
         }
       `}</style>
