@@ -132,7 +132,7 @@ export default function CandidateDashboardLayout({ children }: { children: React
       </aside>
 
       {/* Main Content Area */}
-      <main className="candidate-main" style={{ marginLeft: 280, flex: 1, background: isDark ? '#0f172a' : '#f8fafc', minHeight: '100vh', position: 'relative', transition: 'margin-left 0.3s ease' }}>
+      <main className="candidate-main" style={{ marginLeft: 280, flex: 1, background: isDark ? '#0f172a' : '#f8fafc', minHeight: '100vh', position: 'relative', transition: 'margin-left 0.3s ease', overflowX: 'hidden' }}>
         {/* Subtle Background Glow */}
         <div style={{ position: 'absolute', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.05) 0%, rgba(0,0,0,0) 70%)', top: 0, left: '20%', pointerEvents: 'none' }} />
 
