@@ -116,3 +116,38 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const user = await getUserFromToken(req);
+    if (!user || !['super_admin', 'admin', 'dms', 'coordinator'].includes(user.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const body = await req.json();
+    const { leadIds } = body;
+
+    if (!Array.isArray(leadIds) || leadIds.length === 0) {
+      return NextResponse.json({ error: 'leadIds array is required' }, { status: 400 });
+    }
+
+    let whereClause: any = {
+      id: { in: leadIds }
+    };
+
+    if (user.role === 'dms') {
+      whereClause.dmsId = user.userId;
+    } else if (user.role === 'coordinator') {
+      whereClause.coordinatorId = user.userId;
+    }
+
+    const deleteResult = await prisma.companyLead.deleteMany({
+      where: whereClause
+    });
+
+    return NextResponse.json({ success: true, count: deleteResult.count }, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting leads:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

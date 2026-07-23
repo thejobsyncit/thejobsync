@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Plus, Building2, Mail, Phone, Calendar, Loader2, Upload, Download } from 'lucide-react';
+import { Plus, Building2, Mail, Phone, Calendar, Loader2, Upload, Download, Trash2 } from 'lucide-react';
 import type { CompanyLead } from '@/lib/types';
 import { read, utils, writeFile } from 'xlsx';
 
@@ -16,6 +16,9 @@ export default function DMSDashboard() {
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchLeads();
@@ -143,6 +146,41 @@ export default function DMSDashboard() {
     writeFile(wb, "Leads_Template.xlsx");
   };
 
+  const handleSelect = (id: string) => {
+    setSelectedLeads(prev => 
+      prev.includes(id) ? prev.filter(leadId => leadId !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedLeads(leads.map(l => l.id));
+    } else {
+      setSelectedLeads([]);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedLeads.length === 0 || !confirm(`Are you sure you want to delete ${selectedLeads.length} selected leads?`)) return;
+    
+    try {
+      setDeleting(true);
+      const res = await fetch('/api/leads', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadIds: selectedLeads })
+      });
+      if (res.ok) {
+        setSelectedLeads([]);
+        fetchLeads();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (!user || !['super_admin', 'admin', 'dms'].includes(user.role)) {
     return <div className="p-8">Access Denied</div>;
   }
@@ -155,6 +193,11 @@ export default function DMSDashboard() {
           <p className="text-[var(--muted-foreground)]">Add fresh company dumps to distribute to coordinators</p>
         </div>
         <div className="flex gap-3">
+          {selectedLeads.length > 0 && (
+            <button onClick={handleDeleteSelected} disabled={deleting} className="btn bg-red-50 text-red-600 hover:bg-red-100 border border-red-200">
+              {deleting ? <Loader2 className="animate-spin" size={18} /> : <Trash2 size={18} />} Delete ({selectedLeads.length})
+            </button>
+          )}
           <button className="btn btn-ghost" onClick={downloadTemplate} title="Download Excel Template">
             <Download size={18} /> Template
           </button>
@@ -223,6 +266,7 @@ export default function DMSDashboard() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-[var(--border)] bg-[var(--sidebar-bg)]">
+                <th className="p-4 w-12"><input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" checked={selectedLeads.length === leads.length && leads.length > 0} onChange={handleSelectAll} /></th>
                 <th className="p-4 font-semibold text-sm">Company Name</th>
                 <th className="p-4 font-semibold text-sm">Email</th>
                 <th className="p-4 font-semibold text-sm">Phone</th>
@@ -232,7 +276,8 @@ export default function DMSDashboard() {
             </thead>
             <tbody>
               {leads.map(lead => (
-                <tr key={lead.id} className="border-b border-[var(--border)] last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <tr key={lead.id} className={`border-b border-[var(--border)] last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${selectedLeads.includes(lead.id) ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}>
+                  <td className="p-4"><input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" checked={selectedLeads.includes(lead.id)} onChange={() => handleSelect(lead.id)} /></td>
                   <td className="p-4">
                     <div className="font-semibold text-[var(--foreground)]">{lead.companyName}</div>
                     <div className="text-xs text-[var(--muted-foreground)] uppercase mt-1">{lead.status.replace('_', ' ')}</div>

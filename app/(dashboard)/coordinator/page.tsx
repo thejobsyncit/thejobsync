@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { PhoneCall, Loader2, CheckCircle2, PhoneOff, PhoneMissed, CalendarClock, XCircle } from 'lucide-react';
+import { PhoneCall, Loader2, CheckCircle2, PhoneOff, PhoneMissed, CalendarClock, XCircle, Trash2 } from 'lucide-react';
 import type { CompanyLead } from '@/lib/types';
 
 const STATUS_ACTIONS = [
@@ -22,6 +22,9 @@ export default function CoordinatorDashboard() {
   const [activeLead, setActiveLead] = useState<CompanyLead | null>(null);
   const [formData, setFormData] = useState<Partial<CompanyLead>>({});
   const [submitting, setSubmitting] = useState(false);
+  
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchLeads();
@@ -99,15 +102,69 @@ export default function CoordinatorDashboard() {
     }
   };
 
+  const handleSelect = (id: string) => {
+    setSelectedLeads(prev => 
+      prev.includes(id) ? prev.filter(leadId => leadId !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedLeads(leads.map(l => l.id));
+    } else {
+      setSelectedLeads([]);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedLeads.length === 0 || !confirm(`Are you sure you want to delete ${selectedLeads.length} selected leads?`)) return;
+    
+    try {
+      setDeleting(true);
+      const res = await fetch('/api/leads', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leadIds: selectedLeads })
+      });
+      if (res.ok) {
+        setSelectedLeads([]);
+        fetchLeads();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (!user || !['super_admin', 'admin', 'coordinator'].includes(user.role)) {
     return <div className="p-8">Access Denied</div>;
   }
 
   return (
     <div className="p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">Fresh Leads (Coordinator)</h1>
-        <p className="text-[var(--muted-foreground)]">Your assigned calling list</p>
+      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Fresh Leads (Coordinator)</h1>
+          <p className="text-[var(--muted-foreground)]">Your assigned calling list</p>
+        </div>
+        
+        {leads.length > 0 && (
+          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 border border-[var(--border)] px-4 py-2 rounded-xl shadow-sm">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked={selectedLeads.length === leads.length && leads.length > 0} onChange={handleSelectAll} />
+              <span className="text-sm font-semibold">Select All</span>
+            </label>
+            {selectedLeads.length > 0 && (
+              <div className="flex items-center gap-3 border-l pl-4 border-[var(--border)]">
+                <span className="text-sm font-semibold text-blue-600">{selectedLeads.length} Selected</span>
+                <button onClick={handleDeleteSelected} disabled={deleting} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md bg-red-100 text-red-700 hover:opacity-80 transition-colors">
+                  {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />} Delete
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {showUpdateForm && activeLead && (
@@ -193,8 +250,12 @@ export default function CoordinatorDashboard() {
       ) : (
         <div className="grid gap-4">
           {leads.map(lead => (
-            <div key={lead.id} className="bg-white dark:bg-slate-900 rounded-xl border border-[var(--border)] p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-              <div className="flex-1">
+            <div key={lead.id} className={`bg-white dark:bg-slate-900 rounded-xl border p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm transition-colors ${selectedLeads.includes(lead.id) ? 'border-blue-500 ring-1 ring-blue-500/20' : 'border-[var(--border)]'}`}>
+              <div className="flex items-start gap-4 flex-1">
+                <div className="pt-1">
+                  <input type="checkbox" className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" checked={selectedLeads.includes(lead.id)} onChange={() => handleSelect(lead.id)} />
+                </div>
+                <div className="flex-1">
                 <div className="flex items-center gap-3 mb-1">
                   <h3 className="font-bold text-lg">{lead.companyName}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase ${
@@ -209,6 +270,7 @@ export default function CoordinatorDashboard() {
                   {lead.dms?.name && <span>(Added by {lead.dms.name})</span>}
                 </div>
                 {lead.remark && <div className="text-sm mt-2 font-medium">Remark: {lead.remark}</div>}
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-2">
