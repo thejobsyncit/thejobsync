@@ -64,6 +64,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Company Name is required' }, { status: 400 });
     }
 
+    // Check if company already exists
+    const existingLead = await prisma.companyLead.findFirst({
+      where: {
+        companyName: {
+          equals: companyName.trim(),
+          mode: 'insensitive'
+        }
+      }
+    });
+
+    if (existingLead) {
+      return NextResponse.json({ error: 'A client with this Company Name already exists' }, { status: 400 });
+    }
+
     // Auto-assignment (Round-Robin to Coordinator)
     const coordinators = await prisma.user.findMany({
       where: { role: 'coordinator', isActive: true },

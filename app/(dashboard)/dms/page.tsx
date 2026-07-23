@@ -77,7 +77,8 @@ export default function DMSDashboard() {
         setShowForm(false);
         fetchLeads();
       } else {
-        alert('Failed to add client');
+        const err = await res.json();
+        alert(err.error || 'Failed to add client');
       }
     } catch (err) {
       console.error(err);
@@ -144,7 +145,8 @@ export default function DMSDashboard() {
           });
 
           if (res.ok) {
-            alert(`Successfully uploaded ${leads.length} leads! They have been assigned to coordinators.`);
+            const resultData = await res.json();
+            alert(resultData.message || `Successfully uploaded leads!`);
             fetchLeads();
           } else {
             const err = await res.json();

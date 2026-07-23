@@ -31,6 +31,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Valid leads array is required' }, { status: 400 });
     }
 
+    // Fetch existing companies to avoid duplicates
+    const existingLeads = await prisma.companyLead.findMany({
+      select: { companyName: true }
+    });
+    const existingNames = new Set(existingLeads.map(l => l.companyName.toLowerCase().trim()));
+
+    // Filter out duplicates (both from DB and within the Excel file itself)
+    const uniqueLeadsData = leadsData.filter(lead => {
+      const name = lead.companyName?.toLowerCase().trim();
+      if (!name || existingNames.has(name)) return false;
+      existingNames.add(name); // Add to set to prevent duplicates within the same file
+      return true;
+    });
+
+    if (uniqueLeadsData.length === 0) {
+      return NextResponse.json({ message: 'No new leads to add. All companies already exist.' }, { status: 200 });
+    }
+
     // Auto-assignment (Round-Robin to Coordinator)
     const coordinators = await prisma.user.findMany({
       where: { role: 'coordinator', isActive: true },
@@ -54,7 +72,7 @@ export async function POST(req: NextRequest) {
         if (lc.coordinatorId) countsMap.set(lc.coordinatorId, lc._count.id);
       });
 
-      for (const lead of leadsData) {
+      for (const lead of uniqueLeadsData) {
         // Find coordinator with min count
         let minCount = Infinity;
         let assignedCoordinatorId: string | undefined = undefined;
@@ -83,7 +101,7 @@ export async function POST(req: NextRequest) {
       }
     } else {
       // No coordinators available
-      for (const lead of leadsData) {
+      for (const lead of uniqueLeadsData) {
         newLeads.push({
           companyName: lead.companyName,
           email: lead.email || 'na',
@@ -99,7 +117,9 @@ export async function POST(req: NextRequest) {
       data: newLeads
     });
 
-    return NextResponse.json({ message: `Successfully added ${newLeads.length} leads` }, { status: 201 });
+    return NextResponse.json({ 
+      message: `Successfully added ${newLeads.length} new leads. Skipped ${leadsData.length - newLeads.length} duplicates.` 
+    }, { status: 201 });
   } catch (error) {
     console.error('Error in bulk lead creation:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
