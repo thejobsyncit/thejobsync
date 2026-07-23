@@ -111,55 +111,55 @@ export default function CoordinatorDashboard() {
       </div>
 
       {showUpdateForm && activeLead && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-slate-900 rounded-xl max-w-2xl w-full p-6 shadow-xl relative my-8">
-            <h2 className="text-xl font-bold mb-6">Update Interested Client</h2>
-            <form onSubmit={handleUpdateSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-8 shadow-2xl relative my-8 border border-slate-100 dark:border-slate-800">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-6">Update Interested Client</h2>
+            <form onSubmit={handleUpdateSubmit} className="space-y-5">
+              <div className="grid grid-cols-2 gap-5">
                 <div>
-                  <label className="form-label">Company Name *</label>
-                  <input required className="form-input" value={formData.companyName || ''} onChange={e => setFormData({...formData, companyName: e.target.value})} />
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Company Name *</label>
+                  <input required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.companyName || ''} onChange={e => setFormData({...formData, companyName: e.target.value})} />
                 </div>
                 <div>
-                  <label className="form-label">Contact Person *</label>
-                  <input required className="form-input" value={formData.contactPerson || ''} onChange={e => setFormData({...formData, contactPerson: e.target.value})} />
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Contact Person *</label>
+                  <input required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.contactPerson || ''} onChange={e => setFormData({...formData, contactPerson: e.target.value})} />
                 </div>
                 <div>
-                  <label className="form-label">Position</label>
-                  <input className="form-input" value={formData.position || ''} onChange={e => setFormData({...formData, position: e.target.value})} />
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Position</label>
+                  <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.position || ''} onChange={e => setFormData({...formData, position: e.target.value})} />
                 </div>
                 <div>
-                  <label className="form-label">Email ID</label>
-                  <input className="form-input" type="email" value={formData.email || ''} onChange={e => setFormData({...formData, email: e.target.value})} />
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Email ID</label>
+                  <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" type="email" value={formData.email || ''} onChange={e => setFormData({...formData, email: e.target.value})} />
                 </div>
                 <div>
-                  <label className="form-label">Phone No</label>
-                  <input className="form-input" value={formData.phone || ''} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Phone No</label>
+                  <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.phone || ''} onChange={e => setFormData({...formData, phone: e.target.value})} />
                 </div>
                 <div>
-                  <label className="form-label">Website</label>
-                  <input className="form-input" value={formData.website || ''} onChange={e => setFormData({...formData, website: e.target.value})} />
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Website</label>
+                  <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.website || ''} onChange={e => setFormData({...formData, website: e.target.value})} />
                 </div>
               </div>
               
               <div>
-                <label className="form-label">Company Address</label>
-                <textarea className="form-input" rows={2} value={formData.address || ''} onChange={e => setFormData({...formData, address: e.target.value})} />
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Company Address</label>
+                <textarea className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-y" rows={2} value={formData.address || ''} onChange={e => setFormData({...formData, address: e.target.value})} />
               </div>
               
               <div>
-                <label className="form-label">Requirement Details</label>
-                <textarea className="form-input" rows={3} value={formData.requirementDetails || ''} onChange={e => setFormData({...formData, requirementDetails: e.target.value})} />
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Requirement Details</label>
+                <textarea className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-y" rows={3} value={formData.requirementDetails || ''} onChange={e => setFormData({...formData, requirementDetails: e.target.value})} />
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-5">
                 <div>
-                  <label className="form-label">Validity Time</label>
-                  <input className="form-input" value={formData.validityTime || ''} onChange={e => setFormData({...formData, validityTime: e.target.value})} placeholder="e.g. 3 Months" />
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Validity Time</label>
+                  <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.validityTime || ''} onChange={e => setFormData({...formData, validityTime: e.target.value})} placeholder="e.g. 3 Months" />
                 </div>
                 <div>
-                  <label className="form-label">Status</label>
-                  <select className="form-input" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Status</label>
+                  <select className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none" value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}>
                     <option value="interested">Interested</option>
                     <option value="updated">Updated (Confirmed)</option>
                   </select>
@@ -167,13 +167,13 @@ export default function CoordinatorDashboard() {
               </div>
 
               <div>
-                <label className="form-label">Remark</label>
-                <input className="form-input" value={formData.remark || ''} onChange={e => setFormData({...formData, remark: e.target.value})} />
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Remark</label>
+                <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.remark || ''} onChange={e => setFormData({...formData, remark: e.target.value})} />
               </div>
               
-              <div className="flex justify-end gap-3 mt-8">
-                <button type="button" className="btn btn-ghost" onClick={() => setShowUpdateForm(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
+              <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" className="px-5 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onClick={() => setShowUpdateForm(false)}>Cancel</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl font-bold bg-[#03045E] hover:bg-[#172554] text-white flex items-center justify-center gap-2 shadow-lg transition-all min-w-[140px]" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={18} /> : 'Save Update'}
                 </button>
               </div>
