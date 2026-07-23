@@ -2,6 +2,7 @@ export const COUNTRIES = [
   {
     "code": "IN",
     "name": "India",
+    "flag": "🇮🇳",
     "dialCode": "+91",
     "taxLabel": "GST Number",
     "taxPlaceholder": "E.g. 22AAAAA0000A1Z5"
@@ -9,6 +10,7 @@ export const COUNTRIES = [
   {
     "code": "US",
     "name": "United States",
+    "flag": "🇺🇸",
     "dialCode": "+1",
     "taxLabel": "EIN / Tax ID",
     "taxPlaceholder": "E.g. 12-3456789"
@@ -16,6 +18,7 @@ export const COUNTRIES = [
   {
     "code": "GB",
     "name": "United Kingdom",
+    "flag": "🇬🇧",
     "dialCode": "+44",
     "taxLabel": "VAT Number",
     "taxPlaceholder": "E.g. GB123456789"
@@ -23,6 +26,7 @@ export const COUNTRIES = [
   {
     "code": "SG",
     "name": "Singapore",
+    "flag": "🇸🇬",
     "dialCode": "+65",
     "taxLabel": "UEN Number",
     "taxPlaceholder": "E.g. 202312345A"
@@ -30,6 +34,7 @@ export const COUNTRIES = [
   {
     "code": "AE",
     "name": "United Arab Emirates",
+    "flag": "🇦🇪",
     "dialCode": "+971",
     "taxLabel": "TRN Number",
     "taxPlaceholder": "E.g. 100012345678903"
@@ -37,6 +42,7 @@ export const COUNTRIES = [
   {
     "code": "AU",
     "name": "Australia",
+    "flag": "🇦🇺",
     "dialCode": "+61",
     "taxLabel": "ABN Number",
     "taxPlaceholder": "E.g. 11 222 333 444"
@@ -44,6 +50,7 @@ export const COUNTRIES = [
   {
     "code": "CA",
     "name": "Canada",
+    "flag": "🇨🇦",
     "dialCode": "+1",
     "taxLabel": "BN / Tax ID",
     "taxPlaceholder": "E.g. 123456789RT0001"
@@ -51,6 +58,7 @@ export const COUNTRIES = [
   {
     "code": "AF",
     "name": "Afghanistan",
+    "flag": "🇦🇫",
     "dialCode": "+93",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -58,6 +66,7 @@ export const COUNTRIES = [
   {
     "code": "AX",
     "name": "Aland",
+    "flag": "🇦🇽",
     "dialCode": "+358",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -65,6 +74,7 @@ export const COUNTRIES = [
   {
     "code": "AL",
     "name": "Albania",
+    "flag": "🇦🇱",
     "dialCode": "+355",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -72,6 +82,7 @@ export const COUNTRIES = [
   {
     "code": "DZ",
     "name": "Algeria",
+    "flag": "🇩🇿",
     "dialCode": "+213",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -79,6 +90,7 @@ export const COUNTRIES = [
   {
     "code": "AS",
     "name": "American Samoa",
+    "flag": "🇦🇸",
     "dialCode": "+1684",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -86,6 +98,7 @@ export const COUNTRIES = [
   {
     "code": "AD",
     "name": "Andorra",
+    "flag": "🇦🇩",
     "dialCode": "+376",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -93,6 +106,7 @@ export const COUNTRIES = [
   {
     "code": "AO",
     "name": "Angola",
+    "flag": "🇦🇴",
     "dialCode": "+244",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -100,6 +114,7 @@ export const COUNTRIES = [
   {
     "code": "AI",
     "name": "Anguilla",
+    "flag": "🇦🇮",
     "dialCode": "+1264",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -107,6 +122,7 @@ export const COUNTRIES = [
   {
     "code": "AQ",
     "name": "Antarctica",
+    "flag": "🇦🇶",
     "dialCode": "+672",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -114,6 +130,7 @@ export const COUNTRIES = [
   {
     "code": "AG",
     "name": "Antigua and Barbuda",
+    "flag": "🇦🇬",
     "dialCode": "+1268",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -121,6 +138,7 @@ export const COUNTRIES = [
   {
     "code": "AR",
     "name": "Argentina",
+    "flag": "🇦🇷",
     "dialCode": "+54",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -128,6 +146,7 @@ export const COUNTRIES = [
   {
     "code": "AM",
     "name": "Armenia",
+    "flag": "🇦🇲",
     "dialCode": "+374",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -135,6 +154,7 @@ export const COUNTRIES = [
   {
     "code": "AW",
     "name": "Aruba",
+    "flag": "🇦🇼",
     "dialCode": "+297",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -142,6 +162,7 @@ export const COUNTRIES = [
   {
     "code": "AC",
     "name": "Ascension Island",
+    "flag": "🇦🇨",
     "dialCode": "+247",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -149,6 +170,7 @@ export const COUNTRIES = [
   {
     "code": "AT",
     "name": "Austria",
+    "flag": "🇦🇹",
     "dialCode": "+43",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -156,6 +178,7 @@ export const COUNTRIES = [
   {
     "code": "AZ",
     "name": "Azerbaijan",
+    "flag": "🇦🇿",
     "dialCode": "+994",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -163,6 +186,7 @@ export const COUNTRIES = [
   {
     "code": "BS",
     "name": "Bahamas",
+    "flag": "🇧🇸",
     "dialCode": "+1242",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -170,6 +194,7 @@ export const COUNTRIES = [
   {
     "code": "BH",
     "name": "Bahrain",
+    "flag": "🇧🇭",
     "dialCode": "+973",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -177,6 +202,7 @@ export const COUNTRIES = [
   {
     "code": "BD",
     "name": "Bangladesh",
+    "flag": "🇧🇩",
     "dialCode": "+880",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -184,6 +210,7 @@ export const COUNTRIES = [
   {
     "code": "BB",
     "name": "Barbados",
+    "flag": "🇧🇧",
     "dialCode": "+1246",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -191,6 +218,7 @@ export const COUNTRIES = [
   {
     "code": "BY",
     "name": "Belarus",
+    "flag": "🇧🇾",
     "dialCode": "+375",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -198,6 +226,7 @@ export const COUNTRIES = [
   {
     "code": "BE",
     "name": "Belgium",
+    "flag": "🇧🇪",
     "dialCode": "+32",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -205,6 +234,7 @@ export const COUNTRIES = [
   {
     "code": "BZ",
     "name": "Belize",
+    "flag": "🇧🇿",
     "dialCode": "+501",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -212,6 +242,7 @@ export const COUNTRIES = [
   {
     "code": "BJ",
     "name": "Benin",
+    "flag": "🇧🇯",
     "dialCode": "+229",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -219,6 +250,7 @@ export const COUNTRIES = [
   {
     "code": "BM",
     "name": "Bermuda",
+    "flag": "🇧🇲",
     "dialCode": "+1441",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -226,6 +258,7 @@ export const COUNTRIES = [
   {
     "code": "BT",
     "name": "Bhutan",
+    "flag": "🇧🇹",
     "dialCode": "+975",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -233,6 +266,7 @@ export const COUNTRIES = [
   {
     "code": "BO",
     "name": "Bolivia",
+    "flag": "🇧🇴",
     "dialCode": "+591",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -240,6 +274,7 @@ export const COUNTRIES = [
   {
     "code": "BQ",
     "name": "Bonaire",
+    "flag": "🇧🇶",
     "dialCode": "+5997",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -247,6 +282,7 @@ export const COUNTRIES = [
   {
     "code": "BA",
     "name": "Bosnia and Herzegovina",
+    "flag": "🇧🇦",
     "dialCode": "+387",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -254,6 +290,7 @@ export const COUNTRIES = [
   {
     "code": "BW",
     "name": "Botswana",
+    "flag": "🇧🇼",
     "dialCode": "+267",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -261,6 +298,7 @@ export const COUNTRIES = [
   {
     "code": "BV",
     "name": "Bouvet Island",
+    "flag": "🇧🇻",
     "dialCode": "+47",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -268,6 +306,7 @@ export const COUNTRIES = [
   {
     "code": "BR",
     "name": "Brazil",
+    "flag": "🇧🇷",
     "dialCode": "+55",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -275,6 +314,7 @@ export const COUNTRIES = [
   {
     "code": "IO",
     "name": "British Indian Ocean Territory",
+    "flag": "🇮🇴",
     "dialCode": "+246",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -282,6 +322,7 @@ export const COUNTRIES = [
   {
     "code": "VG",
     "name": "British Virgin Islands",
+    "flag": "🇻🇬",
     "dialCode": "+1284",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -289,6 +330,7 @@ export const COUNTRIES = [
   {
     "code": "BN",
     "name": "Brunei",
+    "flag": "🇧🇳",
     "dialCode": "+673",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -296,6 +338,7 @@ export const COUNTRIES = [
   {
     "code": "BG",
     "name": "Bulgaria",
+    "flag": "🇧🇬",
     "dialCode": "+359",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -303,6 +346,7 @@ export const COUNTRIES = [
   {
     "code": "BF",
     "name": "Burkina Faso",
+    "flag": "🇧🇫",
     "dialCode": "+226",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -310,6 +354,7 @@ export const COUNTRIES = [
   {
     "code": "BI",
     "name": "Burundi",
+    "flag": "🇧🇮",
     "dialCode": "+257",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -317,6 +362,7 @@ export const COUNTRIES = [
   {
     "code": "CV",
     "name": "Cabo Verde",
+    "flag": "🇨🇻",
     "dialCode": "+238",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -324,6 +370,7 @@ export const COUNTRIES = [
   {
     "code": "KH",
     "name": "Cambodia",
+    "flag": "🇰🇭",
     "dialCode": "+855",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -331,6 +378,7 @@ export const COUNTRIES = [
   {
     "code": "CM",
     "name": "Cameroon",
+    "flag": "🇨🇲",
     "dialCode": "+237",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -338,6 +386,7 @@ export const COUNTRIES = [
   {
     "code": "KY",
     "name": "Cayman Islands",
+    "flag": "🇰🇾",
     "dialCode": "+1345",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -345,6 +394,7 @@ export const COUNTRIES = [
   {
     "code": "CF",
     "name": "Central African Republic",
+    "flag": "🇨🇫",
     "dialCode": "+236",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -352,6 +402,7 @@ export const COUNTRIES = [
   {
     "code": "TD",
     "name": "Chad",
+    "flag": "🇹🇩",
     "dialCode": "+235",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -359,6 +410,7 @@ export const COUNTRIES = [
   {
     "code": "CL",
     "name": "Chile",
+    "flag": "🇨🇱",
     "dialCode": "+56",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -366,6 +418,7 @@ export const COUNTRIES = [
   {
     "code": "CN",
     "name": "China",
+    "flag": "🇨🇳",
     "dialCode": "+86",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -373,6 +426,7 @@ export const COUNTRIES = [
   {
     "code": "CX",
     "name": "Christmas Island",
+    "flag": "🇨🇽",
     "dialCode": "+61",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -380,6 +434,7 @@ export const COUNTRIES = [
   {
     "code": "CC",
     "name": "Cocos (Keeling) Islands",
+    "flag": "🇨🇨",
     "dialCode": "+61",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -387,6 +442,7 @@ export const COUNTRIES = [
   {
     "code": "CO",
     "name": "Colombia",
+    "flag": "🇨🇴",
     "dialCode": "+57",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -394,6 +450,7 @@ export const COUNTRIES = [
   {
     "code": "KM",
     "name": "Comoros",
+    "flag": "🇰🇲",
     "dialCode": "+269",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -401,6 +458,7 @@ export const COUNTRIES = [
   {
     "code": "CK",
     "name": "Cook Islands",
+    "flag": "🇨🇰",
     "dialCode": "+682",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -408,6 +466,7 @@ export const COUNTRIES = [
   {
     "code": "CR",
     "name": "Costa Rica",
+    "flag": "🇨🇷",
     "dialCode": "+506",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -415,6 +474,7 @@ export const COUNTRIES = [
   {
     "code": "HR",
     "name": "Croatia",
+    "flag": "🇭🇷",
     "dialCode": "+385",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -422,6 +482,7 @@ export const COUNTRIES = [
   {
     "code": "CU",
     "name": "Cuba",
+    "flag": "🇨🇺",
     "dialCode": "+53",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -429,6 +490,7 @@ export const COUNTRIES = [
   {
     "code": "CW",
     "name": "Curacao",
+    "flag": "🇨🇼",
     "dialCode": "+5999",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -436,6 +498,7 @@ export const COUNTRIES = [
   {
     "code": "CY",
     "name": "Cyprus",
+    "flag": "🇨🇾",
     "dialCode": "+357",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -443,6 +506,7 @@ export const COUNTRIES = [
   {
     "code": "CZ",
     "name": "Czechia",
+    "flag": "🇨🇿",
     "dialCode": "+420",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -450,6 +514,7 @@ export const COUNTRIES = [
   {
     "code": "CD",
     "name": "Democratic Republic of the Congo",
+    "flag": "🇨🇩",
     "dialCode": "+243",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -457,6 +522,7 @@ export const COUNTRIES = [
   {
     "code": "DK",
     "name": "Denmark",
+    "flag": "🇩🇰",
     "dialCode": "+45",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -464,6 +530,7 @@ export const COUNTRIES = [
   {
     "code": "DJ",
     "name": "Djibouti",
+    "flag": "🇩🇯",
     "dialCode": "+253",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -471,6 +538,7 @@ export const COUNTRIES = [
   {
     "code": "DM",
     "name": "Dominica",
+    "flag": "🇩🇲",
     "dialCode": "+1767",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -478,6 +546,7 @@ export const COUNTRIES = [
   {
     "code": "DO",
     "name": "Dominican Republic",
+    "flag": "🇩🇴",
     "dialCode": "+1809",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -485,6 +554,7 @@ export const COUNTRIES = [
   {
     "code": "TL",
     "name": "East Timor",
+    "flag": "🇹🇱",
     "dialCode": "+670",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -492,6 +562,7 @@ export const COUNTRIES = [
   {
     "code": "EC",
     "name": "Ecuador",
+    "flag": "🇪🇨",
     "dialCode": "+593",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -499,6 +570,7 @@ export const COUNTRIES = [
   {
     "code": "EG",
     "name": "Egypt",
+    "flag": "🇪🇬",
     "dialCode": "+20",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -506,6 +578,7 @@ export const COUNTRIES = [
   {
     "code": "SV",
     "name": "El Salvador",
+    "flag": "🇸🇻",
     "dialCode": "+503",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -513,6 +586,7 @@ export const COUNTRIES = [
   {
     "code": "GQ",
     "name": "Equatorial Guinea",
+    "flag": "🇬🇶",
     "dialCode": "+240",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -520,6 +594,7 @@ export const COUNTRIES = [
   {
     "code": "ER",
     "name": "Eritrea",
+    "flag": "🇪🇷",
     "dialCode": "+291",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -527,6 +602,7 @@ export const COUNTRIES = [
   {
     "code": "EE",
     "name": "Estonia",
+    "flag": "🇪🇪",
     "dialCode": "+372",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -534,6 +610,7 @@ export const COUNTRIES = [
   {
     "code": "SZ",
     "name": "Eswatini",
+    "flag": "🇸🇿",
     "dialCode": "+268",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -541,6 +618,7 @@ export const COUNTRIES = [
   {
     "code": "ET",
     "name": "Ethiopia",
+    "flag": "🇪🇹",
     "dialCode": "+251",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -548,6 +626,7 @@ export const COUNTRIES = [
   {
     "code": "FK",
     "name": "Falkland Islands",
+    "flag": "🇫🇰",
     "dialCode": "+500",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -555,6 +634,7 @@ export const COUNTRIES = [
   {
     "code": "FO",
     "name": "Faroe Islands",
+    "flag": "🇫🇴",
     "dialCode": "+298",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -562,6 +642,7 @@ export const COUNTRIES = [
   {
     "code": "FJ",
     "name": "Fiji",
+    "flag": "🇫🇯",
     "dialCode": "+679",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -569,6 +650,7 @@ export const COUNTRIES = [
   {
     "code": "FI",
     "name": "Finland",
+    "flag": "🇫🇮",
     "dialCode": "+358",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -576,6 +658,7 @@ export const COUNTRIES = [
   {
     "code": "FR",
     "name": "France",
+    "flag": "🇫🇷",
     "dialCode": "+33",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -583,6 +666,7 @@ export const COUNTRIES = [
   {
     "code": "GF",
     "name": "French Guiana",
+    "flag": "🇬🇫",
     "dialCode": "+594",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -590,6 +674,7 @@ export const COUNTRIES = [
   {
     "code": "PF",
     "name": "French Polynesia",
+    "flag": "🇵🇫",
     "dialCode": "+689",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -597,6 +682,7 @@ export const COUNTRIES = [
   {
     "code": "TF",
     "name": "French Southern Territories",
+    "flag": "🇹🇫",
     "dialCode": "+262",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -604,6 +690,7 @@ export const COUNTRIES = [
   {
     "code": "GA",
     "name": "Gabon",
+    "flag": "🇬🇦",
     "dialCode": "+241",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -611,6 +698,7 @@ export const COUNTRIES = [
   {
     "code": "GM",
     "name": "Gambia",
+    "flag": "🇬🇲",
     "dialCode": "+220",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -618,6 +706,7 @@ export const COUNTRIES = [
   {
     "code": "GE",
     "name": "Georgia",
+    "flag": "🇬🇪",
     "dialCode": "+995",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -625,6 +714,7 @@ export const COUNTRIES = [
   {
     "code": "DE",
     "name": "Germany",
+    "flag": "🇩🇪",
     "dialCode": "+49",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -632,6 +722,7 @@ export const COUNTRIES = [
   {
     "code": "GH",
     "name": "Ghana",
+    "flag": "🇬🇭",
     "dialCode": "+233",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -639,6 +730,7 @@ export const COUNTRIES = [
   {
     "code": "GI",
     "name": "Gibraltar",
+    "flag": "🇬🇮",
     "dialCode": "+350",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -646,6 +738,7 @@ export const COUNTRIES = [
   {
     "code": "GR",
     "name": "Greece",
+    "flag": "🇬🇷",
     "dialCode": "+30",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -653,6 +746,7 @@ export const COUNTRIES = [
   {
     "code": "GL",
     "name": "Greenland",
+    "flag": "🇬🇱",
     "dialCode": "+299",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -660,6 +754,7 @@ export const COUNTRIES = [
   {
     "code": "GD",
     "name": "Grenada",
+    "flag": "🇬🇩",
     "dialCode": "+1473",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -667,6 +762,7 @@ export const COUNTRIES = [
   {
     "code": "GP",
     "name": "Guadeloupe",
+    "flag": "🇬🇵",
     "dialCode": "+590",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -674,6 +770,7 @@ export const COUNTRIES = [
   {
     "code": "GU",
     "name": "Guam",
+    "flag": "🇬🇺",
     "dialCode": "+1671",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -681,6 +778,7 @@ export const COUNTRIES = [
   {
     "code": "GT",
     "name": "Guatemala",
+    "flag": "🇬🇹",
     "dialCode": "+502",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -688,6 +786,7 @@ export const COUNTRIES = [
   {
     "code": "GG",
     "name": "Guernsey",
+    "flag": "🇬🇬",
     "dialCode": "+44",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -695,6 +794,7 @@ export const COUNTRIES = [
   {
     "code": "GN",
     "name": "Guinea",
+    "flag": "🇬🇳",
     "dialCode": "+224",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -702,6 +802,7 @@ export const COUNTRIES = [
   {
     "code": "GW",
     "name": "Guinea-Bissau",
+    "flag": "🇬🇼",
     "dialCode": "+245",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -709,6 +810,7 @@ export const COUNTRIES = [
   {
     "code": "GY",
     "name": "Guyana",
+    "flag": "🇬🇾",
     "dialCode": "+592",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -716,6 +818,7 @@ export const COUNTRIES = [
   {
     "code": "HT",
     "name": "Haiti",
+    "flag": "🇭🇹",
     "dialCode": "+509",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -723,6 +826,7 @@ export const COUNTRIES = [
   {
     "code": "HM",
     "name": "Heard Island and McDonald Islands",
+    "flag": "🇭🇲",
     "dialCode": "+61",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -730,6 +834,7 @@ export const COUNTRIES = [
   {
     "code": "HN",
     "name": "Honduras",
+    "flag": "🇭🇳",
     "dialCode": "+504",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -737,6 +842,7 @@ export const COUNTRIES = [
   {
     "code": "HK",
     "name": "Hong Kong",
+    "flag": "🇭🇰",
     "dialCode": "+852",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -744,6 +850,7 @@ export const COUNTRIES = [
   {
     "code": "HU",
     "name": "Hungary",
+    "flag": "🇭🇺",
     "dialCode": "+36",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -751,6 +858,7 @@ export const COUNTRIES = [
   {
     "code": "IS",
     "name": "Iceland",
+    "flag": "🇮🇸",
     "dialCode": "+354",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -758,6 +866,7 @@ export const COUNTRIES = [
   {
     "code": "ID",
     "name": "Indonesia",
+    "flag": "🇮🇩",
     "dialCode": "+62",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -765,6 +874,7 @@ export const COUNTRIES = [
   {
     "code": "IR",
     "name": "Iran",
+    "flag": "🇮🇷",
     "dialCode": "+98",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -772,6 +882,7 @@ export const COUNTRIES = [
   {
     "code": "IQ",
     "name": "Iraq",
+    "flag": "🇮🇶",
     "dialCode": "+964",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -779,6 +890,7 @@ export const COUNTRIES = [
   {
     "code": "IE",
     "name": "Ireland",
+    "flag": "🇮🇪",
     "dialCode": "+353",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -786,6 +898,7 @@ export const COUNTRIES = [
   {
     "code": "IM",
     "name": "Isle of Man",
+    "flag": "🇮🇲",
     "dialCode": "+44",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -793,6 +906,7 @@ export const COUNTRIES = [
   {
     "code": "IL",
     "name": "Israel",
+    "flag": "🇮🇱",
     "dialCode": "+972",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -800,6 +914,7 @@ export const COUNTRIES = [
   {
     "code": "IT",
     "name": "Italy",
+    "flag": "🇮🇹",
     "dialCode": "+39",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -807,6 +922,7 @@ export const COUNTRIES = [
   {
     "code": "CI",
     "name": "Ivory Coast",
+    "flag": "🇨🇮",
     "dialCode": "+225",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -814,6 +930,7 @@ export const COUNTRIES = [
   {
     "code": "JM",
     "name": "Jamaica",
+    "flag": "🇯🇲",
     "dialCode": "+1876",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -821,6 +938,7 @@ export const COUNTRIES = [
   {
     "code": "JP",
     "name": "Japan",
+    "flag": "🇯🇵",
     "dialCode": "+81",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -828,6 +946,7 @@ export const COUNTRIES = [
   {
     "code": "JE",
     "name": "Jersey",
+    "flag": "🇯🇪",
     "dialCode": "+44",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -835,6 +954,7 @@ export const COUNTRIES = [
   {
     "code": "JO",
     "name": "Jordan",
+    "flag": "🇯🇴",
     "dialCode": "+962",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -842,6 +962,7 @@ export const COUNTRIES = [
   {
     "code": "KZ",
     "name": "Kazakhstan",
+    "flag": "🇰🇿",
     "dialCode": "+7",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -849,6 +970,7 @@ export const COUNTRIES = [
   {
     "code": "KE",
     "name": "Kenya",
+    "flag": "🇰🇪",
     "dialCode": "+254",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -856,6 +978,7 @@ export const COUNTRIES = [
   {
     "code": "KI",
     "name": "Kiribati",
+    "flag": "🇰🇮",
     "dialCode": "+686",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -863,6 +986,7 @@ export const COUNTRIES = [
   {
     "code": "XK",
     "name": "Kosovo",
+    "flag": "🇽🇰",
     "dialCode": "+377",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -870,6 +994,7 @@ export const COUNTRIES = [
   {
     "code": "KW",
     "name": "Kuwait",
+    "flag": "🇰🇼",
     "dialCode": "+965",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -877,6 +1002,7 @@ export const COUNTRIES = [
   {
     "code": "KG",
     "name": "Kyrgyzstan",
+    "flag": "🇰🇬",
     "dialCode": "+996",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -884,6 +1010,7 @@ export const COUNTRIES = [
   {
     "code": "LA",
     "name": "Laos",
+    "flag": "🇱🇦",
     "dialCode": "+856",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -891,6 +1018,7 @@ export const COUNTRIES = [
   {
     "code": "LV",
     "name": "Latvia",
+    "flag": "🇱🇻",
     "dialCode": "+371",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -898,6 +1026,7 @@ export const COUNTRIES = [
   {
     "code": "LB",
     "name": "Lebanon",
+    "flag": "🇱🇧",
     "dialCode": "+961",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -905,6 +1034,7 @@ export const COUNTRIES = [
   {
     "code": "LS",
     "name": "Lesotho",
+    "flag": "🇱🇸",
     "dialCode": "+266",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -912,6 +1042,7 @@ export const COUNTRIES = [
   {
     "code": "LR",
     "name": "Liberia",
+    "flag": "🇱🇷",
     "dialCode": "+231",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -919,6 +1050,7 @@ export const COUNTRIES = [
   {
     "code": "LY",
     "name": "Libya",
+    "flag": "🇱🇾",
     "dialCode": "+218",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -926,6 +1058,7 @@ export const COUNTRIES = [
   {
     "code": "LI",
     "name": "Liechtenstein",
+    "flag": "🇱🇮",
     "dialCode": "+423",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -933,6 +1066,7 @@ export const COUNTRIES = [
   {
     "code": "LT",
     "name": "Lithuania",
+    "flag": "🇱🇹",
     "dialCode": "+370",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -940,6 +1074,7 @@ export const COUNTRIES = [
   {
     "code": "LU",
     "name": "Luxembourg",
+    "flag": "🇱🇺",
     "dialCode": "+352",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -947,6 +1082,7 @@ export const COUNTRIES = [
   {
     "code": "MO",
     "name": "Macao",
+    "flag": "🇲🇴",
     "dialCode": "+853",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -954,6 +1090,7 @@ export const COUNTRIES = [
   {
     "code": "MG",
     "name": "Madagascar",
+    "flag": "🇲🇬",
     "dialCode": "+261",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -961,6 +1098,7 @@ export const COUNTRIES = [
   {
     "code": "MW",
     "name": "Malawi",
+    "flag": "🇲🇼",
     "dialCode": "+265",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -968,6 +1106,7 @@ export const COUNTRIES = [
   {
     "code": "MY",
     "name": "Malaysia",
+    "flag": "🇲🇾",
     "dialCode": "+60",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -975,6 +1114,7 @@ export const COUNTRIES = [
   {
     "code": "MV",
     "name": "Maldives",
+    "flag": "🇲🇻",
     "dialCode": "+960",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -982,6 +1122,7 @@ export const COUNTRIES = [
   {
     "code": "ML",
     "name": "Mali",
+    "flag": "🇲🇱",
     "dialCode": "+223",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -989,6 +1130,7 @@ export const COUNTRIES = [
   {
     "code": "MT",
     "name": "Malta",
+    "flag": "🇲🇹",
     "dialCode": "+356",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -996,6 +1138,7 @@ export const COUNTRIES = [
   {
     "code": "MH",
     "name": "Marshall Islands",
+    "flag": "🇲🇭",
     "dialCode": "+692",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1003,6 +1146,7 @@ export const COUNTRIES = [
   {
     "code": "MQ",
     "name": "Martinique",
+    "flag": "🇲🇶",
     "dialCode": "+596",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1010,6 +1154,7 @@ export const COUNTRIES = [
   {
     "code": "MR",
     "name": "Mauritania",
+    "flag": "🇲🇷",
     "dialCode": "+222",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1017,6 +1162,7 @@ export const COUNTRIES = [
   {
     "code": "MU",
     "name": "Mauritius",
+    "flag": "🇲🇺",
     "dialCode": "+230",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1024,6 +1170,7 @@ export const COUNTRIES = [
   {
     "code": "YT",
     "name": "Mayotte",
+    "flag": "🇾🇹",
     "dialCode": "+262",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1031,6 +1178,7 @@ export const COUNTRIES = [
   {
     "code": "MX",
     "name": "Mexico",
+    "flag": "🇲🇽",
     "dialCode": "+52",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1038,6 +1186,7 @@ export const COUNTRIES = [
   {
     "code": "FM",
     "name": "Micronesia",
+    "flag": "🇫🇲",
     "dialCode": "+691",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1045,6 +1194,7 @@ export const COUNTRIES = [
   {
     "code": "MD",
     "name": "Moldova",
+    "flag": "🇲🇩",
     "dialCode": "+373",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1052,6 +1202,7 @@ export const COUNTRIES = [
   {
     "code": "MC",
     "name": "Monaco",
+    "flag": "🇲🇨",
     "dialCode": "+377",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1059,6 +1210,7 @@ export const COUNTRIES = [
   {
     "code": "MN",
     "name": "Mongolia",
+    "flag": "🇲🇳",
     "dialCode": "+976",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1066,6 +1218,7 @@ export const COUNTRIES = [
   {
     "code": "ME",
     "name": "Montenegro",
+    "flag": "🇲🇪",
     "dialCode": "+382",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1073,6 +1226,7 @@ export const COUNTRIES = [
   {
     "code": "MS",
     "name": "Montserrat",
+    "flag": "🇲🇸",
     "dialCode": "+1664",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1080,6 +1234,7 @@ export const COUNTRIES = [
   {
     "code": "MA",
     "name": "Morocco",
+    "flag": "🇲🇦",
     "dialCode": "+212",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1087,6 +1242,7 @@ export const COUNTRIES = [
   {
     "code": "MZ",
     "name": "Mozambique",
+    "flag": "🇲🇿",
     "dialCode": "+258",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1094,6 +1250,7 @@ export const COUNTRIES = [
   {
     "code": "MM",
     "name": "Myanmar",
+    "flag": "🇲🇲",
     "dialCode": "+95",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1101,6 +1258,7 @@ export const COUNTRIES = [
   {
     "code": "NA",
     "name": "Namibia",
+    "flag": "🇳🇦",
     "dialCode": "+264",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1108,6 +1266,7 @@ export const COUNTRIES = [
   {
     "code": "NR",
     "name": "Nauru",
+    "flag": "🇳🇷",
     "dialCode": "+674",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1115,6 +1274,7 @@ export const COUNTRIES = [
   {
     "code": "NP",
     "name": "Nepal",
+    "flag": "🇳🇵",
     "dialCode": "+977",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1122,6 +1282,7 @@ export const COUNTRIES = [
   {
     "code": "NL",
     "name": "Netherlands",
+    "flag": "🇳🇱",
     "dialCode": "+31",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1129,6 +1290,7 @@ export const COUNTRIES = [
   {
     "code": "NC",
     "name": "New Caledonia",
+    "flag": "🇳🇨",
     "dialCode": "+687",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1136,6 +1298,7 @@ export const COUNTRIES = [
   {
     "code": "NZ",
     "name": "New Zealand",
+    "flag": "🇳🇿",
     "dialCode": "+64",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1143,6 +1306,7 @@ export const COUNTRIES = [
   {
     "code": "NI",
     "name": "Nicaragua",
+    "flag": "🇳🇮",
     "dialCode": "+505",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1150,6 +1314,7 @@ export const COUNTRIES = [
   {
     "code": "NE",
     "name": "Niger",
+    "flag": "🇳🇪",
     "dialCode": "+227",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1157,6 +1322,7 @@ export const COUNTRIES = [
   {
     "code": "NG",
     "name": "Nigeria",
+    "flag": "🇳🇬",
     "dialCode": "+234",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1164,6 +1330,7 @@ export const COUNTRIES = [
   {
     "code": "NU",
     "name": "Niue",
+    "flag": "🇳🇺",
     "dialCode": "+683",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1171,6 +1338,7 @@ export const COUNTRIES = [
   {
     "code": "NF",
     "name": "Norfolk Island",
+    "flag": "🇳🇫",
     "dialCode": "+672",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1178,6 +1346,7 @@ export const COUNTRIES = [
   {
     "code": "KP",
     "name": "North Korea",
+    "flag": "🇰🇵",
     "dialCode": "+850",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1185,6 +1354,7 @@ export const COUNTRIES = [
   {
     "code": "MK",
     "name": "North Macedonia",
+    "flag": "🇲🇰",
     "dialCode": "+389",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1192,6 +1362,7 @@ export const COUNTRIES = [
   {
     "code": "MP",
     "name": "Northern Mariana Islands",
+    "flag": "🇲🇵",
     "dialCode": "+1670",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1199,6 +1370,7 @@ export const COUNTRIES = [
   {
     "code": "NO",
     "name": "Norway",
+    "flag": "🇳🇴",
     "dialCode": "+47",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1206,6 +1378,7 @@ export const COUNTRIES = [
   {
     "code": "OM",
     "name": "Oman",
+    "flag": "🇴🇲",
     "dialCode": "+968",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1213,6 +1386,7 @@ export const COUNTRIES = [
   {
     "code": "PK",
     "name": "Pakistan",
+    "flag": "🇵🇰",
     "dialCode": "+92",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1220,6 +1394,7 @@ export const COUNTRIES = [
   {
     "code": "PW",
     "name": "Palau",
+    "flag": "🇵🇼",
     "dialCode": "+680",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1227,6 +1402,7 @@ export const COUNTRIES = [
   {
     "code": "PS",
     "name": "Palestine",
+    "flag": "🇵🇸",
     "dialCode": "+970",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1234,6 +1410,7 @@ export const COUNTRIES = [
   {
     "code": "PA",
     "name": "Panama",
+    "flag": "🇵🇦",
     "dialCode": "+507",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1241,6 +1418,7 @@ export const COUNTRIES = [
   {
     "code": "PG",
     "name": "Papua New Guinea",
+    "flag": "🇵🇬",
     "dialCode": "+675",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1248,6 +1426,7 @@ export const COUNTRIES = [
   {
     "code": "PY",
     "name": "Paraguay",
+    "flag": "🇵🇾",
     "dialCode": "+595",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1255,6 +1434,7 @@ export const COUNTRIES = [
   {
     "code": "PE",
     "name": "Peru",
+    "flag": "🇵🇪",
     "dialCode": "+51",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1262,6 +1442,7 @@ export const COUNTRIES = [
   {
     "code": "PH",
     "name": "Philippines",
+    "flag": "🇵🇭",
     "dialCode": "+63",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1269,6 +1450,7 @@ export const COUNTRIES = [
   {
     "code": "PN",
     "name": "Pitcairn Islands",
+    "flag": "🇵🇳",
     "dialCode": "+64",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1276,6 +1458,7 @@ export const COUNTRIES = [
   {
     "code": "PL",
     "name": "Poland",
+    "flag": "🇵🇱",
     "dialCode": "+48",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1283,6 +1466,7 @@ export const COUNTRIES = [
   {
     "code": "PT",
     "name": "Portugal",
+    "flag": "🇵🇹",
     "dialCode": "+351",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1290,6 +1474,7 @@ export const COUNTRIES = [
   {
     "code": "PR",
     "name": "Puerto Rico",
+    "flag": "🇵🇷",
     "dialCode": "+1787",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1297,6 +1482,7 @@ export const COUNTRIES = [
   {
     "code": "QA",
     "name": "Qatar",
+    "flag": "🇶🇦",
     "dialCode": "+974",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1304,6 +1490,7 @@ export const COUNTRIES = [
   {
     "code": "CG",
     "name": "Republic of the Congo",
+    "flag": "🇨🇬",
     "dialCode": "+242",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1311,6 +1498,7 @@ export const COUNTRIES = [
   {
     "code": "RE",
     "name": "Reunion",
+    "flag": "🇷🇪",
     "dialCode": "+262",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1318,6 +1506,7 @@ export const COUNTRIES = [
   {
     "code": "RO",
     "name": "Romania",
+    "flag": "🇷🇴",
     "dialCode": "+40",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1325,6 +1514,7 @@ export const COUNTRIES = [
   {
     "code": "RU",
     "name": "Russia",
+    "flag": "🇷🇺",
     "dialCode": "+7",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1332,6 +1522,7 @@ export const COUNTRIES = [
   {
     "code": "RW",
     "name": "Rwanda",
+    "flag": "🇷🇼",
     "dialCode": "+250",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1339,6 +1530,7 @@ export const COUNTRIES = [
   {
     "code": "BL",
     "name": "Saint Barthelemy",
+    "flag": "🇧🇱",
     "dialCode": "+590",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1346,6 +1538,7 @@ export const COUNTRIES = [
   {
     "code": "SH",
     "name": "Saint Helena",
+    "flag": "🇸🇭",
     "dialCode": "+290",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1353,6 +1546,7 @@ export const COUNTRIES = [
   {
     "code": "KN",
     "name": "Saint Kitts and Nevis",
+    "flag": "🇰🇳",
     "dialCode": "+1869",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1360,6 +1554,7 @@ export const COUNTRIES = [
   {
     "code": "LC",
     "name": "Saint Lucia",
+    "flag": "🇱🇨",
     "dialCode": "+1758",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1367,6 +1562,7 @@ export const COUNTRIES = [
   {
     "code": "MF",
     "name": "Saint Martin",
+    "flag": "🇲🇫",
     "dialCode": "+590",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1374,6 +1570,7 @@ export const COUNTRIES = [
   {
     "code": "PM",
     "name": "Saint Pierre and Miquelon",
+    "flag": "🇵🇲",
     "dialCode": "+508",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1381,6 +1578,7 @@ export const COUNTRIES = [
   {
     "code": "VC",
     "name": "Saint Vincent and the Grenadines",
+    "flag": "🇻🇨",
     "dialCode": "+1784",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1388,6 +1586,7 @@ export const COUNTRIES = [
   {
     "code": "WS",
     "name": "Samoa",
+    "flag": "🇼🇸",
     "dialCode": "+685",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1395,6 +1594,7 @@ export const COUNTRIES = [
   {
     "code": "SM",
     "name": "San Marino",
+    "flag": "🇸🇲",
     "dialCode": "+378",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1402,6 +1602,7 @@ export const COUNTRIES = [
   {
     "code": "ST",
     "name": "Sao Tome and Principe",
+    "flag": "🇸🇹",
     "dialCode": "+239",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1409,6 +1610,7 @@ export const COUNTRIES = [
   {
     "code": "SA",
     "name": "Saudi Arabia",
+    "flag": "🇸🇦",
     "dialCode": "+966",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1416,6 +1618,7 @@ export const COUNTRIES = [
   {
     "code": "SN",
     "name": "Senegal",
+    "flag": "🇸🇳",
     "dialCode": "+221",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1423,6 +1626,7 @@ export const COUNTRIES = [
   {
     "code": "RS",
     "name": "Serbia",
+    "flag": "🇷🇸",
     "dialCode": "+381",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1430,6 +1634,7 @@ export const COUNTRIES = [
   {
     "code": "SC",
     "name": "Seychelles",
+    "flag": "🇸🇨",
     "dialCode": "+248",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1437,6 +1642,7 @@ export const COUNTRIES = [
   {
     "code": "SL",
     "name": "Sierra Leone",
+    "flag": "🇸🇱",
     "dialCode": "+232",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1444,6 +1650,7 @@ export const COUNTRIES = [
   {
     "code": "SX",
     "name": "Sint Maarten",
+    "flag": "🇸🇽",
     "dialCode": "+1721",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1451,6 +1658,7 @@ export const COUNTRIES = [
   {
     "code": "SK",
     "name": "Slovakia",
+    "flag": "🇸🇰",
     "dialCode": "+421",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1458,6 +1666,7 @@ export const COUNTRIES = [
   {
     "code": "SI",
     "name": "Slovenia",
+    "flag": "🇸🇮",
     "dialCode": "+386",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1465,6 +1674,7 @@ export const COUNTRIES = [
   {
     "code": "SB",
     "name": "Solomon Islands",
+    "flag": "🇸🇧",
     "dialCode": "+677",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1472,6 +1682,7 @@ export const COUNTRIES = [
   {
     "code": "SO",
     "name": "Somalia",
+    "flag": "🇸🇴",
     "dialCode": "+252",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1479,6 +1690,7 @@ export const COUNTRIES = [
   {
     "code": "ZA",
     "name": "South Africa",
+    "flag": "🇿🇦",
     "dialCode": "+27",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1486,6 +1698,7 @@ export const COUNTRIES = [
   {
     "code": "GS",
     "name": "South Georgia and the South Sandwich Islands",
+    "flag": "🇬🇸",
     "dialCode": "+500",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1493,6 +1706,7 @@ export const COUNTRIES = [
   {
     "code": "KR",
     "name": "South Korea",
+    "flag": "🇰🇷",
     "dialCode": "+82",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1500,6 +1714,7 @@ export const COUNTRIES = [
   {
     "code": "SS",
     "name": "South Sudan",
+    "flag": "🇸🇸",
     "dialCode": "+211",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1507,6 +1722,7 @@ export const COUNTRIES = [
   {
     "code": "ES",
     "name": "Spain",
+    "flag": "🇪🇸",
     "dialCode": "+34",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1514,6 +1730,7 @@ export const COUNTRIES = [
   {
     "code": "LK",
     "name": "Sri Lanka",
+    "flag": "🇱🇰",
     "dialCode": "+94",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1521,6 +1738,7 @@ export const COUNTRIES = [
   {
     "code": "SD",
     "name": "Sudan",
+    "flag": "🇸🇩",
     "dialCode": "+249",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1528,6 +1746,7 @@ export const COUNTRIES = [
   {
     "code": "SR",
     "name": "Suriname",
+    "flag": "🇸🇷",
     "dialCode": "+597",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1535,6 +1754,7 @@ export const COUNTRIES = [
   {
     "code": "SJ",
     "name": "Svalbard and Jan Mayen",
+    "flag": "🇸🇯",
     "dialCode": "+4779",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1542,6 +1762,7 @@ export const COUNTRIES = [
   {
     "code": "SE",
     "name": "Sweden",
+    "flag": "🇸🇪",
     "dialCode": "+46",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1549,6 +1770,7 @@ export const COUNTRIES = [
   {
     "code": "CH",
     "name": "Switzerland",
+    "flag": "🇨🇭",
     "dialCode": "+41",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1556,6 +1778,7 @@ export const COUNTRIES = [
   {
     "code": "SY",
     "name": "Syria",
+    "flag": "🇸🇾",
     "dialCode": "+963",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1563,6 +1786,7 @@ export const COUNTRIES = [
   {
     "code": "TW",
     "name": "Taiwan",
+    "flag": "🇹🇼",
     "dialCode": "+886",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1570,6 +1794,7 @@ export const COUNTRIES = [
   {
     "code": "TJ",
     "name": "Tajikistan",
+    "flag": "🇹🇯",
     "dialCode": "+992",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1577,6 +1802,7 @@ export const COUNTRIES = [
   {
     "code": "TZ",
     "name": "Tanzania",
+    "flag": "🇹🇿",
     "dialCode": "+255",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1584,6 +1810,7 @@ export const COUNTRIES = [
   {
     "code": "TH",
     "name": "Thailand",
+    "flag": "🇹🇭",
     "dialCode": "+66",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1591,6 +1818,7 @@ export const COUNTRIES = [
   {
     "code": "TG",
     "name": "Togo",
+    "flag": "🇹🇬",
     "dialCode": "+228",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1598,6 +1826,7 @@ export const COUNTRIES = [
   {
     "code": "TK",
     "name": "Tokelau",
+    "flag": "🇹🇰",
     "dialCode": "+690",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1605,6 +1834,7 @@ export const COUNTRIES = [
   {
     "code": "TO",
     "name": "Tonga",
+    "flag": "🇹🇴",
     "dialCode": "+676",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1612,6 +1842,7 @@ export const COUNTRIES = [
   {
     "code": "TT",
     "name": "Trinidad and Tobago",
+    "flag": "🇹🇹",
     "dialCode": "+1868",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1619,6 +1850,7 @@ export const COUNTRIES = [
   {
     "code": "TA",
     "name": "Tristan da Cunha",
+    "flag": "🇹🇦",
     "dialCode": "+290",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1626,6 +1858,7 @@ export const COUNTRIES = [
   {
     "code": "TN",
     "name": "Tunisia",
+    "flag": "🇹🇳",
     "dialCode": "+216",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1633,6 +1866,7 @@ export const COUNTRIES = [
   {
     "code": "TR",
     "name": "Türkiye",
+    "flag": "🇹🇷",
     "dialCode": "+90",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1640,6 +1874,7 @@ export const COUNTRIES = [
   {
     "code": "TM",
     "name": "Turkmenistan",
+    "flag": "🇹🇲",
     "dialCode": "+993",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1647,6 +1882,7 @@ export const COUNTRIES = [
   {
     "code": "TC",
     "name": "Turks and Caicos Islands",
+    "flag": "🇹🇨",
     "dialCode": "+1649",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1654,6 +1890,7 @@ export const COUNTRIES = [
   {
     "code": "TV",
     "name": "Tuvalu",
+    "flag": "🇹🇻",
     "dialCode": "+688",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1661,6 +1898,7 @@ export const COUNTRIES = [
   {
     "code": "UM",
     "name": "U.S. Minor Outlying Islands",
+    "flag": "🇺🇲",
     "dialCode": "+1",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1668,6 +1906,7 @@ export const COUNTRIES = [
   {
     "code": "VI",
     "name": "U.S. Virgin Islands",
+    "flag": "🇻🇮",
     "dialCode": "+1340",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1675,6 +1914,7 @@ export const COUNTRIES = [
   {
     "code": "UG",
     "name": "Uganda",
+    "flag": "🇺🇬",
     "dialCode": "+256",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1682,6 +1922,7 @@ export const COUNTRIES = [
   {
     "code": "UA",
     "name": "Ukraine",
+    "flag": "🇺🇦",
     "dialCode": "+380",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1689,6 +1930,7 @@ export const COUNTRIES = [
   {
     "code": "UY",
     "name": "Uruguay",
+    "flag": "🇺🇾",
     "dialCode": "+598",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1696,6 +1938,7 @@ export const COUNTRIES = [
   {
     "code": "UZ",
     "name": "Uzbekistan",
+    "flag": "🇺🇿",
     "dialCode": "+998",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1703,6 +1946,7 @@ export const COUNTRIES = [
   {
     "code": "VU",
     "name": "Vanuatu",
+    "flag": "🇻🇺",
     "dialCode": "+678",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1710,6 +1954,7 @@ export const COUNTRIES = [
   {
     "code": "VA",
     "name": "Vatican City",
+    "flag": "🇻🇦",
     "dialCode": "+379",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1717,6 +1962,7 @@ export const COUNTRIES = [
   {
     "code": "VE",
     "name": "Venezuela",
+    "flag": "🇻🇪",
     "dialCode": "+58",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1724,6 +1970,7 @@ export const COUNTRIES = [
   {
     "code": "VN",
     "name": "Vietnam",
+    "flag": "🇻🇳",
     "dialCode": "+84",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1731,6 +1978,7 @@ export const COUNTRIES = [
   {
     "code": "WF",
     "name": "Wallis and Futuna",
+    "flag": "🇼🇫",
     "dialCode": "+681",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1738,6 +1986,7 @@ export const COUNTRIES = [
   {
     "code": "EH",
     "name": "Western Sahara",
+    "flag": "🇪🇭",
     "dialCode": "+212",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1745,6 +1994,7 @@ export const COUNTRIES = [
   {
     "code": "YE",
     "name": "Yemen",
+    "flag": "🇾🇪",
     "dialCode": "+967",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1752,6 +2002,7 @@ export const COUNTRIES = [
   {
     "code": "ZM",
     "name": "Zambia",
+    "flag": "🇿🇲",
     "dialCode": "+260",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
@@ -1759,6 +2010,7 @@ export const COUNTRIES = [
   {
     "code": "ZW",
     "name": "Zimbabwe",
+    "flag": "🇿🇼",
     "dialCode": "+263",
     "taxLabel": "Tax ID",
     "taxPlaceholder": "E.g. 123456789"
