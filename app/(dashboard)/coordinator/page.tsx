@@ -216,6 +216,7 @@ export default function CoordinatorDashboard() {
             )}
           </div>
         )}
+        </div>
       </div>
 
       {showUpdateForm && activeLead && (
