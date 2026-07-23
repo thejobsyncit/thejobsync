@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Plus, Building2, Mail, Phone, Calendar, Loader2, Upload, Download, Trash2, Search } from 'lucide-react';
+import { Plus, Building2, Mail, Phone, Calendar, Loader2, Upload, Download, Trash2, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { CompanyLead } from '@/lib/types';
 import { read, utils, writeFile } from 'xlsx';
 
@@ -20,6 +20,8 @@ export default function DMSDashboard() {
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [deleting, setDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 50;
 
   const filteredLeads = useMemo(() => {
     if (!searchQuery) return leads;
@@ -31,6 +33,16 @@ export default function DMSDashboard() {
       l.coordinator?.name?.toLowerCase().includes(lowerQuery)
     );
   }, [leads, searchQuery]);
+
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const totalPages = Math.ceil(filteredLeads.length / ITEMS_PER_PAGE);
+  const paginatedLeads = useMemo(() => {
+    return filteredLeads.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  }, [filteredLeads, currentPage]);
 
   useEffect(() => {
     fetchLeads();
@@ -306,7 +318,7 @@ export default function DMSDashboard() {
               </tr>
             </thead>
             <tbody>
-              {filteredLeads.map(lead => (
+              {paginatedLeads.map(lead => (
                 <tr key={lead.id} className={`border-b border-[var(--border)] last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${selectedLeads.includes(lead.id) ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}>
                   <td className="p-4"><input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" checked={selectedLeads.includes(lead.id)} onChange={() => handleSelect(lead.id)} /></td>
                   <td className="p-4">
@@ -321,6 +333,51 @@ export default function DMSDashboard() {
               ))}
             </tbody>
           </table>
+          
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-[var(--border)] bg-slate-50 dark:bg-slate-800/50 px-4 py-3">
+              <span className="text-sm text-slate-600 dark:text-slate-400">
+                Showing <span className="font-semibold text-slate-900 dark:text-white">{((currentPage - 1) * ITEMS_PER_PAGE) + 1}</span> to <span className="font-semibold text-slate-900 dark:text-white">{Math.min(currentPage * ITEMS_PER_PAGE, filteredLeads.length)}</span> of <span className="font-semibold text-slate-900 dark:text-white">{filteredLeads.length}</span> clients
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum = i + 1;
+                    if (totalPages > 5) {
+                      if (currentPage > 3) {
+                        pageNum = currentPage - 3 + i;
+                        if (pageNum > totalPages) return null;
+                      }
+                    }
+                    if (pageNum > totalPages) return null;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-9 h-9 rounded-lg text-sm font-semibold transition-all ${currentPage === pageNum ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700'}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

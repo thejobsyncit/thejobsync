@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { PhoneCall, Loader2, CheckCircle2, PhoneOff, PhoneMissed, CalendarClock, XCircle, Trash2, Search, Download, Eye, Building2, MapPin, Mail, Globe, Users, Briefcase, FileText } from 'lucide-react';
+import { PhoneCall, Loader2, CheckCircle2, PhoneOff, PhoneMissed, CalendarClock, XCircle, Trash2, Search, Download, Eye, Building2, MapPin, Mail, Globe, Users, Briefcase, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { CompanyLead } from '@/lib/types';
 import { utils, writeFile } from 'xlsx';
 
@@ -28,6 +28,8 @@ export default function CoordinatorDashboard() {
   const [deleting, setDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewLead, setViewLead] = useState<CompanyLead | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 50;
 
   const filteredLeads = useMemo(() => {
     if (!searchQuery) return leads;
@@ -38,6 +40,16 @@ export default function CoordinatorDashboard() {
       l.phone?.toLowerCase().includes(lowerQuery)
     );
   }, [leads, searchQuery]);
+
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  const totalPages = Math.ceil(filteredLeads.length / ITEMS_PER_PAGE);
+  const paginatedLeads = useMemo(() => {
+    return filteredLeads.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  }, [filteredLeads, currentPage]);
 
   useEffect(() => {
     fetchLeads();
@@ -370,8 +382,9 @@ export default function CoordinatorDashboard() {
           <p className="text-[var(--muted-foreground)]">{searchQuery ? `We couldn't find anything matching "${searchQuery}"` : 'You have no assigned company dumps right now.'}</p>
         </div>
       ) : (
-        <div className="grid gap-4">
-          {filteredLeads.map(lead => (
+        <div className="flex flex-col gap-6">
+          <div className="grid gap-4">
+            {paginatedLeads.map(lead => (
             <div key={lead.id} className={`bg-white dark:bg-slate-900 rounded-xl border p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm transition-colors ${selectedLeads.includes(lead.id) ? 'border-blue-500 ring-1 ring-blue-500/20' : 'border-[var(--border)]'}`}>
               <div className="flex items-start gap-4 flex-1">
                 <div className="pt-1">
@@ -411,6 +424,53 @@ export default function CoordinatorDashboard() {
               </div>
             </div>
           ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-3 rounded-xl shadow-sm">
+              <span className="text-sm text-slate-600 dark:text-slate-400">
+                Showing <span className="font-semibold text-slate-900 dark:text-white">{((currentPage - 1) * ITEMS_PER_PAGE) + 1}</span> to <span className="font-semibold text-slate-900 dark:text-white">{Math.min(currentPage * ITEMS_PER_PAGE, filteredLeads.length)}</span> of <span className="font-semibold text-slate-900 dark:text-white">{filteredLeads.length}</span> leads
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    // Simple logic to show current page and surrounding pages
+                    let pageNum = i + 1;
+                    if (totalPages > 5) {
+                      if (currentPage > 3) {
+                        pageNum = currentPage - 3 + i;
+                        if (pageNum > totalPages) return null;
+                      }
+                    }
+                    if (pageNum > totalPages) return null;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-9 h-9 rounded-lg text-sm font-semibold transition-all ${currentPage === pageNum ? 'bg-blue-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
