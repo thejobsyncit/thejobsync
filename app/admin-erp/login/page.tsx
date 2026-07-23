@@ -61,7 +61,7 @@ export default function AdminERPLogin() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50/50" style={{ backgroundImage: 'radial-gradient(#e5e7eb 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         
         <div className="bg-[#0f172a] py-8 px-6 text-center text-white relative">
@@ -96,7 +96,7 @@ export default function AdminERPLogin() {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <User className="h-4 w-4 text-gray-400" />
                     </div>
-                    <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f172a]" placeholder="John Doe" />
+                    <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className="block w-full pl-10 pr-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f172a]" placeholder="John Doe" />
                   </div>
                 </div>
                 <div>
@@ -105,7 +105,7 @@ export default function AdminERPLogin() {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Phone className="h-4 w-4 text-gray-400" />
                     </div>
-                    <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f172a]" placeholder="+91 9876543210" />
+                    <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} className="block w-full pl-10 pr-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f172a]" placeholder="+91 9876543210" />
                   </div>
                 </div>
               </>
@@ -119,7 +119,7 @@ export default function AdminERPLogin() {
                 </div>
                 <input
                   type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f172a]"
+                  className="block w-full pl-10 pr-3 py-3 bg-white text-gray-900 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f172a]"
                   placeholder="admin@example.com"
                 />
               </div>
@@ -133,7 +133,7 @@ export default function AdminERPLogin() {
                 </div>
                 <input
                   type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f172a]"
+                  className="block w-full pl-10 pr-10 py-3 bg-white text-gray-900 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0f172a]"
                   placeholder={isLogin ? "Enter your password" : "Create a password"}
                 />
               </div>
