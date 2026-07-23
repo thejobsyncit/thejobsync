@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { PhoneCall, Loader2, CheckCircle2, PhoneOff, PhoneMissed, CalendarClock, XCircle, Trash2 } from 'lucide-react';
+import { PhoneCall, Loader2, CheckCircle2, PhoneOff, PhoneMissed, CalendarClock, XCircle, Trash2, Search } from 'lucide-react';
 import type { CompanyLead } from '@/lib/types';
 
 const STATUS_ACTIONS = [
@@ -25,6 +25,17 @@ export default function CoordinatorDashboard() {
   
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [deleting, setDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredLeads = useMemo(() => {
+    if (!searchQuery) return leads;
+    const lowerQuery = searchQuery.toLowerCase();
+    return leads.filter(l => 
+      l.companyName?.toLowerCase().includes(lowerQuery) || 
+      l.email?.toLowerCase().includes(lowerQuery) || 
+      l.phone?.toLowerCase().includes(lowerQuery)
+    );
+  }, [leads, searchQuery]);
 
   useEffect(() => {
     fetchLeads();
@@ -110,7 +121,7 @@ export default function CoordinatorDashboard() {
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setSelectedLeads(leads.map(l => l.id));
+      setSelectedLeads(filteredLeads.map(l => l.id));
     } else {
       setSelectedLeads([]);
     }
@@ -146,13 +157,23 @@ export default function CoordinatorDashboard() {
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Fresh Leads (Coordinator)</h1>
-          <p className="text-[var(--muted-foreground)]">Your assigned calling list</p>
+          <p className="text-[var(--muted-foreground)] mb-4">Your assigned calling list</p>
+          <div className="relative max-w-md w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="Search clients, candidates, requirement..." 
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-full text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+            />
+          </div>
         </div>
         
-        {leads.length > 0 && (
-          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 border border-[var(--border)] px-4 py-2 rounded-xl shadow-sm">
+        {filteredLeads.length > 0 && (
+          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 border border-[var(--border)] px-4 py-2 rounded-xl shadow-sm h-fit">
             <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked={selectedLeads.length === leads.length && leads.length > 0} onChange={handleSelectAll} />
+              <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked={selectedLeads.length === filteredLeads.length && filteredLeads.length > 0} onChange={handleSelectAll} />
               <span className="text-sm font-semibold">Select All</span>
             </label>
             {selectedLeads.length > 0 && (
@@ -241,15 +262,15 @@ export default function CoordinatorDashboard() {
 
       {loading ? (
         <div className="flex justify-center p-12"><Loader2 className="animate-spin text-[var(--primary)]" size={32} /></div>
-      ) : leads.length === 0 ? (
+      ) : filteredLeads.length === 0 ? (
         <div className="bg-white dark:bg-slate-900 rounded-xl p-12 text-center border border-[var(--border)]">
           <PhoneCall size={48} className="mx-auto text-[var(--muted-foreground)] mb-4 opacity-50" />
-          <h3 className="text-lg font-bold mb-2">No fresh leads</h3>
-          <p className="text-[var(--muted-foreground)]">You have no assigned company dumps right now.</p>
+          <h3 className="text-lg font-bold mb-2">{searchQuery ? 'No matching leads found' : 'No fresh leads'}</h3>
+          <p className="text-[var(--muted-foreground)]">{searchQuery ? `We couldn't find anything matching "${searchQuery}"` : 'You have no assigned company dumps right now.'}</p>
         </div>
       ) : (
         <div className="grid gap-4">
-          {leads.map(lead => (
+          {filteredLeads.map(lead => (
             <div key={lead.id} className={`bg-white dark:bg-slate-900 rounded-xl border p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm transition-colors ${selectedLeads.includes(lead.id) ? 'border-blue-500 ring-1 ring-blue-500/20' : 'border-[var(--border)]'}`}>
               <div className="flex items-start gap-4 flex-1">
                 <div className="pt-1">
