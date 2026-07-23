@@ -3,6 +3,17 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
+const COUNTRIES = [
+  { code: 'IN', name: 'India', flag: '🇮🇳', dialCode: '+91', taxLabel: 'GST Number', taxPlaceholder: 'E.g. 22AAAAA0000A1Z5' },
+  { code: 'SG', name: 'Singapore', flag: '🇸🇬', dialCode: '+65', taxLabel: 'UEN Number', taxPlaceholder: 'E.g. 202312345A' },
+  { code: 'US', name: 'United States', flag: '🇺🇸', dialCode: '+1', taxLabel: 'EIN / Tax ID', taxPlaceholder: 'E.g. 12-3456789' },
+  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', dialCode: '+44', taxLabel: 'VAT Number', taxPlaceholder: 'E.g. GB123456789' },
+  { code: 'AE', name: 'United Arab Emirates', flag: '🇦🇪', dialCode: '+971', taxLabel: 'TRN Number', taxPlaceholder: 'E.g. 100012345678903' },
+  { code: 'AU', name: 'Australia', flag: '🇦🇺', dialCode: '+61', taxLabel: 'ABN Number', taxPlaceholder: 'E.g. 11 222 333 444' },
+  { code: 'CA', name: 'Canada', flag: '🇨🇦', dialCode: '+1', taxLabel: 'BN / Tax ID', taxPlaceholder: 'E.g. 123456789RT0001' },
+  { code: 'OTHER', name: 'Other', flag: '🌐', dialCode: '', taxLabel: 'Tax/Registration ID', taxPlaceholder: 'Enter Tax/Registration ID' }
+];
 import { ArrowLeft, CheckCircle2, Circle, Eye, EyeOff, Check, Search, MapPin, Users, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '@/components/landing/Footer';
@@ -24,6 +35,7 @@ export default function EmployerRegistration() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Form State
+  const [selectedCountryCode, setSelectedCountryCode] = useState('IN');
   const [companyName, setCompanyName] = useState('');
   const [gstNumber, setGstNumber] = useState('');
   const [address, setAddress] = useState('');
@@ -139,12 +151,15 @@ export default function EmployerRegistration() {
       }
 
       // 2. Register User
+      const countryData = COUNTRIES.find(c => c.code === selectedCountryCode) || COUNTRIES[0];
+      const fullContactPhone = `${countryData.dialCode} ${contactPhone}`.trim();
+
       const registerRes = await fetch('/api/employer/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          companyName, gstNumber, address, contactPerson, contactPhone,
-          email: workEmail, password, industry, about
+          companyName, gstNumber, address, contactPerson, contactPhone: fullContactPhone,
+          country: selectedCountryCode, email: workEmail, password, industry, about
         }),
       });
       const registerData = await registerRes.json();
@@ -689,9 +704,26 @@ export default function EmployerRegistration() {
                           <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Company Name *</label>
                           <input type="text" placeholder="e.g. Infosys, TCS, Zoho" required value={companyName} onChange={e => setCompanyName(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white" />
                         </div>
-                        <div>
-                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">GST Number *</label>
-                          <input type="text" placeholder="E.g. 22AAAAA0000A1Z5" required value={gstNumber} onChange={e => setGstNumber(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white" />
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Country *</label>
+                            <select value={selectedCountryCode} onChange={e => setSelectedCountryCode(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white appearance-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}>
+                              {COUNTRIES.map(c => (
+                                <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            {(() => {
+                              const countryData = COUNTRIES.find(c => c.code === selectedCountryCode) || COUNTRIES[0];
+                              return (
+                                <>
+                                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{countryData.taxLabel} *</label>
+                                  <input type="text" placeholder={countryData.taxPlaceholder} required value={gstNumber} onChange={e => setGstNumber(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white" />
+                                </>
+                              );
+                            })()}
+                          </div>
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Company Address *</label>
@@ -705,7 +737,18 @@ export default function EmployerRegistration() {
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Contact Number *</label>
-                            <input type="tel" placeholder="10-digit mobile" required value={contactPhone} onChange={e => setContactPhone(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white" />
+                            {(() => {
+                              const countryData = COUNTRIES.find(c => c.code === selectedCountryCode) || COUNTRIES[0];
+                              return (
+                                <div className="flex w-full border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden focus-within:border-[#0077B6] dark:focus-within:border-[#0077B6] transition-colors bg-white dark:bg-slate-800">
+                                  <div className="flex items-center justify-center px-3 bg-slate-50 dark:bg-slate-800/50 border-r border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium">
+                                    <span className="mr-1.5 text-base leading-none">{countryData.flag}</span>
+                                    <span>{countryData.dialCode}</span>
+                                  </div>
+                                  <input type="tel" placeholder="Mobile number" required value={contactPhone} onChange={e => setContactPhone(e.target.value)} className="flex-1 px-3 py-3.5 bg-transparent text-sm focus:outline-none dark:text-white" />
+                                </div>
+                              );
+                            })()}
                           </div>
                         </div>
 
