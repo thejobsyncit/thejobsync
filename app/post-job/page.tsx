@@ -4,16 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-const COUNTRIES = [
-  { code: 'IN', name: 'India', flag: '🇮🇳', dialCode: '+91', taxLabel: 'GST Number', taxPlaceholder: 'E.g. 22AAAAA0000A1Z5' },
-  { code: 'SG', name: 'Singapore', flag: '🇸🇬', dialCode: '+65', taxLabel: 'UEN Number', taxPlaceholder: 'E.g. 202312345A' },
-  { code: 'US', name: 'United States', flag: '🇺🇸', dialCode: '+1', taxLabel: 'EIN / Tax ID', taxPlaceholder: 'E.g. 12-3456789' },
-  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', dialCode: '+44', taxLabel: 'VAT Number', taxPlaceholder: 'E.g. GB123456789' },
-  { code: 'AE', name: 'United Arab Emirates', flag: '🇦🇪', dialCode: '+971', taxLabel: 'TRN Number', taxPlaceholder: 'E.g. 100012345678903' },
-  { code: 'AU', name: 'Australia', flag: '🇦🇺', dialCode: '+61', taxLabel: 'ABN Number', taxPlaceholder: 'E.g. 11 222 333 444' },
-  { code: 'CA', name: 'Canada', flag: '🇨🇦', dialCode: '+1', taxLabel: 'BN / Tax ID', taxPlaceholder: 'E.g. 123456789RT0001' },
-  { code: 'OTHER', name: 'Other', flag: '🌐', dialCode: '', taxLabel: 'Tax/Registration ID', taxPlaceholder: 'Enter Tax/Registration ID' }
-];
+import { COUNTRIES } from '@/lib/countries';
 import { ArrowLeft, CheckCircle2, Circle, Eye, EyeOff, Check, Search, MapPin, Users, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '@/components/landing/Footer';
