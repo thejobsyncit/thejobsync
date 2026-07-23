@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { PhoneCall, Loader2, CheckCircle2, PhoneOff, PhoneMissed, CalendarClock, XCircle, Trash2, Search } from 'lucide-react';
+import { PhoneCall, Loader2, CheckCircle2, PhoneOff, PhoneMissed, CalendarClock, XCircle, Trash2, Search, Download, Eye, Building2, MapPin, Mail, Globe, Users, Briefcase, FileText } from 'lucide-react';
 import type { CompanyLead } from '@/lib/types';
+import { utils, writeFile } from 'xlsx';
 
 const STATUS_ACTIONS = [
   { value: 'rnr', label: 'RNR', icon: <PhoneMissed size={16} />, color: 'bg-orange-100 text-orange-700' },
@@ -26,6 +27,7 @@ export default function CoordinatorDashboard() {
   const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [deleting, setDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewLead, setViewLead] = useState<CompanyLead | null>(null);
 
   const filteredLeads = useMemo(() => {
     if (!searchQuery) return leads;
@@ -148,6 +150,30 @@ export default function CoordinatorDashboard() {
     }
   };
 
+  const downloadExcel = () => {
+    if (filteredLeads.length === 0) return alert('No leads to export.');
+    const wsData = filteredLeads.map(lead => ({
+      'Company Name': lead.companyName || 'N/A',
+      'Email ID': lead.email || 'N/A',
+      'Phone No': lead.phone || 'N/A',
+      'Contact Person': lead.contactPerson || 'N/A',
+      'Position': lead.position || 'N/A',
+      'Address': lead.address || 'N/A',
+      'Status': lead.status.replace('_', ' ').toUpperCase(),
+      'Requirement Details': lead.requirementDetails || 'N/A',
+      'Validity Time': lead.validityTime || 'N/A',
+      'Remark': lead.remark || 'N/A',
+      'Website': lead.website || 'N/A',
+      'Added By': lead.dms?.name || 'Unknown',
+      'Date Added': new Date(lead.createdAt).toLocaleDateString()
+    }));
+    
+    const ws = utils.json_to_sheet(wsData);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, "Leads");
+    writeFile(wb, `Fresh_Leads_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
   if (!user || !['super_admin', 'admin', 'coordinator'].includes(user.role)) {
     return <div className="p-8">Access Denied</div>;
   }
@@ -170,8 +196,12 @@ export default function CoordinatorDashboard() {
           </div>
         </div>
         
-        {filteredLeads.length > 0 && (
-          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 border border-[var(--border)] px-4 py-2 rounded-xl shadow-sm h-fit">
+        <div className="flex items-center gap-4 flex-wrap justify-end">
+          <button onClick={downloadExcel} className="flex items-center gap-2 bg-[#03045E] hover:bg-[#172554] text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm">
+            <Download size={16} /> Export Excel
+          </button>
+          {filteredLeads.length > 0 && (
+            <div className="flex items-center gap-4 bg-white dark:bg-slate-900 border border-[var(--border)] px-4 py-2 rounded-xl shadow-sm h-fit">
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked={selectedLeads.length === filteredLeads.length && filteredLeads.length > 0} onChange={handleSelectAll} />
               <span className="text-sm font-semibold">Select All</span>
@@ -260,6 +290,76 @@ export default function CoordinatorDashboard() {
         </div>
       )}
 
+      {viewLead && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-8 shadow-2xl relative my-8 border border-slate-100 dark:border-slate-800">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-3">
+                  <Building2 size={24} className="text-[#03045E]" /> 
+                  {viewLead.companyName}
+                </h2>
+                <div className="flex gap-2 mt-2">
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase ${
+                    viewLead.status === 'fresh' ? 'bg-purple-100 text-purple-700' :
+                    viewLead.status === 'interested' || viewLead.status === 'updated' ? 'bg-green-100 text-green-700' :
+                    'bg-slate-100 text-slate-600'
+                  }`}>{viewLead.status.replace('_', ' ')}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full font-semibold bg-slate-100 text-slate-600">Added: {new Date(viewLead.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+              <button onClick={() => setViewLead(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                <XCircle size={24} />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-800/50 p-5 rounded-xl border border-slate-100 dark:border-slate-800">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1"><Users size={12} /> Contact Person</label>
+                  <p className="font-medium text-sm text-slate-700 dark:text-slate-300">{viewLead.contactPerson || 'Not provided'}</p>
+                  {viewLead.position && <p className="text-xs text-slate-500 mt-0.5">{viewLead.position}</p>}
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1"><PhoneCall size={12} /> Phone Number</label>
+                  <p className="font-medium text-sm text-slate-700 dark:text-slate-300">{viewLead.phone || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1"><Mail size={12} /> Email ID</label>
+                  <p className="font-medium text-sm text-slate-700 dark:text-slate-300">{viewLead.email || 'Not provided'}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1"><Globe size={12} /> Website</label>
+                  <p className="font-medium text-sm text-slate-700 dark:text-slate-300">{viewLead.website || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1"><MapPin size={12} /> Address</label>
+                  <p className="font-medium text-sm text-slate-700 dark:text-slate-300">{viewLead.address || 'Not provided'}</p>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1"><CalendarClock size={12} /> Validity Time</label>
+                  <p className="font-medium text-sm text-slate-700 dark:text-slate-300">{viewLead.validityTime || 'Not provided'}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-5 bg-slate-50 dark:bg-slate-800/50 p-5 rounded-xl border border-slate-100 dark:border-slate-800">
+              <div>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5"><Briefcase size={12} /> Requirement Details</label>
+                <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{viewLead.requirementDetails || 'No requirements listed yet.'}</p>
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-1.5"><FileText size={12} /> Internal Remark</label>
+                <p className="text-sm text-slate-700 dark:text-slate-300 italic">{viewLead.remark || 'No remarks added.'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center p-12"><Loader2 className="animate-spin text-[var(--primary)]" size={32} /></div>
       ) : filteredLeads.length === 0 ? (
@@ -278,7 +378,10 @@ export default function CoordinatorDashboard() {
                 </div>
                 <div className="flex-1">
                 <div className="flex items-center gap-3 mb-1">
-                  <h3 className="font-bold text-lg">{lead.companyName}</h3>
+                  <button onClick={() => setViewLead(lead)} className="font-bold text-lg hover:text-blue-600 transition-colors flex items-center gap-2 text-left">
+                    {lead.companyName}
+                    <Eye size={16} className="text-slate-400 opacity-50" />
+                  </button>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase ${
                     lead.status === 'fresh' ? 'bg-purple-100 text-purple-700' :
                     lead.status === 'interested' || lead.status === 'updated' ? 'bg-green-100 text-green-700' :
