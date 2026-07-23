@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
           companyName: lead.companyName,
           email: lead.email || 'na',
           phone: String(lead.phone || 'na'),
+          address: lead.address || null,
           status: 'fresh',
           dmsId: user.userId,
           coordinatorId: assignedCoordinatorId,
@@ -87,6 +88,7 @@ export async function POST(req: NextRequest) {
           companyName: lead.companyName,
           email: lead.email || 'na',
           phone: String(lead.phone || 'na'),
+          address: lead.address || null,
           status: 'fresh',
           dmsId: user.userId,
         });

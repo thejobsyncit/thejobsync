@@ -12,7 +12,7 @@ export default function DMSDashboard() {
   const [loading, setLoading] = useState(true);
   
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ companyName: '', email: '', phone: '' });
+  const [formData, setFormData] = useState({ companyName: '', email: '', phone: '', address: '' });
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +61,7 @@ export default function DMSDashboard() {
         body: JSON.stringify(formData)
       });
       if (res.ok) {
-        setFormData({ companyName: '', email: '', phone: '' });
+        setFormData({ companyName: '', email: '', phone: '', address: '' });
         setShowForm(false);
         fetchLeads();
       } else {
@@ -93,6 +93,7 @@ export default function DMSDashboard() {
             let companyName = '';
             let email = '';
             let phone = '';
+            let address = '';
 
             for (const key of Object.keys(row)) {
               const val = row[key];
@@ -109,9 +110,12 @@ export default function DMSDashboard() {
               else if (!phone && (normalizedKey.includes('phone') || normalizedKey.includes('mobile') || normalizedKey.includes('contact') || normalizedKey.includes('number') || normalizedKey.includes('cell'))) {
                 phone = String(val);
               }
+              else if (!address && (normalizedKey.includes('address') || normalizedKey.includes('location') || normalizedKey.includes('city') || normalizedKey.includes('hq'))) {
+                address = String(val);
+              }
             }
 
-            return { companyName: companyName.trim(), email: email.trim(), phone: phone.trim() };
+            return { companyName: companyName.trim(), email: email.trim(), phone: phone.trim(), address: address.trim() };
           }).filter(lead => lead.companyName !== '');
 
           if (leads.length === 0) {
@@ -151,7 +155,8 @@ export default function DMSDashboard() {
     const ws = utils.json_to_sheet([{
       'Company Name': 'Acme Corp',
       'Email ID': 'contact@acme.com',
-      'Phone No': '9876543210'
+      'Phone No': '9876543210',
+      'Address': '123 Business Avenue, Tech City'
     }]);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, "Leads");
@@ -247,25 +252,29 @@ export default function DMSDashboard() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-xl max-w-md w-full p-6 shadow-xl relative">
-            <h2 className="text-xl font-bold mb-4">Add Client (Fresh Dump)</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-8 shadow-2xl relative border border-slate-100 dark:border-slate-800">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-6">Add Client (Fresh Dump)</h2>
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="form-label">Company Name *</label>
-                <input required className="form-input" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} placeholder="e.g. Acme Corp" />
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Company Name *</label>
+                <input required className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} placeholder="e.g. Acme Corp" />
               </div>
               <div>
-                <label className="form-label">Email ID</label>
-                <input className="form-input" type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="If none, leave blank or type 'na'" />
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Email ID</label>
+                <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="If none, leave blank or type 'na'" />
               </div>
               <div>
-                <label className="form-label">Phone No</label>
-                <input className="form-input" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="If none, leave blank or type 'na'" />
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Phone No</label>
+                <input className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="If none, leave blank or type 'na'" />
               </div>
-              <div className="flex justify-end gap-3 mt-6">
-                <button type="button" className="btn btn-ghost" onClick={() => setShowForm(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={submitting}>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Address</label>
+                <textarea className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-y" rows={2} value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} placeholder="Company Address (Optional)" />
+              </div>
+              <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" className="px-5 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" onClick={() => setShowForm(false)}>Cancel</button>
+                <button type="submit" className="px-5 py-2.5 rounded-xl font-bold bg-[#03045E] hover:bg-[#172554] text-white flex items-center justify-center gap-2 shadow-lg transition-all min-w-[140px]" disabled={submitting}>
                   {submitting ? <Loader2 className="animate-spin" size={18} /> : 'Save Client'}
                 </button>
               </div>

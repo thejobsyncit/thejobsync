@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { companyName, email, phone } = body;
+    const { companyName, email, phone, address } = body;
 
     if (!companyName) {
       return NextResponse.json({ error: 'Company Name is required' }, { status: 400 });
@@ -100,6 +100,7 @@ export async function POST(req: NextRequest) {
         companyName,
         email: email || 'na',
         phone: phone || 'na',
+        address: address || null,
         status: 'fresh',
         dmsId: user.userId,
         coordinatorId: assignedCoordinatorId,
