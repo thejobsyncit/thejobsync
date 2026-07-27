@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { PhoneOff, PhoneForwarded, PhoneCall, ThumbsUp, ThumbsDown, Mail, Phone, FileText, Briefcase, GraduationCap, Building2 } from 'lucide-react';
+import { openResumeSafe } from '@/lib/resume';
 
 export default function HRPage() {
   const { user } = useAuth();
@@ -61,28 +62,7 @@ export default function HRPage() {
   };
 
   const openResume = (url: string | null | undefined, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!url) return;
-    
-    if (url.startsWith('data:')) {
-      try {
-        const arr = url.split(',');
-        const mime = arr[0].match(/:(.*?);/)?.[1] || 'application/pdf';
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) u8arr[n] = bstr.charCodeAt(n);
-        const blob = new Blob([u8arr], { type: mime });
-        const blobUrl = URL.createObjectURL(blob);
-        window.open(blobUrl, '_blank');
-      } catch (err) {
-        console.error('Error opening resume', err);
-        window.open(url, '_blank');
-      }
-    } else {
-      window.open(url, '_blank');
-    }
+    openResumeSafe(url, e);
   };
 
   if (loading) return <div className="p-10 flex justify-center"><div className="spinner" style={{width: 40, height: 40}} /></div>;

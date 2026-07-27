@@ -278,6 +278,7 @@ export default function SuperAdminPage() {
                   <option value="placement_coordinator">Placement Coordinator</option>
                   <option value="dms">DMS</option>
                   <option value="coordinator">Coordinator</option>
+                  <option value="application_support">Application Support</option>
                   <option value="admin">Admin</option>
                   <option value="super_admin">Super Admin</option>
                 </select>

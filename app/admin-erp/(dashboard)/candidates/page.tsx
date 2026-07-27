@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Search, Trash2, Eye, Plus, X, Upload, FileText } from "lucide-react";
+import { Search, Trash2, Eye, Plus, X, Upload, FileText, Download } from "lucide-react";
+import { openResumeSafe, downloadResumeSafe } from "@/lib/resume";
 
 export default function CandidatesPage() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -164,9 +165,14 @@ export default function CandidatesPage() {
             </div>
 
             {viewResume.resumeUrl && (
-              <a href={viewResume.resumeUrl} target="_blank" className="mt-5 flex items-center justify-center gap-2 w-full py-2.5 bg-[#0f172a] text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors">
-                <FileText size={16} /> Download Resume PDF
-              </a>
+              <div className="mt-5 flex gap-2">
+                <button onClick={(e) => openResumeSafe(viewResume.resumeUrl, e)} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                  <FileText size={16} /> Open Resume
+                </button>
+                <button onClick={(e) => downloadResumeSafe(viewResume.resumeUrl, `${viewResume.name || 'Candidate'}_Resume.pdf`, e)} className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#0f172a] text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition">
+                  <Download size={16} /> Download PDF
+                </button>
+              </div>
             )}
           </div>
         </div>

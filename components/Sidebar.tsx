@@ -29,14 +29,14 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Recruiter Hub', href: '/recruiter', icon: <UserCheck size={18} />, roles: ['recruiter'] },
   { label: 'Interviewer Hub', href: '/interviewer', icon: <Calendar size={18} />, roles: ['interviewer'] },
   { label: 'HR Hub', href: '/hr', icon: <Heart size={18} />, roles: ['hr'] },
-  { label: 'Fresh Dump', href: '/fresh-dump', icon: <TestTube2 size={18} />, roles: ['super_admin', 'admin', 'hr', 'placement_coordinator', 'recruiter'] },
+  { label: 'Fresh Dump', href: '/fresh-dump', icon: <TestTube2 size={18} />, roles: ['super_admin', 'admin', 'hr', 'placement_coordinator', 'recruiter', 'application_support'] },
   { label: 'Reports', href: '/reports', icon: <BarChart3 size={18} />, roles: ['super_admin', 'admin', 'placement_coordinator', 'hr'] },
   { label: 'Admin Panel', href: '/admin', icon: <Shield size={18} />, roles: ['super_admin', 'admin'] },
   { label: 'Super Admin', href: '/super-admin', icon: <Crown size={18} />, roles: ['super_admin'] },
   { label: 'Candidate Stats', href: '/candidate-registrations', icon: <BarChart3 size={18} />, roles: ['super_admin'] },
-  { label: 'Helpdesk & Leave', href: '/helpdesk', icon: <LifeBuoy size={18} />, roles: ['super_admin', 'it_admin', 'admin', 'placement_coordinator', 'recruiter', 'interviewer', 'hr', 'developer', 'tester', 'dms', 'coordinator'] },
-  { label: 'My Attendance', href: '/my-attendance', icon: <Clock size={18} />, roles: ['super_admin', 'it_admin', 'admin', 'placement_coordinator', 'recruiter', 'interviewer', 'hr', 'developer', 'tester', 'dms', 'coordinator'] },
-  { label: 'Settings', href: '/settings', icon: <Settings size={18} />, roles: ['super_admin', 'admin', 'placement_coordinator', 'recruiter', 'interviewer', 'hr', 'client'] },
+  { label: 'Helpdesk & Leave', href: '/helpdesk', icon: <LifeBuoy size={18} />, roles: ['super_admin', 'it_admin', 'admin', 'placement_coordinator', 'recruiter', 'interviewer', 'hr', 'developer', 'tester', 'dms', 'coordinator', 'application_support'] },
+  { label: 'My Attendance', href: '/my-attendance', icon: <Clock size={18} />, roles: ['super_admin', 'it_admin', 'admin', 'placement_coordinator', 'recruiter', 'interviewer', 'hr', 'developer', 'tester', 'dms', 'coordinator', 'application_support'] },
+  { label: 'Settings', href: '/settings', icon: <Settings size={18} />, roles: ['super_admin', 'admin', 'placement_coordinator', 'recruiter', 'interviewer', 'hr', 'client', 'application_support'] },
 ];
 
 interface SidebarProps {

@@ -12,7 +12,8 @@ export type UserRole =
   | 'developer'
   | 'tester'
   | 'dms'
-  | 'coordinator';
+  | 'coordinator'
+  | 'application_support';
 
 export type RequirementStatus = 'open' | 'in_progress' | 'on_hold' | 'closed' | 'cancelled';
 export type CandidateStatus = 'new' | 'shortlisted' | 'interview_scheduled' | 'interviewed' | 'selected' | 'rejected' | 'offered' | 'joined' | 'withdrawn';
@@ -85,6 +86,8 @@ export interface Candidate {
   location: string;
   resumeUrl?: string;
   status: CandidateStatus;
+  source?: string;
+  assignedSupportId?: string | null;
   appliedFor?: string | null;
   requirementTitle?: string | null;
   notes?: string;
@@ -219,6 +222,7 @@ export const ROLE_LABELS: Partial<Record<UserRole, string>> = {
   tester: 'QA Tester',
   dms: 'DMS',
   coordinator: 'Coordinator',
+  application_support: 'Application Support',
 };
 
 export const ROLE_COLORS: Partial<Record<UserRole, string>> = {
@@ -234,6 +238,7 @@ export const ROLE_COLORS: Partial<Record<UserRole, string>> = {
   tester: '#ec4899',
   dms: '#f43f5e',         // rose
   coordinator: '#8b5cf6', // violet
+  application_support: '#06b6d4', // cyan
 };
 
 export const STATUS_COLORS: Record<string, string> = {

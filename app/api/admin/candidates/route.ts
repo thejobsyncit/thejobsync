@@ -132,7 +132,12 @@ async function sendStatusEmail(email: string, name: string, status: string) {
 
 export async function GET() {
   try {
-    const candidates = await prisma.candidate.findMany({ orderBy: { createdAt: 'desc' } });
+    const candidates = await prisma.candidate.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        assignedSupport: { select: { id: true, name: true } }
+      } as any
+    });
     return NextResponse.json(candidates);
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });

@@ -25,7 +25,7 @@ export default function EmployeesPage() {
 
   const handleDelete = async (id: string) => { if (!confirm("Delete this employee?")) return; await fetch("/api/admin/employees", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }); fetchData(); };
 
-  const roleColors: Record<string, string> = { super_admin: "bg-purple-100 text-purple-700", admin: "bg-blue-100 text-blue-700", recruiter: "bg-green-100 text-green-700", hr: "bg-pink-100 text-pink-700", interviewer: "bg-orange-100 text-orange-700" };
+  const roleColors: Record<string, string> = { super_admin: "bg-purple-100 text-purple-700", admin: "bg-blue-100 text-blue-700", recruiter: "bg-green-100 text-green-700", hr: "bg-pink-100 text-pink-700", interviewer: "bg-orange-100 text-orange-700", application_support: "bg-cyan-100 text-cyan-700" };
 
   if (loading) return <div className="p-8 text-center text-gray-500">Loading...</div>;
 
@@ -67,6 +67,7 @@ export default function EmployeesPage() {
                 <option value="recruiter">Recruiter</option>
                 <option value="hr">HR</option>
                 <option value="interviewer">Interviewer</option>
+                <option value="application_support">Application Support</option>
               </select>
               <input placeholder="Department (optional)" value={form.department} onChange={e => setForm({...form, department: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
             </div>

@@ -32,6 +32,7 @@ export default function LoginPage() {
         'recruiter': '/recruiter',
         'interviewer': '/interviewer',
         'client': '/client-portal',
+        'application_support': '/fresh-dump',
       };
       const targetPath = roleMap[result.user.role] || '/dashboard';
       router.push(targetPath);
@@ -51,6 +52,7 @@ export default function LoginPage() {
     { role: 'Interviewer', email: 'interviewer@crm.com' },
     { role: 'Placement', email: 'crm@crm.com' },
     { role: 'Client', email: 'client@crm.com' },
+    { role: 'App Support', email: 'support@crm.com' },
   ];
 
   if (isLoading) {

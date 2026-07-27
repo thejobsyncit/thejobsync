@@ -7,30 +7,10 @@ import { Candidate, JobRequirement } from '@/lib/types';
 import { validateForm, validateRequired, validateEmail, validatePhone } from '@/lib/validation';
 import { useAuth } from '@/context/AuthContext';
 import { canEditModule } from '@/lib/permissions';
+import { openResumeSafe } from '@/lib/resume';
 
 const openResume = (url: string | null | undefined, e: React.MouseEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
-  if (!url) return;
-  
-  if (url.startsWith('data:')) {
-    try {
-      const arr = url.split(',');
-      const mime = arr[0].match(/:(.*?);/)?.[1] || 'application/pdf';
-      const bstr = atob(arr[1]);
-      let n = bstr.length;
-      const u8arr = new Uint8Array(n);
-      while (n--) u8arr[n] = bstr.charCodeAt(n);
-      const blob = new Blob([u8arr], { type: mime });
-      const blobUrl = URL.createObjectURL(blob);
-      window.open(blobUrl, '_blank');
-    } catch (err) {
-      console.error('Error opening resume', err);
-      window.open(url, '_blank');
-    }
-  } else {
-    window.open(url, '_blank');
-  }
+  openResumeSafe(url, e);
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -117,6 +97,7 @@ export default function CandidatesPage() {
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [sourceFilter, setSourceFilter] = useState<string>('applied');
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -179,9 +160,10 @@ export default function CandidatesPage() {
         (c.skills && c.skills.some(s => s.toLowerCase().includes(search.toLowerCase()))) ||
         c.email.toLowerCase().includes(search.toLowerCase());
       const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      const matchesSource = sourceFilter === 'all' || (sourceFilter === 'applied' ? c.source !== 'excel_upload' : c.source === 'excel_upload');
+      return matchesSearch && matchesStatus && matchesSource;
     });
-  }, [candidates, search, statusFilter]);
+  }, [candidates, search, statusFilter, sourceFilter]);
 
   const handleOpenModal = (cand?: Candidate) => {
     if (cand) {
@@ -278,10 +260,17 @@ export default function CandidatesPage() {
         )}
       </div>
 
-      <div className="crm-filter-bar animate-fade-in delay-1" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ position: 'relative', flex: '1 1 240px' }}>
-          <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
-          <input className="input" style={{ paddingLeft: '2.5rem' }} placeholder="Search by name, skill, or email..." value={search} onChange={e => setSearch(e.target.value)} />
+      <div className="crm-filter-bar animate-fade-in delay-1" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ position: 'relative', flex: '1 1 240px', maxWidth: '400px' }}>
+            <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
+            <input className="input" style={{ paddingLeft: '2.5rem', width: '100%' }} placeholder="Search by name, skill, or email..." value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
+          <div className="tab-list" style={{ flexShrink: 0 }}>
+            <button className={`tab-item ${sourceFilter === 'applied' ? 'active' : ''}`} onClick={() => setSourceFilter('applied')}>Applied Profiles ({candidates.filter(c => c.source !== 'excel_upload').length})</button>
+            <button className={`tab-item ${sourceFilter === 'excel_upload' ? 'active' : ''}`} onClick={() => setSourceFilter('excel_upload')}>Excel Dumps ({candidates.filter(c => c.source === 'excel_upload').length})</button>
+            <button className={`tab-item ${sourceFilter === 'all' ? 'active' : ''}`} onClick={() => setSourceFilter('all')}>All ({candidates.length})</button>
+          </div>
         </div>
         <div className="tab-list" style={{ flexWrap: 'wrap' }}>
           {['all', 'new', 'shortlisted', 'interview_scheduled', 'selected', 'offered', 'joined'].map(s => (

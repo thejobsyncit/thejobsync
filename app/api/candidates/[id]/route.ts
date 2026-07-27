@@ -40,13 +40,16 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (data.currentRole !== undefined) updateData.currentRole = data.currentRole?.trim() || null;
     if (data.expectedSalary !== undefined) updateData.expectedSalary = data.expectedSalary?.trim() || null;
     if (data.location !== undefined) updateData.location = data.location.trim();
+    if (data.resumeUrl !== undefined) updateData.resumeUrl = data.resumeUrl?.trim() || null;
+    if (data.source !== undefined) updateData.source = data.source;
+    if (data.assignedSupportId !== undefined) updateData.assignedSupportId = data.assignedSupportId || null;
     if (data.status !== undefined) updateData.status = data.status;
     if (data.appliedFor !== undefined) updateData.appliedFor = data.appliedFor || null;
     if (data.notes !== undefined) updateData.notes = data.notes?.trim() || null;
 
     const candidate = await prisma.candidate.update({
       where: { id },
-      data: updateData,
+      data: updateData as any,
       include: { requirement: { select: { title: true } } }
     });
 

@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import PrintableEnrollmentForm from './PrintableEnrollmentForm';
 import ATSPremiumPlansModal from './ATSPremiumPlansModal';
 import { usePortalTheme } from '@/context/PortalThemeContext';
+import { openResumeSafe, downloadResumeSafe } from '@/lib/resume';
 import { toast } from 'react-hot-toast';
 import { getAllStates, getDistricts } from 'india-state-district';
 import { DEPARTMENTS, SALARY_RANGES } from '@/lib/constants';
@@ -649,7 +650,10 @@ export default function CandidateProfilePage() {
                     <div style={{ fontSize: '0.9rem', fontWeight: 700, color: isDark ? '#e0f2fe' : '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {form.resumeFileName || 'Resume uploaded'}
                     </div>
-                    <a href={form.resumeUrl} download={form.resumeFileName || 'Resume'} style={{ fontSize: '0.8rem', color: isDark ? '#00B4D8' : '#0077B6', textDecoration: 'none', fontWeight: 600 }} className="hover:underline">Download File</a>
+                    <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+                      <button onClick={(e) => openResumeSafe(form.resumeUrl, e)} style={{ background: 'none', border: 'none', padding: 0, fontSize: '0.8rem', color: isDark ? '#38bdf8' : '#0077B6', textDecoration: 'underline', fontWeight: 600, cursor: 'pointer' }}>View Resume</button>
+                      <button onClick={(e) => downloadResumeSafe(form.resumeUrl, form.resumeFileName || 'Resume.pdf', e)} style={{ background: 'none', border: 'none', padding: 0, fontSize: '0.8rem', color: isDark ? '#94a3b8' : '#475569', textDecoration: 'underline', fontWeight: 600, cursor: 'pointer' }}>Download File</button>
+                    </div>
                   </div>
                   <button onClick={() => setForm({ ...form, resumeUrl: '', resumeFileName: '' })} style={{ background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.05)', border: 'none', borderRadius: 8, padding: 6, cursor: 'pointer', color: '#94a3b8' }} className={isDark ? "hover:text-white" : "hover:text-black"}>
                     <X size={16} />

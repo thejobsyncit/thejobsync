@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Search, Download } from "lucide-react";
+import { Search, Download, Eye } from "lucide-react";
+import { openResumeSafe, downloadResumeSafe } from "@/lib/resume";
 
 export default function ResumesPage() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -44,9 +45,14 @@ export default function ResumesPage() {
               <p className="text-xs text-gray-500"><span className="font-medium text-gray-700">Skills:</span> {c.skills}</p>
             </div>
             {c.resumeUrl && (
-              <a href={c.resumeUrl} target="_blank" className="mt-3 flex items-center gap-1 text-xs text-blue-600 hover:underline">
-                <Download size={12} /> View Resume
-              </a>
+              <div className="mt-3 flex items-center gap-3 pt-2 border-t border-gray-100">
+                <button onClick={(e) => openResumeSafe(c.resumeUrl, e)} className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline">
+                  <Eye size={13} /> Open
+                </button>
+                <button onClick={(e) => downloadResumeSafe(c.resumeUrl, `${c.name || 'Candidate'}_Resume.pdf`, e)} className="flex items-center gap-1 text-xs font-semibold text-slate-700 hover:underline">
+                  <Download size={13} /> Download
+                </button>
+              </div>
             )}
           </div>
         ))}

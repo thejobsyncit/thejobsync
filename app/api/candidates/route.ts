@@ -10,6 +10,8 @@ export async function GET(request: NextRequest) {
     const requirementId = searchParams.get('requirementId') || '';
     const assignedHrId = searchParams.get('assignedHrId') || '';
     const assignedInterviewerId = searchParams.get('assignedInterviewerId') || '';
+    const assignedSupportId = searchParams.get('assignedSupportId') || '';
+    const source = searchParams.get('source') || '';
 
     const where: Record<string, unknown> = {};
 
@@ -25,10 +27,12 @@ export async function GET(request: NextRequest) {
     if (requirementId) where.appliedFor = requirementId;
     if (assignedHrId) where.assignedHrId = assignedHrId;
     if (assignedInterviewerId) where.assignedInterviewerId = assignedInterviewerId;
+    if (assignedSupportId) where.assignedSupportId = assignedSupportId;
+    if (source && source !== 'all') where.source = source;
 
     const candidates = await prisma.candidate.findMany({
       where: where as any,
-      include: { requirement: { select: { title: true } } },
+      include: { requirement: { select: { title: true } }, assignedSupport: { select: { id: true, name: true } } } as any,
       orderBy: { createdAt: 'desc' },
     });
 
@@ -45,7 +49,7 @@ export async function GET(request: NextRequest) {
       }
     };
 
-    const parsed = candidates.map(c => ({
+    const parsed = candidates.map((c: any) => ({
       ...c,
       skills: safeParse(c.skills),
       requirementTitle: c.requirement?.title || null,
