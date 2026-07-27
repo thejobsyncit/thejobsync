@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
             status: 'new',
             source: 'excel_upload',
             notes: (cand.notes || cand.remarks || 'Uploaded via Excel').toString().trim(),
-          },
+          } as any,
         })
       )
     );
