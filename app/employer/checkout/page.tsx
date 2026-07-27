@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Check, Shield, Zap, Lock } from 'lucide-react';
+import { Check, Shield, Zap, Lock, Building2 } from 'lucide-react';
 import Script from 'next/script';
 
 function CheckoutContent() {
@@ -9,11 +9,39 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const planName = searchParams.get('plan') || 'Standard';
   const baseAmount = parseInt(searchParams.get('amount') || '550');
-  
+  const packageId = searchParams.get('packageId') || null;
+
   const [loading, setLoading] = useState(false);
-  
-  const gstAmount = baseAmount * 0.18;
+  const [pkgDetails, setPkgDetails] = useState<any>(null);
+
+  // Fetch package details for display
+  useEffect(() => {
+    if (packageId) {
+      fetch('/api/packages')
+        .then(r => r.json())
+        .then((pkgs: any[]) => {
+          const found = pkgs.find(p => p.id === packageId);
+          if (found) setPkgDetails(found);
+        })
+        .catch(() => {});
+    }
+  }, [packageId]);
+
+  const gstAmount = Math.round(baseAmount * 0.18);
   const totalAmount = baseAmount + gstAmount;
+
+  // Build features list for display
+  let displayFeatures: string[] = [];
+  if (pkgDetails) {
+    try { displayFeatures = JSON.parse(pkgDetails.features || '[]'); } catch { displayFeatures = []; }
+    if (pkgDetails.packageType === 'company') {
+      displayFeatures = [`${pkgDetails.jobPosts} Job Posts`, `${pkgDetails.resumeViews} Resume Views`, ...displayFeatures];
+    } else if (pkgDetails.candidateViews > 0) {
+      displayFeatures = [`${pkgDetails.candidateViews} Company Contacts`, ...displayFeatures];
+    }
+  } else {
+    displayFeatures = ['Job Posting capabilities', 'Instant activation', 'Dedicated support', 'Premium branding'];
+  }
 
   const handlePayment = async () => {
     setLoading(true);
@@ -24,9 +52,9 @@ function CheckoutContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalAmount, planName })
       });
-      
+
       const order = await res.json();
-      
+
       if (order.error) {
         alert(order.error);
         setLoading(false);
@@ -42,7 +70,6 @@ function CheckoutContent() {
         description: `Payment for ${planName} Plan`,
         order_id: order.orderId,
         handler: async function (response: any) {
-          // 3. Verify payment
           try {
             const verifyRes = await fetch('/api/employer/checkout/verify-payment', {
               method: 'POST',
@@ -52,17 +79,17 @@ function CheckoutContent() {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
                 planName,
+                packageId,
                 amount: baseAmount,
                 gstAmount,
                 totalAmount
               })
             });
-            
+
             const verifyData = await verifyRes.json();
-            
+
             if (verifyData.success) {
-              // Show success toast and redirect
-              alert('Payment Successful! Package activated.');
+              alert(`✅ Payment Successful! "${planName}" package activated.`);
               router.push('/employer/dashboard');
             } else {
               alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
@@ -71,22 +98,16 @@ function CheckoutContent() {
             alert('Error verifying payment.');
           }
         },
-        prefill: {
-          name: '',
-          email: '',
-          contact: ''
-        },
-        theme: {
-          color: '#0077B6'
-        }
+        prefill: { name: '', email: '', contact: '' },
+        theme: { color: '#0077B6' }
       };
-      
+
       const rzp = new (window as any).Razorpay(options);
       rzp.on('payment.failed', function (response: any) {
         alert(`Payment Failed: ${response.error.description}`);
       });
       rzp.open();
-      
+
     } catch (error) {
       alert('Error initiating checkout. Please try again.');
     } finally {
@@ -97,34 +118,33 @@ function CheckoutContent() {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 flex items-center justify-center">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      
+
       <div className="max-w-4xl w-full grid md:grid-cols-2 gap-8 bg-white rounded-3xl shadow-xl overflow-hidden">
         {/* Left Side: Plan Details */}
         <div className="p-8 md:p-10 bg-[#0f172a] text-white">
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">Complete your purchase</h1>
-            <p className="text-slate-400">You are subscribing to the <strong className="text-white">{planName}</strong> plan.</p>
+            <p className="text-slate-400">
+              You are subscribing to the <strong className="text-white">{planName}</strong> plan.
+            </p>
           </div>
-          
+
           <div className="space-y-6">
             <div className="bg-white/10 p-6 rounded-2xl border border-white/10">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
-                  <Zap size={20} />
+                  {pkgDetails?.packageType === 'candidate' ? <Zap size={20} /> : <Building2 size={20} />}
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">{planName}</h3>
-                  <p className="text-sm text-slate-300">Unlock premium features</p>
+                  <p className="text-sm text-slate-300">
+                    {pkgDetails ? `Valid ${pkgDetails.duration} days` : 'Unlock premium features'}
+                  </p>
                 </div>
               </div>
-              
+
               <ul className="space-y-3 mt-6">
-                {[
-                  planName.includes('RESDEX') ? 'Advanced candidate search' : 'Job Posting capabilities',
-                  'Instant activation',
-                  'Dedicated support',
-                  'Premium branding'
-                ].map((feature, i) => (
+                {displayFeatures.map((feature, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-slate-300">
                     <Check size={16} className="text-green-400 shrink-0" />
                     <span>{feature}</span>
@@ -132,10 +152,10 @@ function CheckoutContent() {
                 ))}
               </ul>
             </div>
-            
+
             <div className="flex items-center gap-3 text-sm text-slate-400">
               <Shield size={16} />
-              <span>Secure, encrypted checkout</span>
+              <span>Secure, encrypted checkout via Razorpay</span>
             </div>
           </div>
         </div>
@@ -143,7 +163,7 @@ function CheckoutContent() {
         {/* Right Side: Payment Details */}
         <div className="p-8 md:p-10">
           <h2 className="text-xl font-bold text-slate-900 mb-6">Order Summary</h2>
-          
+
           <div className="space-y-4 mb-8">
             <div className="flex justify-between items-center text-slate-600">
               <span>{planName}</span>
@@ -175,7 +195,7 @@ function CheckoutContent() {
               )}
             </button>
             <p className="text-center text-xs text-slate-500">
-              By proceeding, you agree to our Terms of Service and Privacy Policy. Payments are processed securely via Razorpay.
+              By proceeding, you agree to our Terms of Service and Privacy Policy.
             </p>
           </div>
         </div>

@@ -28,6 +28,9 @@ export async function GET(req: NextRequest) {
           where: {
             status: 'active',
             expiresAt: { gt: new Date() }
+          },
+          orderBy: {
+            createdAt: 'desc'
           }
         }
       },

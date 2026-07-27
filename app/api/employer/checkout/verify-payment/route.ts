@@ -19,7 +19,7 @@ async function getEmployerId(req: NextRequest): Promise<string | null> {
 }
 
 function getPlanLimits(planName: string) {
-  // Define plan limits based on pricing page
+  // Fallback hardcoded limits (used when no packageId provided)
   const plan = planName.trim();
   
   if (plan === 'Single Post' || plan === 'Standard' || plan === 'Trial Pack') {
@@ -32,7 +32,6 @@ function getPlanLimits(planName: string) {
     return { planType: 'resdex', jobsAllowed: 0, resumeViewsAllowed: 100, durationDays: 15 };
   }
   
-  // Default fallback
   return { planType: 'job_posting', jobsAllowed: 1, resumeViewsAllowed: 0, durationDays: 30 };
 }
 
@@ -43,7 +42,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, planName, amount, gstAmount, totalAmount } = await req.json();
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, planName, packageId, amount, gstAmount, totalAmount } = await req.json();
 
     const text = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
@@ -56,7 +55,23 @@ export async function POST(req: NextRequest) {
     }
 
     // Payment is successful, create subscription
-    const limits = getPlanLimits(planName);
+    // If packageId provided, fetch limits from DB; otherwise use hardcoded fallback
+    let limits = getPlanLimits(planName);
+    if (packageId) {
+      try {
+        const dbPkg = await (prisma as any).package.findUnique({ where: { id: packageId } });
+        if (dbPkg) {
+          limits = {
+            planType: dbPkg.packageType === 'candidate' ? 'resdex' : 'job_posting',
+            jobsAllowed: dbPkg.jobPosts || 0,
+            resumeViewsAllowed: dbPkg.resumeViews || 0,
+            durationDays: dbPkg.duration || 30,
+          };
+        }
+      } catch (pkgErr) {
+        console.error('[Checkout] Failed to fetch package from DB, using fallback:', pkgErr);
+      }
+    }
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + limits.durationDays);
 
