@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Search, Trash2, Eye, Plus, X, Upload, FileText, Send, CheckSquare, Square, Filter, Download, UserCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Trash2, Eye, Plus, X, Upload, FileText, Send, CheckSquare, Square, Filter, Download, UserCheck, ChevronLeft, ChevronRight, Edit2, Save, Mail, Phone } from "lucide-react";
 import { read, utils, writeFile } from "xlsx";
 import { openResumeSafe, downloadResumeSafe } from "@/lib/resume";
 
@@ -19,6 +19,9 @@ export default function SACandidatesPage() {
   // Forms
   const [form, setForm] = useState({ name: "", email: "", phone: "", skills: "", experience: "", education: "", currentRole: "", location: "", resumeUrl: "" });
   const [newResumeInput, setNewResumeInput] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", experience: "", education: "", location: "", skills: "" });
+  const [updatingProfile, setUpdatingProfile] = useState(false);
   const [uploadingExcel, setUploadingExcel] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -293,6 +296,53 @@ export default function SACandidatesPage() {
     return c.location;
   };
 
+  const handleOpenModal = (c: any) => {
+    setViewResume(c);
+    setNewResumeInput(c.resumeUrl || "");
+    setEditForm({
+      name: c.name || "",
+      email: c.email || "",
+      phone: c.phone || "",
+      experience: c.experience || "",
+      education: getEducationString(c) || "",
+      location: getLocationString(c) || "",
+      skills: typeof c.skills === 'string' && c.skills.startsWith('[') ? (() => { try { return JSON.parse(c.skills).join(', '); } catch { return c.skills; } })() : (c.skills || ""),
+    });
+    setIsEditing(false);
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!viewResume) return;
+    setUpdatingProfile(true);
+    try {
+      const res = await fetch(`/api/candidates/${viewResume.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editForm.name,
+          email: editForm.email,
+          phone: editForm.phone,
+          experience: editForm.experience,
+          education: editForm.education,
+          location: editForm.location,
+          skills: editForm.skills,
+        })
+      });
+      if (res.ok) {
+        alert("✅ Candidate profile updated successfully!");
+        setCandidates(candidates.map(c => c.id === viewResume.id ? { ...c, ...editForm } : c));
+        setViewResume({ ...viewResume, ...editForm });
+        setIsEditing(false);
+      } else {
+        alert("Failed to update candidate profile");
+      }
+    } catch {
+      alert("Error updating profile");
+    } finally {
+      setUpdatingProfile(false);
+    }
+  };
+
   const handleDownloadTemplate = () => {
     const sampleData = [
       {
@@ -431,7 +481,7 @@ export default function SACandidatesPage() {
                 const supportUserObj = supportUsers.find(u => u.id === c.assignedSupportId) || c.assignedSupport;
                 const supportName = supportUserObj?.name || c.assignedSupport?.name || null;
                 return (
-                  <tr key={c.id} className={`border-b hover:bg-gray-50 transition ${isSelected ? 'bg-blue-50/50' : ''}`} onClick={() => { setViewResume(c); setNewResumeInput(c.resumeUrl || ""); }}>
+                  <tr key={c.id} className={`border-b hover:bg-gray-50 transition ${isSelected ? 'bg-blue-50/50' : ''}`} onClick={() => handleOpenModal(c)}>
                     <td className="p-4 text-center" onClick={(e) => handleSelectRow(c.id, e)}>
                       <button className="text-gray-500 hover:text-gray-700 flex items-center justify-center">
                         {isSelected ? <CheckSquare size={18} className="text-blue-600" /> : <Square size={18} />}
@@ -453,16 +503,28 @@ export default function SACandidatesPage() {
                       )}
                     </td>
                     <td className="p-4" onClick={(e) => e.stopPropagation()}>
-                      {c.resumeUrl ? (
-                        <button onClick={() => { setViewResume(c); setNewResumeInput(c.resumeUrl || ""); }} className="flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-semibold hover:bg-blue-100 transition">
-                          <Eye size={14} /> View
-                        </button>
-                      ) : (
-                        <div className="flex items-center gap-1.5">
-                          <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[11px] font-bold">NA</span>
-                          <button onClick={() => { setViewResume(c); setNewResumeInput(""); }} className="text-blue-600 hover:underline text-xs font-semibold">+ Attach</button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-1.5">
+                        {c.resumeUrl ? (
+                          <button onClick={() => handleOpenModal(c)} className="flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-semibold hover:bg-blue-100 transition">
+                            <Eye size={14} /> View
+                          </button>
+                        ) : (
+                          <div className="flex items-center gap-1">
+                            <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[11px] font-bold">NA</span>
+                            <button onClick={() => handleOpenModal(c)} className="text-blue-600 hover:underline text-xs font-semibold">+ Attach</button>
+                          </div>
+                        )}
+                        {c.email && (
+                          <a href={`mailto:${c.email}?subject=Regarding Your Job Application at The JobSync`} onClick={(e) => e.stopPropagation()} className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition shadow-sm" title={`Email ${c.email}`}>
+                            <Mail size={14} />
+                          </a>
+                        )}
+                        {c.phone && (
+                          <a href={`https://wa.me/${c.phone.toString().replace(/[^0-9]/g, '')}?text=Hi ${encodeURIComponent(c.name || 'there')}, regarding your application at The JobSync...`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition shadow-sm" title={`WhatsApp ${c.phone}`}>
+                            <Phone size={14} />
+                          </a>
+                        )}
+                      </div>
                     </td>
                     <td className="p-4" onClick={(e) => e.stopPropagation()}>
                       <button onClick={(e) => handleDeleteOne(c.id, e)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete Candidate">
@@ -616,8 +678,34 @@ export default function SACandidatesPage() {
                 </span>
                 <h2 className="text-lg font-bold text-gray-800 mt-1">Candidate Profile</h2>
               </div>
-              <button onClick={() => setViewResume(null)} className="p-2 hover:bg-gray-100 rounded-full text-gray-500"><X size={20} /></button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${isEditing ? 'bg-amber-100 text-amber-800' : 'bg-blue-50 text-blue-600 hover:bg-blue-100'}`}
+                >
+                  <Edit2 size={14} /> {isEditing ? 'Cancel Edit' : 'Edit Profile'}
+                </button>
+                <button onClick={() => setViewResume(null)} className="p-2 hover:bg-gray-100 rounded-full text-gray-500"><X size={20} /></button>
+              </div>
             </div>
+
+            {/* Quick Contact Bar */}
+            <div className="flex flex-wrap gap-3 mb-5 p-3 bg-slate-50 rounded-xl border border-slate-200 justify-between items-center">
+              <span className="text-xs font-bold text-slate-600 flex items-center gap-1">Quick Message:</span>
+              <div className="flex gap-2">
+                {viewResume.email && (
+                  <a href={`mailto:${viewResume.email}?subject=Regarding Your Job Application at The JobSync`} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition shadow-sm">
+                    <Mail size={14} /> Email Candidate
+                  </a>
+                )}
+                {viewResume.phone && (
+                  <a href={`https://wa.me/${viewResume.phone.toString().replace(/[^0-9]/g, '')}?text=Hi ${encodeURIComponent(viewResume.name || 'there')}, regarding your application at The JobSync...`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition shadow-sm">
+                    <Phone size={14} /> WhatsApp Message
+                  </a>
+                )}
+              </div>
+            </div>
+
             <div className="flex items-center gap-4 mb-6 pb-5 border-b">
               <div className="w-14 h-14 rounded-full bg-[#0f172a] flex items-center justify-center text-white text-xl font-bold">{viewResume.name?.[0]?.toUpperCase() || 'C'}</div>
               <div>
@@ -625,30 +713,55 @@ export default function SACandidatesPage() {
                 <p className="text-sm text-gray-500">{renderField(viewResume.currentRole || viewResume.appliedFor)}</p>
               </div>
             </div>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Mail ID</p><p className="text-sm font-medium text-gray-800">{renderField(viewResume.email)}</p></div>
-                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Contact No</p><p className="text-sm font-medium text-gray-800">{renderField(viewResume.phone)}</p></div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Experience</p><p className="text-sm font-medium text-gray-800">{renderField(viewResume.experience)}</p></div>
-                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Education</p><p className="text-sm font-medium text-gray-800">{renderField(getEducationString(viewResume))}</p></div>
-              </div>
-              <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Location</p><p className="text-sm font-medium text-gray-800">{renderField(getLocationString(viewResume))}</p></div>
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-xs text-gray-500 mb-2">Skills</p>
-                <div className="flex flex-wrap gap-2">
-                  {(() => { 
-                    try { 
-                      const parsed = JSON.parse(viewResume.skills); 
-                      return Array.isArray(parsed) && parsed.length > 0 ? parsed : [viewResume.skills];
-                    } catch { return viewResume.skills ? [viewResume.skills] : []; } 
-                  })().map((skill: string, i: number) => (
-                    <span key={i} className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{skill}</span>
-                  ))}
+
+            {isEditing ? (
+              <div className="space-y-3 bg-amber-50/50 p-4 rounded-xl border border-amber-200 mb-4">
+                <div><label className="text-xs text-gray-500 font-semibold">Name</label><input type="text" value={editForm.name} onChange={e => setEditForm({ ...editForm, name: e.target.value })} className="w-full p-2 border rounded text-sm bg-white mt-1" /></div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><label className="text-xs text-gray-500 font-semibold">Mail ID</label><input type="email" value={editForm.email} onChange={e => setEditForm({ ...editForm, email: e.target.value })} className="w-full p-2 border rounded text-sm bg-white mt-1" /></div>
+                  <div><label className="text-xs text-gray-500 font-semibold">Contact No</label><input type="text" value={editForm.phone} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} className="w-full p-2 border rounded text-sm bg-white mt-1" /></div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><label className="text-xs text-gray-500 font-semibold">Experience</label><input type="text" value={editForm.experience} onChange={e => setEditForm({ ...editForm, experience: e.target.value })} className="w-full p-2 border rounded text-sm bg-white mt-1" /></div>
+                  <div><label className="text-xs text-gray-500 font-semibold">Education</label><input type="text" value={editForm.education} onChange={e => setEditForm({ ...editForm, education: e.target.value })} className="w-full p-2 border rounded text-sm bg-white mt-1" /></div>
+                </div>
+                <div><label className="text-xs text-gray-500 font-semibold">Location</label><input type="text" value={editForm.location} onChange={e => setEditForm({ ...editForm, location: e.target.value })} className="w-full p-2 border rounded text-sm bg-white mt-1" /></div>
+                <div><label className="text-xs text-gray-500 font-semibold">Skills (comma separated)</label><input type="text" value={editForm.skills} onChange={e => setEditForm({ ...editForm, skills: e.target.value })} className="w-full p-2 border rounded text-sm bg-white mt-1" /></div>
+                <div className="flex justify-end gap-2 pt-2">
+                  <button onClick={() => setIsEditing(false)} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-300">Cancel</button>
+                  <button onClick={handleUpdateProfile} disabled={updatingProfile} className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 shadow-sm disabled:opacity-50">
+                    <Save size={14} /> {updatingProfile ? 'Saving...' : 'Save Changes'}
+                  </button>
                 </div>
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Mail ID</p><p className="text-sm font-medium text-gray-800">{renderField(viewResume.email)}</p></div>
+                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Contact No</p><p className="text-sm font-medium text-gray-800">{renderField(viewResume.phone)}</p></div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Experience</p><p className="text-sm font-medium text-gray-800">{renderField(viewResume.experience)}</p></div>
+                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Education</p><p className="text-sm font-medium text-gray-800">{renderField(getEducationString(viewResume))}</p></div>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Location</p><p className="text-sm font-medium text-gray-800">{renderField(getLocationString(viewResume))}</p></div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-xs text-gray-500 mb-2">Skills</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(() => { 
+                      try { 
+                        const parsed = JSON.parse(viewResume.skills); 
+                        return Array.isArray(parsed) && parsed.length > 0 ? parsed : [viewResume.skills];
+                      } catch { return viewResume.skills ? [viewResume.skills] : []; } 
+                    })().map((skill: string, i: number) => (
+                      <span key={i} className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
+            <div className="space-y-4 mt-4">
               {/* Resume Section with NA Fallback & Attach Later */}
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <p className="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1"><FileText size={14} /> Resume Attachment</p>
