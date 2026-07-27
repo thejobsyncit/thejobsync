@@ -208,7 +208,9 @@ export default function SACandidatesPage() {
         }
 
         if (maxScore === 0 && rows.length > 0) {
-           bestHeaders = rows[0].map(cell => String(cell).toLowerCase().replace(/[^a-z0-9]/g, ''));
+           // If no recognizable headers were found, assume standard template order but no header row
+           bestHeaders = ['name', 'email', 'phone', 'department', 'education', 'location', 'skills', 'experience', 'currentrole', 'resumeurl'];
+           headerRowIndex = -1; // Start processing from row 0
         }
 
         // 2. Process data rows below the header
@@ -225,17 +227,39 @@ export default function SACandidatesPage() {
           bestHeaders.forEach((norm, colIndex) => {
             const val = row[colIndex];
             if (val === undefined || val === null || val === '') return;
+            const strVal = String(val).trim();
             
-            if (!name && (norm.includes('name') || norm.includes('candidate') || norm.includes('applicant'))) name = String(val);
-            else if (!email && (norm.includes('email') || norm.includes('mail'))) email = String(val);
-            else if (!phone && (norm.includes('phone') || norm.includes('contact') || norm.includes('mobile'))) phone = String(val);
-            else if (!department && (norm.includes('department') || norm.includes('role') || norm.includes('designation') || norm.includes('job'))) department = String(val);
-            else if (!education && (norm.includes('education') || norm.includes('degree') || norm.includes('qualification'))) education = String(val);
-            else if (!location && (norm.includes('location') || norm.includes('city') || norm.includes('place') || norm.includes('address'))) location = String(val);
-            else if (!skills && (norm.includes('skill') || norm.includes('tech'))) skills = String(val);
-            else if (!experience && (norm.includes('exp') || norm.includes('year'))) experience = String(val);
-            else if (!resumeUrl && (norm.includes('resume') || norm.includes('cv') || norm.includes('url') || norm.includes('link'))) resumeUrl = String(val);
+            if (!name && (norm.includes('name') || norm.includes('candidate') || norm.includes('applicant'))) name = strVal;
+            else if (!email && (norm.includes('email') || norm.includes('mail'))) email = strVal;
+            else if (!phone && (norm.includes('phone') || norm.includes('contact') || norm.includes('mobile'))) phone = strVal;
+            else if (!department && (norm.includes('department') || norm.includes('role') || norm.includes('designation') || norm.includes('job'))) department = strVal;
+            else if (!education && (norm.includes('education') || norm.includes('degree') || norm.includes('qualification'))) education = strVal;
+            else if (!location && (norm.includes('location') || norm.includes('city') || norm.includes('place') || norm.includes('address'))) location = strVal;
+            else if (!skills && (norm.includes('skill') || norm.includes('tech'))) skills = strVal;
+            else if (!experience && (norm.includes('exp') || norm.includes('year'))) experience = strVal;
+            else if (!resumeUrl && (norm.includes('resume') || norm.includes('cv') || norm.includes('url') || norm.includes('link'))) resumeUrl = strVal;
           });
+
+          // Data-driven fallback: If fields are still missing, try to infer them from remaining columns
+          if (!email || !phone || !name) {
+             row.forEach((cell, idx) => {
+                const str = String(cell || '').trim();
+                if (!str) return;
+                
+                // If it looks like an email and we don't have one
+                if (!email && str.includes('@') && str.includes('.')) {
+                   email = str;
+                } 
+                // If it looks like a phone number (at least 9 digits)
+                else if (!phone && str.replace(/[^0-9]/g, '').length >= 9 && str.replace(/[^0-9]/g, '').length <= 15) {
+                   phone = str;
+                }
+                // If we don't have a name, and it's a short text (not an email or phone or long sentence)
+                else if (!name && str.length > 2 && str.length < 50 && !str.includes('@') && !str.match(/[0-9]{5}/)) {
+                   name = str;
+                }
+             });
+          }
 
           // Only push if at least one meaningful field exists
           if (name || email || phone || department || education || location || skills || experience) {
