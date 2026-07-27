@@ -229,15 +229,15 @@ export default function SACandidatesPage() {
             if (val === undefined || val === null || val === '') return;
             const strVal = String(val).trim();
             
-            if (!name && (norm.includes('name') || norm.includes('candidate') || norm.includes('applicant'))) name = strVal;
-            else if (!email && (norm.includes('email') || norm.includes('mail'))) email = strVal;
-            else if (!phone && (norm.includes('phone') || norm.includes('contact') || norm.includes('mobile'))) phone = strVal;
-            else if (!department && (norm.includes('department') || norm.includes('role') || norm.includes('designation') || norm.includes('job'))) department = strVal;
-            else if (!education && (norm.includes('education') || norm.includes('degree') || norm.includes('qualification'))) education = strVal;
-            else if (!location && (norm.includes('location') || norm.includes('city') || norm.includes('place') || norm.includes('address'))) location = strVal;
-            else if (!skills && (norm.includes('skill') || norm.includes('tech'))) skills = strVal;
-            else if (!experience && (norm.includes('exp') || norm.includes('year'))) experience = strVal;
-            else if (!resumeUrl && (norm.includes('resume') || norm.includes('cv') || norm.includes('url') || norm.includes('link'))) resumeUrl = strVal;
+            if (!name && (norm.includes('name') || norm.includes('candidate') || norm.includes('applicant') || norm.includes('first') || norm.includes('user'))) name = strVal;
+            else if (!email && (norm.includes('email') || norm.includes('mail') || norm.includes('id'))) email = strVal;
+            else if (!phone && (norm.includes('phone') || norm.includes('contact') || norm.includes('mobile') || norm.includes('cell') || norm.includes('number'))) phone = strVal;
+            else if (!department && (norm.includes('department') || norm.includes('role') || norm.includes('designation') || norm.includes('job') || norm.includes('domain') || norm.includes('function') || norm.includes('profile') || norm.includes('title') || norm.includes('specialization') || norm.includes('branch'))) department = strVal;
+            else if (!education && (norm.includes('education') || norm.includes('degree') || norm.includes('qualification') || norm.includes('course') || norm.includes('ug') || norm.includes('pg') || norm.includes('grad') || norm.includes('academic') || norm.includes('college') || norm.includes('school') || norm.includes('university') || norm.includes('study'))) education = strVal;
+            else if (!location && (norm.includes('location') || norm.includes('city') || norm.includes('place') || norm.includes('address') || norm.includes('state') || norm.includes('country') || norm.includes('region') || norm.includes('town') || norm.includes('area') || norm.includes('zone') || norm.includes('pin'))) location = strVal;
+            else if (!skills && (norm.includes('skill') || norm.includes('tech') || norm.includes('tool') || norm.includes('software') || norm.includes('language') || norm.includes('expert'))) skills = strVal;
+            else if (!experience && (norm.includes('exp') || norm.includes('year') || norm.includes('work') || norm.includes('history') || norm.includes('employ'))) experience = strVal;
+            else if (!resumeUrl && (norm.includes('resume') || norm.includes('cv') || norm.includes('url') || norm.includes('link') || norm.includes('drive'))) resumeUrl = strVal;
           });
 
           // Data-driven fallback: If fields are still missing, try to infer them from remaining columns
