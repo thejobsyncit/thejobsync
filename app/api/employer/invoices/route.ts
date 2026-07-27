@@ -1,20 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.EMPLOYER_JWT_SECRET || 'employer_jwt_secret_gojobsync_2024'
-);
+import { getEmployerId } from '@/lib/auth';
 
 async function getEmployerEmail(req: NextRequest): Promise<string | null> {
   try {
-    const token = req.cookies.get('employer_token')?.value;
-    if (!token) return null;
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const employerId = await getEmployerId(req);
+    if (!employerId) return null;
     
     // Fetch employer email by ID
     const employer = await prisma.employer.findUnique({
-      where: { id: payload.employerId as string },
+      where: { id: employerId },
       select: { email: true }
     });
     

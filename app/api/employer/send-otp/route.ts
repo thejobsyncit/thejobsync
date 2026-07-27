@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/mail';
 
+import { z } from 'zod';
+import { checkRateLimit } from '@/lib/rate-limit';
+
 // Shared global OTP store — persists across hot reloads in dev
 declare global {
   // eslint-disable-next-line no-var
@@ -14,13 +17,25 @@ function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+const otpSchema = z.object({
+  email: z.string().email("Valid email is required"),
+});
+
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: 'Valid email is required' }, { status: 400 });
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    if (!checkRateLimit(ip, 3, 60000)) { // 3 OTP requests per minute max
+      return NextResponse.json({ error: 'Too many OTP requests. Please wait a minute.' }, { status: 429 });
     }
+
+    const body = await req.json();
+    const parsed = otpSchema.safeParse(body);
+    
+    if (!parsed.success) {
+      return NextResponse.json({ error: (parsed.error as any).errors[0].message }, { status: 400 });
+    }
+    
+    const { email } = parsed.data;
 
     const otp = generateOtp();
     const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes

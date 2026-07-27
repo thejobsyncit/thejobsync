@@ -23,6 +23,7 @@ export default function SACandidatesPage() {
   const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", experience: "", education: "", location: "", skills: "" });
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const [uploadingExcel, setUploadingExcel] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({ uploaded: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Bulk Selection & Push
@@ -222,26 +223,40 @@ export default function SACandidatesPage() {
           };
         });
 
-        const res = await fetch("/api/admin/candidates/bulk", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ candidates: candidatesPayload })
-        });
+        const totalRecords = candidatesPayload.length;
+        setUploadProgress({ uploaded: 0, total: totalRecords });
+        
+        const chunkSize = 500;
+        let successCount = 0;
 
-        if (res.ok) {
-          const resData = await res.json();
-          alert(`✅ Successfully uploaded ${resData.count} candidates from Excel!`);
-          setShowExcelModal(false);
-          fetchData();
-        } else {
-          const err = await res.json();
-          alert(err.error || "Failed to upload candidates");
+        for (let i = 0; i < totalRecords; i += chunkSize) {
+          const chunk = candidatesPayload.slice(i, i + chunkSize);
+          const res = await fetch("/api/admin/candidates/bulk", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ candidates: chunk })
+          });
+
+          if (res.ok) {
+            const resData = await res.json();
+            successCount += resData.count;
+            setUploadProgress({ uploaded: successCount, total: totalRecords });
+          } else {
+            const err = await res.json();
+            throw new Error(err.error || `Failed at chunk ${i / chunkSize + 1}`);
+          }
         }
+
+        alert(`✅ Successfully uploaded ${successCount} candidates from Excel!`);
+        setShowExcelModal(false);
+        fetchData();
+
       } catch (err: any) {
         console.error(err);
         alert("Error reading Excel file: " + err.message);
       } finally {
         setUploadingExcel(false);
+        setUploadProgress({ uploaded: 0, total: 0 });
         if (fileInputRef.current) fileInputRef.current.value = '';
       }
     };
@@ -655,9 +670,21 @@ export default function SACandidatesPage() {
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".xlsx,.xls,.csv" className="hidden" />
             </div>
             {uploadingExcel && (
-              <div className="flex items-center justify-center gap-2 text-sm text-emerald-700 font-medium mb-4">
-                <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-                Processing and uploading records...
+              <div className="flex flex-col items-center justify-center gap-2 text-sm text-emerald-700 font-medium mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                  {uploadProgress.total > 0 
+                    ? `Processing... (${uploadProgress.uploaded} / ${uploadProgress.total})` 
+                    : "Reading and processing file..."}
+                </div>
+                {uploadProgress.total > 0 && (
+                  <div className="w-full bg-emerald-100 h-2 rounded-full mt-2 overflow-hidden">
+                    <div 
+                      className="bg-emerald-600 h-full transition-all duration-300" 
+                      style={{ width: `${(uploadProgress.uploaded / uploadProgress.total) * 100}%` }}
+                    />
+                  </div>
+                )}
               </div>
             )}
             <div className="flex justify-end pt-3 border-t">

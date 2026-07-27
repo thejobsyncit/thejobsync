@@ -1,22 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { prisma } from '@/lib/db';
-import { jwtVerify } from 'jose';
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.EMPLOYER_JWT_SECRET || 'employer_jwt_secret_gojobsync_2024'
-);
-
-async function getEmployerId(req: NextRequest): Promise<string | null> {
-  try {
-    const token = req.cookies.get('employer_token')?.value;
-    if (!token) return null;
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload.employerId as string;
-  } catch {
-    return null;
-  }
-}
+import { getEmployerId } from '@/lib/auth';
 
 function getPlanLimits(planName: string) {
   // Fallback hardcoded limits (used when no packageId provided)

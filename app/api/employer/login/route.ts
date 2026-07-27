@@ -2,19 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
+import { z } from 'zod';
+import { JWT_SECRET } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.EMPLOYER_JWT_SECRET || 'employer_jwt_secret_gojobsync_2024'
-);
+const loginSchema = z.object({
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(1, "Password is required"),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    if (!checkRateLimit(ip, 5, 60000)) { // 5 attempts per minute
+      return NextResponse.json({ error: 'Too many login attempts. Please try again later.' }, { status: 429 });
     }
+
+    const body = await req.json();
+    const parsed = loginSchema.safeParse(body);
+    
+    if (!parsed.success) {
+      return NextResponse.json({ error: (parsed.error as any).errors[0].message }, { status: 400 });
+    }
+    
+    const { email, password } = parsed.data;
 
     const employer = await prisma.employer.findUnique({
       where: { email: email.toLowerCase() },
@@ -63,3 +74,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
