@@ -181,24 +181,51 @@ export default function SACandidatesPage() {
         const workbook = read(data, { type: 'array' });
         const firstSheet = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheet];
-        const json: any[] = utils.sheet_to_json(worksheet, { defval: '' });
+        const rows: any[][] = utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+        
+        let headerRowIndex = 0;
+        let maxScore = 0;
+        let bestHeaders: string[] = [];
 
-        const candidatesPayload = json.map(row => {
-          let name = '';
-          let email = '';
-          let phone = '';
-          let department = '';
-          let education = '';
-          let location = '';
-          let skills = '';
-          let experience = '';
-          let resumeUrl = '';
+        // 1. Find the most likely header row by scanning the first 15 rows
+        for (let i = 0; i < Math.min(15, rows.length); i++) {
+          const row = rows[i];
+          let score = 0;
+          const headers = row.map(cell => String(cell).toLowerCase().replace(/[^a-z0-9]/g, ''));
+          
+          headers.forEach(norm => {
+            if (norm.includes('name') || norm.includes('email') || norm.includes('mail') || 
+                norm.includes('phone') || norm.includes('contact') || norm.includes('mobile')) {
+              score++;
+            }
+          });
+          
+          if (score > maxScore) {
+            maxScore = score;
+            headerRowIndex = i;
+            bestHeaders = headers;
+          }
+        }
 
-          for (const key of Object.keys(row)) {
-            const val = row[key];
-            if (val === undefined || val === null || val === '') continue;
-            const norm = String(key).toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (maxScore === 0 && rows.length > 0) {
+           bestHeaders = rows[0].map(cell => String(cell).toLowerCase().replace(/[^a-z0-9]/g, ''));
+        }
 
+        // 2. Process data rows below the header
+        const candidatesPayload = [];
+        for (let i = headerRowIndex + 1; i < rows.length; i++) {
+          const row = rows[i];
+          // Skip completely empty rows
+          if (!row || row.every(cell => cell === undefined || cell === null || String(cell).trim() === '')) {
+            continue;
+          }
+
+          let name = '', email = '', phone = '', department = '', education = '', location = '', skills = '', experience = '', resumeUrl = '';
+
+          bestHeaders.forEach((norm, colIndex) => {
+            const val = row[colIndex];
+            if (val === undefined || val === null || val === '') return;
+            
             if (!name && (norm.includes('name') || norm.includes('candidate') || norm.includes('applicant'))) name = String(val);
             else if (!email && (norm.includes('email') || norm.includes('mail'))) email = String(val);
             else if (!phone && (norm.includes('phone') || norm.includes('contact') || norm.includes('mobile'))) phone = String(val);
@@ -208,20 +235,23 @@ export default function SACandidatesPage() {
             else if (!skills && (norm.includes('skill') || norm.includes('tech'))) skills = String(val);
             else if (!experience && (norm.includes('exp') || norm.includes('year'))) experience = String(val);
             else if (!resumeUrl && (norm.includes('resume') || norm.includes('cv') || norm.includes('url') || norm.includes('link'))) resumeUrl = String(val);
-          }
+          });
 
-          return {
-            name: name || 'NA',
-            email: email || `noemail-${Math.random().toString(36).substring(7)}@example.com`,
-            phone: phone || 'NA',
-            currentRole: department || 'NA',
-            education: education || 'NA',
-            location: location || 'NA',
-            skills: skills ? skills.split(',').map(s => s.trim()) : ['General'],
-            experience: experience || 'NA',
-            resumeUrl: resumeUrl || null
-          };
-        });
+          // Only push if at least one meaningful field exists
+          if (name || email || phone || department || education || location || skills || experience) {
+            candidatesPayload.push({
+              name: name || 'NA',
+              email: email || `noemail-${Math.random().toString(36).substring(7)}@example.com`,
+              phone: phone || 'NA',
+              currentRole: department || 'NA',
+              education: education || 'NA',
+              location: location || 'NA',
+              skills: skills ? skills.split(',').map(s => s.trim()) : ['General'],
+              experience: experience || 'NA',
+              resumeUrl: resumeUrl || null
+            });
+          }
+        }
 
         const totalRecords = candidatesPayload.length;
         setUploadProgress({ uploaded: 0, total: totalRecords });
