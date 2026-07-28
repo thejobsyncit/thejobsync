@@ -103,7 +103,8 @@ export default function SACandidatesPage() {
                           c.phone?.includes(search) ||
                           c.currentRole?.toLowerCase().includes(search.toLowerCase());
     if (!matchesSearch) return false;
-    if (sourceTab === 'applied') return c.source !== 'excel_upload';
+    if (sourceTab === 'applied') return !!(c.appliedFor || c.requirementTitle);
+    if (sourceTab === 'registered') return !(c.appliedFor || c.requirementTitle) && c.source !== 'excel_upload';
     if (sourceTab === 'excel_upload') return c.source === 'excel_upload';
     return true;
   });
@@ -594,7 +595,10 @@ GoJobSync Recruitment Team
             All ({candidates.length})
           </button>
           <button onClick={() => { setSourceTab('applied'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'applied' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            Applied ({candidates.filter(c => c.source !== 'excel_upload').length})
+            Applied ({candidates.filter(c => !!(c.appliedFor || c.requirementTitle)).length})
+          </button>
+          <button onClick={() => { setSourceTab('registered'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'registered' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            Registered ({candidates.filter(c => !(c.appliedFor || c.requirementTitle) && c.source !== 'excel_upload').length})
           </button>
           <button onClick={() => { setSourceTab('excel_upload'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'excel_upload' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
             Excel Uploads ({candidates.filter(c => c.source === 'excel_upload').length})
