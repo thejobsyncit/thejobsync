@@ -5,7 +5,10 @@ import { read, utils, writeFile } from "xlsx";
 import { openResumeSafe, downloadResumeSafe } from "@/lib/resume";
 
 const getRegistrationWhatsAppLink = (name: string, phone: string) => {
-  const cleanPhone = phone?.toString().replace(/[^0-9]/g, '') || '';
+  let cleanPhone = phone?.toString().replace(/[^0-9]/g, '') || '';
+  if (!cleanPhone.startsWith('91') && cleanPhone.length === 10) {
+    cleanPhone = '91' + cleanPhone;
+  }
   const msg = `Hi ${name || 'there'},
 
 We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
@@ -33,7 +36,7 @@ Best Regards,
 GoJobSync Recruitment Team
 🌐 www.gojobsync.com 
 📧 hr@thejobsync.com`;
-  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+  return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
 };
 
 export default function SACandidatesPage() {
