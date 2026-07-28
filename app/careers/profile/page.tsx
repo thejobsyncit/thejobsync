@@ -510,44 +510,41 @@ export default function CandidateProfilePage() {
 
             <div style={{ marginTop: '1rem' }}>
               <Grid2>
-                <Field label="Current Company">
-                  <input style={getINPUT(isDark)} value={form.currentCompany} onChange={e => setForm({ ...form, currentCompany: e.target.value })} placeholder="Current employer" className="focus:border-[#0077B6]" />
-                </Field>
                 <Field label="Expected Salary">
                   <select style={getINPUT(isDark)} value={form.expectedSalary} onChange={e => setForm({ ...form, expectedSalary: e.target.value })} className="focus:border-[#0077B6] appearance-none">
                     <option value="">Select Expected Salary</option>
                     {SALARY_RANGES.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </Field>
+                <Field label="Department / Preferred Field *">
+                  <select
+                    style={getINPUT(isDark)}
+                    value={DEPARTMENTS.includes(form.preferredRoles as any) || form.preferredRoles === '' ? form.preferredRoles : 'Other'}
+                    onChange={e => {
+                      if (e.target.value === 'Other') {
+                        setForm({ ...form, preferredRoles: 'Other' });
+                      } else {
+                        setForm({ ...form, preferredRoles: e.target.value });
+                      }
+                    }}
+                    className="focus:border-[#0077B6] appearance-none"
+                  >
+                    <option value="">Select your Department / Field</option>
+                    {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                    <option value="Other">Other (Type below)</option>
+                  </select>
+                  {(form.preferredRoles === 'Other' || (!DEPARTMENTS.includes(form.preferredRoles as any) && form.preferredRoles !== '')) && (
+                    <input
+                      style={{ ...getINPUT(isDark), marginTop: 8 }}
+                      value={form.preferredRoles === 'Other' ? '' : form.preferredRoles}
+                      onChange={e => setForm({ ...form, preferredRoles: e.target.value })}
+                      placeholder="Type your department / field here..."
+                      className="focus:border-[#0077B6]"
+                      autoFocus
+                    />
+                  )}
+                </Field>
               </Grid2>
-              <Field label="Department / Preferred Field *" full>
-                <select
-                  style={getINPUT(isDark)}
-                  value={DEPARTMENTS.includes(form.preferredRoles as any) || form.preferredRoles === '' ? form.preferredRoles : 'Other'}
-                  onChange={e => {
-                    if (e.target.value === 'Other') {
-                      setForm({ ...form, preferredRoles: 'Other' });
-                    } else {
-                      setForm({ ...form, preferredRoles: e.target.value });
-                    }
-                  }}
-                  className="focus:border-[#0077B6] appearance-none"
-                >
-                  <option value="">Select your Department / Field</option>
-                  {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-                  <option value="Other">Other (Type below)</option>
-                </select>
-                {(form.preferredRoles === 'Other' || (!DEPARTMENTS.includes(form.preferredRoles as any) && form.preferredRoles !== '')) && (
-                  <input
-                    style={{ ...getINPUT(isDark), marginTop: 8 }}
-                    value={form.preferredRoles === 'Other' ? '' : form.preferredRoles}
-                    onChange={e => setForm({ ...form, preferredRoles: e.target.value })}
-                    placeholder="Type your department / field here..."
-                    className="focus:border-[#0077B6]"
-                    autoFocus
-                  />
-                )}
-              </Field>
             </div>
           </Section>
 
