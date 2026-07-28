@@ -556,12 +556,10 @@ export default function EmployerRegistration() {
           {/* TOP NAVBAR */}
           <header className="absolute top-0 left-0 w-full h-20 px-6 sm:px-10 flex items-center justify-between z-10 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#0077B6] to-[#00B4D8] rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-md">
-                S
-              </div>
+              <img src="/loooo.jpeg" alt="The jobsync Logo" className="h-10 w-10 object-contain rounded-full shadow-sm" />
               <div className="flex flex-col">
-                <span className="font-extrabold text-lg text-slate-900 dark:text-white leading-none tracking-tight">GO</span>
-                <span className="font-extrabold text-lg text-slate-900 dark:text-white leading-none tracking-tight">The jobsync</span>
+                <span className="font-extrabold text-lg text-[#03045E] dark:text-white leading-none tracking-tight">The jobsync</span>
+                <span className="text-[10px] font-bold text-[#0077B6] dark:text-[#00B4D8] tracking-widest uppercase mt-0.5">Recruitment System</span>
               </div>
             </Link>
             <div className="flex items-center gap-6">
