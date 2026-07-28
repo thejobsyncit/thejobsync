@@ -20,6 +20,7 @@ export default function EmployerRegistration() {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
@@ -407,7 +408,16 @@ export default function EmployerRegistration() {
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
-                          <input type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required placeholder="••••••••••••" className="w-full px-4 py-3 bg-[#CAF0F8]/30/50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] transition-colors" />
+                          <div className="relative">
+                            <input type={showLoginPassword ? "text" : "password"} value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required placeholder="••••••••••••" className="w-full px-4 py-3 pr-10 bg-[#CAF0F8]/30/50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] transition-colors" />
+                            <button
+                              type="button"
+                              onClick={() => setShowLoginPassword(!showLoginPassword)}
+                              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+                            >
+                              {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                          </div>
                         </div>
 
                         {loginError && (
