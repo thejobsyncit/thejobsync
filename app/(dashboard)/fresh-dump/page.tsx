@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { Database, Clock, Briefcase, Mail, Phone, MapPin, GraduationCap, FileText, Eye, UserCheck, X, Download, Edit2, Save, Upload, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { Database, Clock, Briefcase, Mail, Phone, MapPin, GraduationCap, FileText, Eye, UserCheck, X, Download, Edit2, Save, Upload, CheckSquare, Square, Trash2, Check } from 'lucide-react';
 import { openResumeSafe, downloadResumeSafe } from '@/lib/resume';
 import { read, utils } from "xlsx";
 
@@ -20,6 +20,9 @@ export default function FreshDumpPage() {
   const [uploadProgress, setUploadProgress] = useState({ uploaded: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [metrics, setMetrics] = useState<any>(null);
+  const [mailModal, setMailModal] = useState<any>(null);
+  const [sendingMail, setSendingMail] = useState(false);
 
   const fetchFreshDump = async () => {
     try {
@@ -39,9 +42,25 @@ export default function FreshDumpPage() {
     }
   };
 
+  const fetchMetrics = async () => {
+    try {
+      const res = await fetch('/api/admin/support-metrics');
+      if (res.ok) {
+        const data = await res.json();
+        const myMetrics = data.find((m: any) => m.id === user?.id);
+        if (myMetrics) setMetrics(myMetrics);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       fetchFreshDump();
+      if (user.role === 'application_support') {
+        fetchMetrics();
+      }
     }
   }, [user]);
 
@@ -84,6 +103,7 @@ export default function FreshDumpPage() {
         toast.success(`✅ Deleted ${selectedIds.length} candidate(s)`);
         setSelectedIds([]);
         fetchFreshDump();
+        if (user?.role === 'application_support') fetchMetrics();
       } else {
         toast.error("Failed to delete candidates");
       }
@@ -105,11 +125,77 @@ export default function FreshDumpPage() {
         toast.success("✅ Candidate deleted successfully");
         setSelectedIds(prev => prev.filter(i => i !== id));
         fetchFreshDump();
+        if (user?.role === 'application_support') fetchMetrics();
       } else {
         toast.error("Failed to delete candidate");
       }
     } catch {
       toast.error("Error during deletion");
+    }
+  };
+
+  const handleOpenMailModal = (c: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setMailModal({
+      candidateId: c.id,
+      name: c.name,
+      fromEmail: 'hr@thejobsync.com',
+      toEmail: c.email.startsWith('noemail-') ? '' : c.email,
+      subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
+      message: `Hi ${c.name},
+
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+
+Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+
+✨ Why apply through GoJobSync?
+
+- Multiple verified job opportunities
+- Quick and easy application process
+- Track your application status in real time
+- Direct access to hiring companies
+- Absolutely FREE for job seekers
+
+Don't miss your chance to land your next job.
+
+👉 Apply Now: www.gojobsync.com/careers/register
+
+Complete your profile and start applying to jobs in just a few minutes.
+
+If you have any questions, simply reply to this email—we're happy to help.
+
+Best Regards,
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@thejobsync.com`
+    });
+  };
+
+  const handleSendMail = async () => {
+    if (!mailModal.toEmail) {
+      toast.error('Please provide a valid email address');
+      return;
+    }
+    setSendingMail(true);
+    try {
+      const res = await fetch('/api/support/send-registration-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mailModal)
+      });
+      if (res.ok) {
+        toast.success('✅ Email sent and marked as completed!');
+        setMailModal(null);
+        fetchFreshDump();
+        fetchMetrics();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Failed to send email');
+      }
+    } catch (e) {
+      toast.error('Error sending email');
+    } finally {
+      setSendingMail(false);
     }
   };
 
@@ -402,6 +488,23 @@ export default function FreshDumpPage() {
         </div>
       </div>
 
+      {user?.role === 'application_support' && metrics && (
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 animate-fade-in-up">
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center">
+            <span className="text-gray-500 text-xs font-bold uppercase mb-1">Emails Sent Today</span>
+            <span className="text-3xl font-black text-[#0077B6]">{metrics.today}</span>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center">
+            <span className="text-gray-500 text-xs font-bold uppercase mb-1">Emails Sent This Week</span>
+            <span className="text-3xl font-black text-emerald-600">{metrics.weekly}</span>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center">
+            <span className="text-gray-500 text-xs font-bold uppercase mb-1">Emails Sent This Month</span>
+            <span className="text-3xl font-black text-indigo-600">{metrics.monthly}</span>
+          </div>
+        </div>
+      )}
+
       <div className="animate-fade-in-up space-y-10">
         {sortedDates.length === 0 ? (
           <div className="text-center p-12 card border border-[var(--border)]">
@@ -438,9 +541,16 @@ export default function FreshDumpPage() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
                           <h3 className="font-bold text-lg text-[var(--foreground)] truncate">{formatNA(c.name)}</h3>
-                          <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase ${c.source === 'excel_upload' || c.source === 'self' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}`}>
-                            {c.source === 'excel_upload' || c.source === 'self' ? 'Excel' : 'Online'}
-                          </span>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {c.status === 'completed' && (
+                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded uppercase bg-green-500 text-white flex items-center gap-1 shadow-sm">
+                                <Check size={10} /> Completed
+                              </span>
+                            )}
+                            <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase ${c.source === 'excel_upload' || c.source === 'self' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}`}>
+                              {c.source === 'excel_upload' || c.source === 'self' ? 'Excel' : 'Online'}
+                            </span>
+                          </div>
                         </div>
                         <p className="text-sm text-[var(--muted-foreground)] truncate">{formatNA(c.currentRole || c.appliedFor || 'Candidate')}</p>
                       </div>
@@ -479,9 +589,9 @@ export default function FreshDumpPage() {
                           <button onClick={() => handleOpenModal(c)} className="px-2 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-bold hover:bg-amber-100">+ Attach</button>
                         )}
                         {c.email && c.email !== 'NA' && (
-                          <a href={`mailto:${c.email}`} target="_blank" rel="noreferrer" title={`Email ${c.email}`} className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">
+                          <button onClick={(e) => handleOpenMailModal(c, e)} title={`Send Registration Email to ${c.email}`} className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition">
                             <Mail size={13} />
-                          </a>
+                          </button>
                         )}
                         {c.phone && c.phone !== 'NA' && (
                           <a href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" title={`WhatsApp ${c.phone}`} className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition">
@@ -532,9 +642,9 @@ export default function FreshDumpPage() {
             {/* Quick Contact Bar (Email & WhatsApp) */}
             <div className="flex gap-2.5 mb-5 pb-4 border-b">
               {viewResume.email && viewResume.email !== 'NA' ? (
-                <a href={`mailto:${viewResume.email}`} target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-bold transition border border-blue-200 shadow-sm">
+                <button onClick={(e) => handleOpenMailModal(viewResume, e)} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-bold transition border border-blue-200 shadow-sm">
                   <Mail size={15} /> Email Candidate
-                </a>
+                </button>
               ) : (
                 <button disabled className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gray-100 text-gray-400 rounded-lg text-xs font-bold cursor-not-allowed border border-gray-200">
                   <Mail size={15} /> Email (NA)
@@ -648,6 +758,44 @@ export default function FreshDumpPage() {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Mail Modal */}
+      {mailModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4 animate-fade-in" onClick={() => !sendingMail && setMailModal(null)}>
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-5 border-b pb-4">
+              <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <Mail size={20} className="text-[#0077B6]" /> Send Registration Email
+              </h2>
+              <button onClick={() => setMailModal(null)} disabled={sendingMail} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 disabled:opacity-50"><X size={20} /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">From Email (Sender)</label>
+                <input type="email" value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition" placeholder="Sender's email" disabled={sendingMail} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">To Email</label>
+                <input type="email" value={mailModal.toEmail} onChange={e => setMailModal({...mailModal, toEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Candidate's email" disabled={sendingMail} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Subject</label>
+                <input type="text" value={mailModal.subject} onChange={e => setMailModal({...mailModal, subject: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Email subject" disabled={sendingMail} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Message</label>
+                <textarea rows={15} value={mailModal.message} onChange={e => setMailModal({...mailModal, message: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Email content..." disabled={sendingMail}></textarea>
+              </div>
+              <div className="pt-2 flex justify-end gap-2">
+                <button onClick={() => setMailModal(null)} disabled={sendingMail} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-200 transition disabled:opacity-50">Cancel</button>
+                <button onClick={handleSendMail} disabled={sendingMail} className="flex items-center gap-2 px-5 py-2 bg-[#0077B6] text-white rounded-lg text-sm font-bold hover:bg-[#0077B6]/90 transition shadow-sm disabled:opacity-50">
+                  {sendingMail ? <div className="spinner" style={{width: 16, height: 16, border: '2px solid white', borderTopColor: 'transparent'}} /> : <Mail size={16} />}
+                  {sendingMail ? 'Sending...' : 'Send Email'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

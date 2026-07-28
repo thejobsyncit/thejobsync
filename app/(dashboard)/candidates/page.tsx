@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Users, Plus, Search, MapPin, Briefcase, GraduationCap, Mail, Phone, FileText, MoreVertical, Edit2, Trash2, X } from 'lucide-react';
 import { useDataStore } from '@/lib/useDataStore';
 import { Candidate, JobRequirement } from '@/lib/types';
@@ -123,6 +123,14 @@ export default function CandidatesPage() {
   const [emailSuccess, setEmailSuccess] = useState(false);
   const [emailError, setEmailError] = useState('');
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 30;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, sourceFilter]);
+
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!emailCandidate) return;
@@ -160,10 +168,19 @@ export default function CandidatesPage() {
         (c.skills && c.skills.some(s => s.toLowerCase().includes(search.toLowerCase()))) ||
         c.email.toLowerCase().includes(search.toLowerCase());
       const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
-      const matchesSource = sourceFilter === 'all' || (sourceFilter === 'applied' ? c.source !== 'excel_upload' : c.source === 'excel_upload');
+      const matchesSource = sourceFilter === 'all' 
+        ? true 
+        : sourceFilter === 'applied' 
+          ? !!(c.appliedFor || c.requirementTitle)
+          : sourceFilter === 'registered'
+            ? !(c.appliedFor || c.requirementTitle) && c.source !== 'excel_upload'
+            : c.source === 'excel_upload';
       return matchesSearch && matchesStatus && matchesSource;
     });
   }, [candidates, search, statusFilter, sourceFilter]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedCandidates = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   const handleOpenModal = (cand?: Candidate) => {
     if (cand) {
@@ -266,10 +283,19 @@ export default function CandidatesPage() {
             <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
             <input className="input" style={{ paddingLeft: '2.5rem', width: '100%' }} placeholder="Search by name, skill, or email..." value={search} onChange={e => setSearch(e.target.value)} />
           </div>
-          <div className="tab-list" style={{ flexShrink: 0 }}>
-            <button className={`tab-item ${sourceFilter === 'applied' ? 'active' : ''}`} onClick={() => setSourceFilter('applied')}>Applied Profiles ({candidates.filter(c => c.source !== 'excel_upload').length})</button>
-            <button className={`tab-item ${sourceFilter === 'excel_upload' ? 'active' : ''}`} onClick={() => setSourceFilter('excel_upload')}>Excel Dumps ({candidates.filter(c => c.source === 'excel_upload').length})</button>
-            <button className={`tab-item ${sourceFilter === 'all' ? 'active' : ''}`} onClick={() => setSourceFilter('all')}>All ({candidates.length})</button>
+          <div className="tab-list" style={{ flexShrink: 0, gap: '0.5rem', display: 'flex', flexWrap: 'wrap' }}>
+            <button className={`tab-item ${sourceFilter === 'applied' ? 'active' : ''}`} onClick={() => setSourceFilter('applied')}>
+              Applied Profiles ({candidates.filter(c => !!(c.appliedFor || c.requirementTitle)).length})
+            </button>
+            <button className={`tab-item ${sourceFilter === 'registered' ? 'active' : ''}`} onClick={() => setSourceFilter('registered')}>
+              Registered ({candidates.filter(c => !(c.appliedFor || c.requirementTitle) && c.source !== 'excel_upload').length})
+            </button>
+            <button className={`tab-item ${sourceFilter === 'excel_upload' ? 'active' : ''}`} onClick={() => setSourceFilter('excel_upload')}>
+              Excel Dumps ({candidates.filter(c => c.source === 'excel_upload').length})
+            </button>
+            <button className={`tab-item ${sourceFilter === 'all' ? 'active' : ''}`} onClick={() => setSourceFilter('all')}>
+              All ({candidates.length})
+            </button>
           </div>
         </div>
         <div className="tab-list" style={{ flexWrap: 'wrap' }}>
@@ -291,7 +317,7 @@ export default function CandidatesPage() {
       ) : (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-            {filtered.map((candidate, i) => (
+            {paginatedCandidates.map((candidate, i) => (
               <div
                 key={candidate.id}
                 className={`card animate-fade-in-up delay-${Math.min(i + 1, 8)}`}
@@ -431,6 +457,44 @@ export default function CandidatesPage() {
               </div>
             ))}
           </div>
+
+          {totalPages > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginTop: '2rem' }}>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <div style={{ display: 'flex', gap: '0.25rem' }}>
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let pageNum = i + 1;
+                  if (totalPages > 5 && currentPage > 3) {
+                    pageNum = currentPage - 3 + i;
+                  }
+                  if (pageNum > totalPages) return null;
+                  return (
+                    <button
+                      key={pageNum}
+                      className={currentPage === pageNum ? 'btn btn-primary' : 'btn btn-secondary'}
+                      style={{ padding: '0.5rem 0.75rem', minWidth: '36px' }}
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          )}
 
           {filtered.length === 0 && (
             <div className="empty-state" style={{ minHeight: 300 }}>
