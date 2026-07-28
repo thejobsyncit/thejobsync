@@ -7,6 +7,38 @@ import { Database, Clock, Briefcase, Mail, Phone, MapPin, GraduationCap, FileTex
 import { openResumeSafe, downloadResumeSafe } from '@/lib/resume';
 import { read, utils } from "xlsx";
 
+const getRegistrationWhatsAppLink = (name: string, phone: string) => {
+  const cleanPhone = phone?.toString().replace(/[^0-9]/g, '') || '';
+  const msg = `Hi ${name || 'there'},
+
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+
+Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+
+✨ Why apply through GoJobSync?
+
+- Multiple verified job opportunities
+- Quick and easy application process
+- Track your application status in real time
+- Direct access to hiring companies
+- Absolutely FREE for job seekers
+
+Don't miss your chance to land your next job.
+
+👉 Apply Now: www.gojobsync.com/careers/register
+
+Complete your profile and start applying to jobs in just a few minutes.
+
+If you have any questions, simply reply to our email—we're happy to help.
+*(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
+
+Best Regards,
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@thejobsync.com`;
+  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+};
+
 export default function FreshDumpPage() {
   const { user } = useAuth();
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -594,7 +626,7 @@ GoJobSync Recruitment Team
                           </button>
                         )}
                         {c.phone && c.phone !== 'NA' && (
-                          <a href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" title={`WhatsApp ${c.phone}`} className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition">
+                          <a href={getRegistrationWhatsAppLink(c.name, c.phone)} target="_blank" rel="noreferrer" title={`WhatsApp ${c.phone}`} className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition">
                             <Phone size={13} />
                           </a>
                         )}
@@ -651,7 +683,7 @@ GoJobSync Recruitment Team
                 </button>
               )}
               {viewResume.phone && viewResume.phone !== 'NA' ? (
-                <a href={`https://wa.me/${viewResume.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition border border-emerald-200 shadow-sm">
+                <a href={getRegistrationWhatsAppLink(viewResume.name, viewResume.phone)} target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-bold transition border border-emerald-200 shadow-sm">
                   <Phone size={15} /> WhatsApp Contact
                 </a>
               ) : (

@@ -2,7 +2,39 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Trash2, Eye, Plus, X, Upload, FileText, Send, CheckSquare, Square, Filter, Download, UserCheck, ChevronLeft, ChevronRight, Edit2, Save, Mail, Phone } from "lucide-react";
 import { read, utils, writeFile } from "xlsx";
-import { openResumeSafe, downloadResumeSafe } from "@/lib/resume";
+import { openResumeSafe } from "@/lib/resume";
+
+const getRegistrationWhatsAppLink = (name: string, phone: string) => {
+  const cleanPhone = phone?.toString().replace(/[^0-9]/g, '') || '';
+  const msg = `Hi ${name || 'there'},
+
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+
+Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+
+✨ Why apply through GoJobSync?
+
+- Multiple verified job opportunities
+- Quick and easy application process
+- Track your application status in real time
+- Direct access to hiring companies
+- Absolutely FREE for job seekers
+
+Don't miss your chance to land your next job.
+
+👉 Apply Now: www.gojobsync.com/careers/register
+
+Complete your profile and start applying to jobs in just a few minutes.
+
+If you have any questions, simply reply to our email—we're happy to help.
+*(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
+
+Best Regards,
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@thejobsync.com`;
+  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+};
 
 export default function SACandidatesPage() {
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -25,6 +57,10 @@ export default function SACandidatesPage() {
   const [uploadingExcel, setUploadingExcel] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({ uploaded: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Mail Modal
+  const [mailModal, setMailModal] = useState<any>(null);
+  const [sendingMail, setSendingMail] = useState(false);
 
   // Bulk Selection & Push
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -145,6 +181,70 @@ export default function SACandidatesPage() {
       alert("Error pushing candidates");
     } finally {
       setPushing(false);
+    }
+  };
+
+  const handleOpenMailModal = (c: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setMailModal({
+      candidateId: c.id,
+      name: c.name,
+      fromEmail: 'hr@thejobsync.com',
+      toEmail: c.email?.startsWith('noemail-') ? '' : c.email,
+      subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
+      message: `Hi ${c.name},
+
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+
+Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+
+✨ Why apply through GoJobSync?
+
+- Multiple verified job opportunities
+- Quick and easy application process
+- Track your application status in real time
+- Direct access to hiring companies
+- Absolutely FREE for job seekers
+
+Don't miss your chance to land your next job.
+
+👉 Apply Now: www.gojobsync.com/careers/register
+
+Complete your profile and start applying to jobs in just a few minutes.
+
+If you have any questions, simply reply to this email—we're happy to help.
+
+Best Regards,
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@thejobsync.com`
+    });
+  };
+
+  const handleSendMail = async () => {
+    if (!mailModal.toEmail) {
+      alert('Please provide a valid email address');
+      return;
+    }
+    setSendingMail(true);
+    try {
+      const res = await fetch('/api/support/send-registration-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mailModal)
+      });
+      if (res.ok) {
+        alert('✅ Email sent and marked as completed!');
+        setMailModal(null);
+        fetchData();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to send email');
+      }
+    } catch (e) {
+      alert('Error sending email');
+    } finally {
+      setSendingMail(false);
     }
   };
 
@@ -589,7 +689,7 @@ export default function SACandidatesPage() {
                           </a>
                         )}
                         {c.phone && (
-                          <a href={`https://wa.me/${c.phone.toString().replace(/[^0-9]/g, '')}?text=Hi ${encodeURIComponent(c.name || 'there')}, regarding your application at The JobSync...`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition shadow-sm" title={`WhatsApp ${c.phone}`}>
+                          <a href={getRegistrationWhatsAppLink(c.name, c.phone)} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition shadow-sm" title={`WhatsApp ${c.phone}`}>
                             <Phone size={14} />
                           </a>
                         )}
@@ -775,12 +875,12 @@ export default function SACandidatesPage() {
               <span className="text-xs font-bold text-slate-600 flex items-center gap-1">Quick Message:</span>
               <div className="flex gap-2">
                 {viewResume.email && (
-                  <a href={`mailto:${viewResume.email}?subject=Regarding Your Job Application at The JobSync`} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition shadow-sm">
+                  <button onClick={(e) => handleOpenMailModal(viewResume, e)} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition shadow-sm">
                     <Mail size={14} /> Email Candidate
-                  </a>
+                  </button>
                 )}
                 {viewResume.phone && (
-                  <a href={`https://wa.me/${viewResume.phone.toString().replace(/[^0-9]/g, '')}?text=Hi ${encodeURIComponent(viewResume.name || 'there')}, regarding your application at The JobSync...`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition shadow-sm">
+                  <a href={getRegistrationWhatsAppLink(viewResume.name, viewResume.phone)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition shadow-sm">
                     <Phone size={14} /> WhatsApp Message
                   </a>
                 )}
@@ -892,6 +992,45 @@ export default function SACandidatesPage() {
               <input placeholder="Resume URL (optional)" value={form.resumeUrl} onChange={e => setForm({...form, resumeUrl: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
             </div>
             <div className="flex justify-end gap-3 mt-6 pt-3 border-t"><button onClick={() => setShowAddModal(false)} className="px-4 py-2 border rounded-lg text-sm">Cancel</button><button onClick={handleAddCandidate} className="px-4 py-2 bg-[#0f172a] text-white rounded-lg text-sm font-medium">Add Candidate</button></div>
+          </div>
+        </div>
+      )}
+
+      {/* Mail Modal */}
+      {mailModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4 animate-fade-in" onClick={() => !sendingMail && setMailModal(null)}>
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-5 border-b pb-4">
+              <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <Mail size={20} className="text-[#0077B6]" /> Send Registration Email
+              </h2>
+              <button onClick={() => setMailModal(null)} disabled={sendingMail} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 disabled:opacity-50"><X size={20} /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">From Email (Sender)</label>
+                <input type="email" value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition" placeholder="Sender's email" disabled={sendingMail} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">To Email</label>
+                <input type="email" value={mailModal.toEmail} onChange={e => setMailModal({...mailModal, toEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Candidate's email" disabled={sendingMail} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Subject</label>
+                <input type="text" value={mailModal.subject} onChange={e => setMailModal({...mailModal, subject: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Email subject" disabled={sendingMail} />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Message</label>
+                <textarea rows={15} value={mailModal.message} onChange={e => setMailModal({...mailModal, message: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Email content..." disabled={sendingMail}></textarea>
+              </div>
+              <div className="pt-2 flex justify-end gap-2">
+                <button onClick={() => setMailModal(null)} disabled={sendingMail} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-200 transition disabled:opacity-50">Cancel</button>
+                <button onClick={handleSendMail} disabled={sendingMail} className="flex items-center gap-2 px-5 py-2 bg-[#0077B6] text-white rounded-lg text-sm font-bold hover:bg-[#0077B6]/90 transition shadow-sm disabled:opacity-50">
+                  {sendingMail ? <div className="spinner" style={{width: 16, height: 16, border: '2px solid white', borderTopColor: 'transparent'}} /> : <Mail size={16} />}
+                  {sendingMail ? 'Sending...' : 'Send Email'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
