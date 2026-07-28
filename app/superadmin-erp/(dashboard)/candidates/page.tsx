@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Trash2, Eye, Plus, X, Upload, FileText, Send, CheckSquare, Square, Filter, Download, UserCheck, ChevronLeft, ChevronRight, Edit2, Save, Mail, Phone } from "lucide-react";
 import { read, utils, writeFile } from "xlsx";
-import { openResumeSafe } from "@/lib/resume";
+import { openResumeSafe, downloadResumeSafe } from "@/lib/resume";
 
 const getRegistrationWhatsAppLink = (name: string, phone: string) => {
   const cleanPhone = phone?.toString().replace(/[^0-9]/g, '') || '';
