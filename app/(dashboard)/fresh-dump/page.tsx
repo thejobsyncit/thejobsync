@@ -206,21 +206,67 @@ GoJobSync Recruitment Team
     });
   };
 
+  const handleOpenBulkMailModal = () => {
+    setMailModal({
+      isBulk: true,
+      candidateIds: selectedIds,
+      fromEmail: 'hr@thejobsync.com',
+      subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
+      message: `Hi {name},
+
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+
+Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+
+✨ Why apply through GoJobSync?
+
+- Multiple verified job opportunities
+- Quick and easy application process
+- Track your application status in real time
+- Direct access to hiring companies
+- Absolutely FREE for job seekers
+
+Don't miss your chance to land your next job.
+
+👉 Apply Now: www.gojobsync.com/careers/register
+
+Complete your profile and start applying to jobs in just a few minutes.
+
+If you have any questions, simply reply to our email—we're happy to help.
+*(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
+
+Best Regards,
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@thejobsync.com`
+    });
+  };
+
   const handleSendMail = async () => {
-    if (!mailModal.toEmail) {
+    if (!mailModal.isBulk && !mailModal.toEmail) {
       toast.error('Please provide a valid email address');
       return;
     }
     setSendingMail(true);
     try {
-      const res = await fetch('/api/support/send-registration-email', {
+      const endpoint = mailModal.isBulk ? '/api/support/send-registration-email-bulk' : '/api/support/send-registration-email';
+      const payload = mailModal.isBulk ? {
+        candidateIds: mailModal.candidateIds,
+        fromEmail: mailModal.fromEmail,
+        subject: mailModal.subject,
+        messageTemplate: mailModal.message
+      } : mailModal;
+
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(mailModal)
+        body: JSON.stringify(payload)
       });
+      
       if (res.ok) {
-        toast.success('✅ Email sent and marked as completed!');
+        toast.success(mailModal.isBulk ? '✅ Bulk emails sent successfully!' : '✅ Email sent and marked as completed!');
         setMailModal(null);
+        if (mailModal.isBulk) setSelectedIds([]);
         fetchFreshDump();
         fetchMetrics();
       } else {
@@ -514,9 +560,14 @@ GoJobSync Recruitment Team
                 {selectedIds.length === candidates.length && candidates.length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
               </button>
               {selectedIds.length > 0 && (
-                <button onClick={handleBulkDelete} className="px-3 py-1.5 bg-red-50 text-red-600 border border-red-100 rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-red-100 transition shadow-sm">
-                  <Trash2 size={14} /> Delete Selected ({selectedIds.length})
-                </button>
+                <>
+                  <button onClick={handleOpenBulkMailModal} className="px-3 py-1.5 bg-[#0077B6] text-white rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-[#0077B6]/90 transition shadow-sm">
+                    <Mail size={14} /> Send Mail to Selected ({selectedIds.length})
+                  </button>
+                  <button onClick={handleBulkDelete} className="px-3 py-1.5 bg-red-50 text-red-600 border border-red-100 rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-red-100 transition shadow-sm">
+                    <Trash2 size={14} /> Delete Selected ({selectedIds.length})
+                  </button>
+                </>
               )}
             </div>
           )}
@@ -803,7 +854,7 @@ GoJobSync Recruitment Team
           <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-5 border-b pb-4">
               <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                <Mail size={20} className="text-[#0077B6]" /> Send Registration Email
+                <Mail size={20} className="text-[#0077B6]" /> {mailModal.isBulk ? `Bulk Send Registration Email (${mailModal.candidateIds.length} profiles)` : 'Send Registration Email'}
               </h2>
               <button onClick={() => setMailModal(null)} disabled={sendingMail} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 disabled:opacity-50"><X size={20} /></button>
             </div>
@@ -812,17 +863,23 @@ GoJobSync Recruitment Team
                 <label className="block text-xs font-bold text-gray-700 mb-1">From Email (Sender)</label>
                 <input type="email" value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition" placeholder="Sender's email" disabled={sendingMail} />
               </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">To Email</label>
-                <input type="email" value={mailModal.toEmail} onChange={e => setMailModal({...mailModal, toEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Candidate's email" disabled={sendingMail} />
-              </div>
+              {!mailModal.isBulk ? (
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">To Email</label>
+                  <input type="email" value={mailModal.toEmail} onChange={e => setMailModal({...mailModal, toEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Candidate's email" disabled={sendingMail} />
+                </div>
+              ) : (
+                <div className="p-3 bg-blue-50 text-blue-800 text-sm font-medium rounded-lg border border-blue-100">
+                  You are sending an email to {mailModal.candidateIds.length} candidates. The system will automatically use each candidate's registered email and insert their name using the <span className="font-bold font-mono">`{name}`</span> variable.
+                </div>
+              )}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">Subject</label>
                 <input type="text" value={mailModal.subject} onChange={e => setMailModal({...mailModal, subject: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Email subject" disabled={sendingMail} />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Message</label>
-                <textarea rows={15} value={mailModal.message} onChange={e => setMailModal({...mailModal, message: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Email content..." disabled={sendingMail}></textarea>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Message {mailModal.isBulk && <span className="text-gray-500 font-normal">(Use `{name}` as placeholder)</span>}</label>
+                <textarea rows={15} value={mailModal.message} onChange={e => setMailModal({...mailModal, message: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition font-mono" placeholder="Email content..." disabled={sendingMail}></textarea>
               </div>
               <div className="pt-2 flex justify-end gap-2">
                 <button onClick={() => setMailModal(null)} disabled={sendingMail} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-200 transition disabled:opacity-50">Cancel</button>
