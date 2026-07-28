@@ -43,7 +43,7 @@ export default function SACandidatesPage() {
   const [candidates, setCandidates] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [sourceTab, setSourceTab] = useState<'all' | 'applied' | 'excel_upload'>('all');
+  const [sourceTab, setSourceTab] = useState<'all' | 'applied' | 'registered' | 'excel_upload'>('all');
 
   // Modals
   const [showAddModal, setShowAddModal] = useState(false);
