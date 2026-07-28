@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { COUNTRIES } from '@/lib/countries';
+import { State, City } from 'country-state-city';
 import { ArrowLeft, CheckCircle2, Circle, Eye, EyeOff, Check, Search, MapPin, Users, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Footer from '@/components/landing/Footer';
@@ -28,6 +29,8 @@ export default function EmployerRegistration() {
 
   // Form State
   const [selectedCountryCode, setSelectedCountryCode] = useState('IN');
+  const [selectedStateCode, setSelectedStateCode] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [gstNumber, setGstNumber] = useState('');
   const [address, setAddress] = useState('');
@@ -150,7 +153,7 @@ export default function EmployerRegistration() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          companyName, gstNumber, address, contactPerson, contactPhone: fullContactPhone,
+          companyName, gstNumber, address: `${address}, ${selectedCity}, ${State.getStateByCodeAndCountry(selectedStateCode, selectedCountryCode)?.name || selectedStateCode}`, contactPerson, contactPhone: fullContactPhone,
           country: selectedCountryCode, email: workEmail, password, industry, about
         }),
       });
@@ -708,7 +711,7 @@ export default function EmployerRegistration() {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Country *</label>
-                            <select value={selectedCountryCode} onChange={e => setSelectedCountryCode(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white appearance-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}>
+                            <select value={selectedCountryCode} onChange={e => { setSelectedCountryCode(e.target.value); setSelectedStateCode(''); setSelectedCity(''); }} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white appearance-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}>
                               {COUNTRIES.map(c => (
                                 <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
                               ))}
@@ -726,9 +729,27 @@ export default function EmployerRegistration() {
                             })()}
                           </div>
                         </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">State / Province *</label>
+                            <select required value={selectedStateCode} onChange={e => { setSelectedStateCode(e.target.value); setSelectedCity(''); }} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white appearance-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}>
+                              <option value="">Select State</option>
+                              {selectedCountryCode ? State.getStatesOfCountry(selectedCountryCode).map(s => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>) : <option value="">Select Country first</option>}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">City / District *</label>
+                            <select required value={selectedCity} onChange={e => setSelectedCity(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white appearance-none" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E\")", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}>
+                              <option value="">Select City/District</option>
+                              {selectedStateCode ? City.getCitiesOfState(selectedCountryCode, selectedStateCode).map(c => <option key={c.name} value={c.name}>{c.name}</option>) : <option value="">Select State first</option>}
+                            </select>
+                          </div>
+                        </div>
+
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Company Address *</label>
-                          <input type="text" placeholder="Street address, city, state, PIN" required value={address} onChange={e => setAddress(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white" />
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Specific Address *</label>
+                          <input type="text" placeholder="Street address, PIN" required value={address} onChange={e => setAddress(e.target.value)} className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] dark:focus:border-[#0077B6] transition-colors dark:text-white" />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">

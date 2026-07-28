@@ -11,7 +11,9 @@ import { usePortalTheme } from '@/context/PortalThemeContext';
 import { openResumeSafe, downloadResumeSafe } from '@/lib/resume';
 import { toast } from 'react-hot-toast';
 import { getAllStates, getDistricts } from 'india-state-district';
+import { Country, State, City } from 'country-state-city';
 import { DEPARTMENTS, SALARY_RANGES } from '@/lib/constants';
+import { COUNTRIES } from '@/lib/countries';
 import ResumeBuilder from '@/components/candidate/ResumeBuilder';
 
 const getINPUT = (isDark: boolean) => ({
@@ -88,7 +90,7 @@ export default function CandidateProfilePage() {
 
   const [form, setForm] = useState<any>({
     name: '', email: '', phone: '', headline: '', summary: '',
-    locState: '', locDistrict: '', locCity: '', locAddress: '', currentCompany: '', currentRole: '', expectedSalary: '',
+    locCountry: 'IN', locState: '', locDistrict: '', locCity: '', locAddress: '', currentCompany: '', currentRole: '', expectedSalary: '',
     preferredRoles: '', resumeUrl: '', resumeFileName: '', photoUrl: '',
     skillsArr: [],
     languages: [],
@@ -139,11 +141,11 @@ export default function CandidateProfilePage() {
       if ((candidate as any).experience) experiences[0].role = (candidate as any).experience;
     }
 
-    let parsedLoc = { state: '', district: '', city: '', address: '' };
+    let parsedLoc = { country: 'IN', state: '', district: '', city: '', address: '' };
     try {
       if (candidate.location && candidate.location.startsWith('{')) {
         const locObj = JSON.parse(candidate.location);
-        parsedLoc = { state: locObj.state || '', district: locObj.district || '', city: locObj.city || '', address: locObj.address || '' };
+        parsedLoc = { country: locObj.country || 'IN', state: locObj.state || '', district: locObj.district || '', city: locObj.city || '', address: locObj.address || '' };
       } else {
         parsedLoc.city = candidate.location || '';
       }
@@ -164,6 +166,7 @@ export default function CandidateProfilePage() {
       phone: candidate.phone || '',
       headline: candidate.headline || '',
       summary: (candidate as any).summary || '',
+      locCountry: parsedLoc.country,
       locState: parsedLoc.state,
       locDistrict: parsedLoc.district,
       locCity: parsedLoc.city,
@@ -194,7 +197,7 @@ export default function CandidateProfilePage() {
   if (!form.name) missingFields.push('Full Name');
   if (!form.headline) missingFields.push('Headline');
   if (!form.summary) missingFields.push('Summary');
-  if (!form.locState || !form.locCity) missingFields.push('Location (State & City)');
+  if (!form.locCountry || !form.locState || !form.locCity) missingFields.push('Location (Country, State & City)');
   if (!form.preferredRoles) missingFields.push('Department / Field');
   if (!form.educations?.[0]?.degree || !form.educations?.[0]?.college) missingFields.push('Education Details');
   if (!form.skillsArr || form.skillsArr.length === 0) missingFields.push('Skills');
@@ -310,7 +313,7 @@ export default function CandidateProfilePage() {
         phone: form.phone,
         headline: form.headline,
         summary: form.summary,
-        location: JSON.stringify({ state: form.locState, district: form.locDistrict, city: form.locCity, address: form.locAddress }),
+        location: JSON.stringify({ country: form.locCountry, state: form.locState, district: form.locDistrict, city: form.locCity, address: form.locAddress }),
         currentCompany: form.currentCompany,
         currentRole: form.currentRole,
         expectedSalary: form.expectedSalary,
@@ -400,27 +403,33 @@ export default function CandidateProfilePage() {
             </Grid2>
             <div style={{ marginTop: 24, marginBottom: 8, fontSize: '1rem', fontWeight: 700, color: isDark ? 'white' : '#0f172a' }}>Location Details</div>
             <Grid2>
-              <Field label="State *">
-                <select style={getINPUT(isDark)} value={form.locState} onChange={e => setForm({ ...form, locState: e.target.value, locDistrict: '' })} className="focus:border-[#0077B6] appearance-none">
-                  <option value="">Select State</option>
-                  {getAllStates().map((s: any) => <option key={s.code} value={s.code}>{s.name}</option>)}
+              <Field label="Country *">
+                <select style={getINPUT(isDark)} value={form.locCountry} onChange={e => setForm({ ...form, locCountry: e.target.value, locState: '', locDistrict: '' })} className="focus:border-[#0077B6] appearance-none">
+                  <option value="">Select Country</option>
+                  {Country.getAllCountries().map(c => <option key={c.isoCode} value={c.isoCode}>{c.name}</option>)}
                 </select>
               </Field>
-              <Field label="District *">
-                <select style={getINPUT(isDark)} value={form.locDistrict} onChange={e => setForm({ ...form, locDistrict: e.target.value })} className="focus:border-[#0077B6] appearance-none">
-                  <option value="">Select District</option>
-                  {form.locState ? getDistricts(form.locState).map((d: string) => <option key={d} value={d}>{d}</option>) : null}
+              <Field label="State / Province *">
+                <select style={getINPUT(isDark)} value={form.locState} onChange={e => setForm({ ...form, locState: e.target.value, locDistrict: '' })} className="focus:border-[#0077B6] appearance-none">
+                  <option value="">Select State</option>
+                  {form.locCountry ? State.getStatesOfCountry(form.locCountry).map(s => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>) : <option value="">Select Country first</option>}
                 </select>
               </Field>
             </Grid2>
             <Grid2>
-              <Field label="City / Locality *">
+              <Field label="City / District *">
+                <select style={getINPUT(isDark)} value={form.locDistrict} onChange={e => setForm({ ...form, locDistrict: e.target.value })} className="focus:border-[#0077B6] appearance-none">
+                  <option value="">Select City/District</option>
+                  {form.locState ? City.getCitiesOfState(form.locCountry, form.locState).map(c => <option key={c.name} value={c.name}>{c.name}</option>) : <option value="">Select State first</option>}
+                </select>
+              </Field>
+              <Field label="Specific Locality / Area *">
                 <input style={getINPUT(isDark)} value={form.locCity} onChange={e => setForm({ ...form, locCity: e.target.value })} placeholder="e.g. Anna Nagar" className="focus:border-[#0077B6]" />
               </Field>
-              <Field label="Full Address">
-                <input style={getINPUT(isDark)} value={form.locAddress} onChange={e => setForm({ ...form, locAddress: e.target.value })} placeholder="Door No, Street Name" className="focus:border-[#0077B6]" />
-              </Field>
             </Grid2>
+            <Field label="Full Address" full>
+              <input style={getINPUT(isDark)} value={form.locAddress} onChange={e => setForm({ ...form, locAddress: e.target.value })} placeholder="Door No, Street Name" className="focus:border-[#0077B6]" />
+            </Field>
             <Field label="Phone Number *">
               <input style={getINPUT(isDark)} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Your mobile number" className="focus:border-[#0077B6]" />
             </Field>
