@@ -265,7 +265,7 @@ export default function SACandidatesPage() {
           if (name || email || phone || department || education || location || skills || experience) {
             candidatesPayload.push({
               name: name || 'NA',
-              email: email || `noemail-${Math.random().toString(36).substring(7)}@example.com`,
+              email: email || `noemail-${name?.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0,15) || 'unknown'}-${department?.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0,10) || 'role'}@example.com`,
               phone: phone || 'NA',
               currentRole: department || 'NA',
               education: education || 'NA',

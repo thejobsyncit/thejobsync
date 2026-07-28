@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
-import { Database, Clock, Briefcase, Mail, Phone, MapPin, GraduationCap, FileText, Eye, UserCheck, X, Download, Edit2, Save } from 'lucide-react';
+import { Database, Clock, Briefcase, Mail, Phone, MapPin, GraduationCap, FileText, Eye, UserCheck, X, Download, Edit2, Save, Upload, CheckSquare, Square, Trash2 } from 'lucide-react';
 import { openResumeSafe, downloadResumeSafe } from '@/lib/resume';
+import { read, utils } from "xlsx";
 
 export default function FreshDumpPage() {
   const { user } = useAuth();
@@ -15,6 +16,10 @@ export default function FreshDumpPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState<any>({});
   const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [uploadingExcel, setUploadingExcel] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({ uploaded: 0, total: 0 });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const fetchFreshDump = async () => {
     try {
@@ -55,6 +60,56 @@ export default function FreshDumpPage() {
       toast.success("✅ Resume URL updated successfully!");
     } else {
       toast.error("Failed to update resume URL");
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === candidates.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(candidates.map(c => c.id));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`Are you sure you want to delete ${selectedIds.length} selected candidate(s)?`)) return;
+    try {
+      const res = await fetch("/api/admin/candidates/bulk-delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds })
+      });
+      if (res.ok) {
+        toast.success(`✅ Deleted ${selectedIds.length} candidate(s)`);
+        setSelectedIds([]);
+        fetchFreshDump();
+      } else {
+        toast.error("Failed to delete candidates");
+      }
+    } catch {
+      toast.error("Error during deletion");
+    }
+  };
+
+  const handleDeleteOne = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("Are you sure you want to delete this candidate?")) return;
+    try {
+      const res = await fetch("/api/admin/candidates", { 
+        method: "DELETE", 
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify({ id }) 
+      });
+      if (res.ok) {
+        toast.success("✅ Candidate deleted successfully");
+        setSelectedIds(prev => prev.filter(i => i !== id));
+        fetchFreshDump();
+      } else {
+        toast.error("Failed to delete candidate");
+      }
+    } catch {
+      toast.error("Error during deletion");
     }
   };
 
@@ -158,6 +213,149 @@ export default function FreshDumpPage() {
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingExcel(true);
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const data = event.target?.result;
+        if (!data) return;
+        const workbook = read(data, { type: 'array' });
+        const firstSheet = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheet];
+        const rows: any[][] = utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+        
+        let headerRowIndex = 0;
+        let maxScore = 0;
+        let bestHeaders: string[] = [];
+
+        // 1. Find the most likely header row by scanning the first 15 rows
+        for (let i = 0; i < Math.min(15, rows.length); i++) {
+          const row = rows[i];
+          let score = 0;
+          const headers = row.map(cell => String(cell).toLowerCase().replace(/[^a-z0-9]/g, ''));
+          
+          headers.forEach(norm => {
+            if (norm.includes('name') || norm.includes('email') || norm.includes('mail') || 
+                norm.includes('phone') || norm.includes('contact') || norm.includes('mobile')) {
+              score++;
+            }
+          });
+          
+          if (score > maxScore) {
+            maxScore = score;
+            headerRowIndex = i;
+            bestHeaders = headers;
+          }
+        }
+
+        if (maxScore === 0 && rows.length > 0) {
+           bestHeaders = ['name', 'email', 'phone', 'department', 'education', 'location', 'skills', 'experience', 'currentrole', 'resumeurl'];
+           headerRowIndex = -1; 
+        }
+
+        const candidatesPayload = [];
+        for (let i = headerRowIndex + 1; i < rows.length; i++) {
+          const row = rows[i];
+          if (!row || row.every(cell => cell === undefined || cell === null || String(cell).trim() === '')) {
+            continue;
+          }
+
+          let name = '', email = '', phone = '', department = '', education = '', location = '', skills = '', experience = '', resumeUrl = '';
+
+          bestHeaders.forEach((norm, colIndex) => {
+            const val = row[colIndex];
+            if (val === undefined || val === null || val === '') return;
+            const strVal = String(val).trim();
+            
+            if (!name && (norm.includes('name') || norm.includes('candidate') || norm.includes('applicant') || norm.includes('first') || norm.includes('user'))) name = strVal;
+            else if (!email && (norm.includes('email') || norm.includes('mail') || norm.includes('id'))) email = strVal;
+            else if (!phone && (norm.includes('phone') || norm.includes('contact') || norm.includes('mobile') || norm.includes('cell') || norm.includes('number'))) phone = strVal;
+            else if (!department && (norm.includes('department') || norm.includes('role') || norm.includes('designation') || norm.includes('job') || norm.includes('domain') || norm.includes('function') || norm.includes('profile') || norm.includes('title') || norm.includes('specialization') || norm.includes('branch'))) department = strVal;
+            else if (!education && (norm.includes('education') || norm.includes('degree') || norm.includes('qualification') || norm.includes('course') || norm.includes('ug') || norm.includes('pg') || norm.includes('grad') || norm.includes('academic') || norm.includes('college') || norm.includes('school') || norm.includes('university') || norm.includes('study'))) education = strVal;
+            else if (!location && (norm.includes('location') || norm.includes('city') || norm.includes('place') || norm.includes('address') || norm.includes('state') || norm.includes('country') || norm.includes('region') || norm.includes('town') || norm.includes('area') || norm.includes('zone') || norm.includes('pin'))) location = strVal;
+            else if (!skills && (norm.includes('skill') || norm.includes('tech') || norm.includes('tool') || norm.includes('software') || norm.includes('language') || norm.includes('expert'))) skills = strVal;
+            else if (!experience && (norm.includes('exp') || norm.includes('year') || norm.includes('work') || norm.includes('history') || norm.includes('employ'))) experience = strVal;
+            else if (!resumeUrl && (norm.includes('resume') || norm.includes('cv') || norm.includes('url') || norm.includes('link') || norm.includes('drive'))) resumeUrl = strVal;
+          });
+
+          if (!email || !phone || !name) {
+             row.forEach((cell, idx) => {
+                const str = String(cell || '').trim();
+                if (!str) return;
+                if (!email && str.includes('@') && str.includes('.')) {
+                   email = str;
+                } 
+                else if (!phone && str.replace(/[^0-9]/g, '').length >= 9 && str.replace(/[^0-9]/g, '').length <= 15) {
+                   phone = str;
+                }
+                else if (!name && str.length > 2 && str.length < 50 && !str.includes('@') && !str.match(/[0-9]{5}/)) {
+                   name = str;
+                }
+             });
+          }
+
+          if (name || email || phone || department || education || location || skills || experience) {
+            candidatesPayload.push({
+              name: name || 'NA',
+              email: email || `noemail-${name?.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0,15) || 'unknown'}-${department?.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0,10) || 'role'}@example.com`,
+              phone: phone || 'NA',
+              currentRole: department || 'NA',
+              education: education || 'NA',
+              location: location || 'NA',
+              skills: skills ? skills.split(',').map(s => s.trim()) : ['General'],
+              experience: experience || 'NA',
+              resumeUrl: resumeUrl || null
+            });
+          }
+        }
+
+        const totalRecords = candidatesPayload.length;
+        setUploadProgress({ uploaded: 0, total: totalRecords });
+        
+        const chunkSize = 500;
+        let successCount = 0;
+
+        for (let i = 0; i < totalRecords; i += chunkSize) {
+          const chunk = candidatesPayload.slice(i, i + chunkSize);
+          const res = await fetch("/api/admin/candidates/bulk", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              candidates: chunk,
+              assignedSupportId: user?.id,
+              source: 'self'
+            })
+          });
+
+          if (res.ok) {
+            const resData = await res.json();
+            successCount += resData.count;
+            setUploadProgress({ uploaded: successCount, total: totalRecords });
+          } else {
+            const err = await res.json();
+            throw new Error(err.error || `Failed at chunk ${i / chunkSize + 1}`);
+          }
+        }
+
+        toast.success(`✅ Successfully uploaded ${successCount} candidates! Duplicates were skipped.`);
+        fetchFreshDump();
+
+      } catch (err: any) {
+        console.error(err);
+        toast.error("Error reading Excel file: " + err.message);
+      } finally {
+        setUploadingExcel(false);
+        setUploadProgress({ uploaded: 0, total: 0 });
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   return (
     <div>
       <div className="animate-fade-in mb-8 flex justify-between items-start">
@@ -172,11 +370,36 @@ export default function FreshDumpPage() {
               : 'Day-to-day new applications waiting for review'}
           </p>
         </div>
-        {user?.role === 'application_support' && (
-          <div className="px-3 py-1.5 bg-cyan-50 border border-cyan-200 text-cyan-800 rounded-xl flex items-center gap-2 text-sm font-bold shadow-sm">
-            <UserCheck size={16} /> Support Workspace: {user.name}
-          </div>
-        )}
+        <div className="flex flex-col gap-2 items-end">
+          {user?.role === 'application_support' && (
+            <div className="flex items-center gap-3">
+              <input type="file" ref={fileInputRef} accept=".xlsx,.xls,.csv" onChange={handleFileUpload} className="hidden" />
+              <button 
+                onClick={() => fileInputRef.current?.click()} 
+                disabled={uploadingExcel}
+                className="px-4 py-2 bg-[#0077B6] hover:bg-[#0077B6]/90 text-white rounded-xl flex items-center gap-2 text-sm font-bold shadow-sm transition disabled:opacity-50"
+              >
+                {uploadingExcel ? <div className="spinner" style={{width: 16, height: 16, border: '2px solid white', borderTopColor: 'transparent'}} /> : <Upload size={16} />}
+                {uploadingExcel ? `Uploading (${uploadProgress.uploaded}/${uploadProgress.total})...` : 'Upload Excel'}
+              </button>
+              <div className="px-3 py-2 bg-cyan-50 border border-cyan-200 text-cyan-800 rounded-xl flex items-center gap-2 text-sm font-bold shadow-sm">
+                <UserCheck size={16} /> Support Workspace: {user.name}
+              </div>
+            </div>
+          )}
+          {candidates.length > 0 && (
+            <div className="flex items-center gap-3">
+              <button onClick={handleSelectAll} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100">
+                {selectedIds.length === candidates.length && candidates.length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
+              </button>
+              {selectedIds.length > 0 && (
+                <button onClick={handleBulkDelete} className="px-3 py-1.5 bg-red-50 text-red-600 border border-red-100 rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-red-100 transition shadow-sm">
+                  <Trash2 size={14} /> Delete Selected ({selectedIds.length})
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="animate-fade-in-up space-y-10">
@@ -201,16 +424,22 @@ export default function FreshDumpPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {grouped[dateStr].map((c: any) => (
-                  <div key={c.id} className="card p-5 border border-[var(--border)] flex flex-col hover:border-[#0077B6]/30 transition-all shadow-sm cursor-pointer" onClick={() => handleOpenModal(c)}>
-                    <div className="flex gap-4 items-center mb-4">
+                  <div key={c.id} className={`card p-5 border flex flex-col transition-all shadow-sm cursor-pointer ${selectedIds.includes(c.id) ? 'border-[#0077B6] bg-blue-50/10' : 'border-[var(--border)] hover:border-[#0077B6]/30'}`} onClick={() => handleOpenModal(c)}>
+                    <div className="flex gap-3 items-center mb-4">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setSelectedIds(prev => prev.includes(c.id) ? prev.filter(id => id !== c.id) : [...prev, c.id]) }}
+                        className={`p-1 rounded-lg transition shrink-0 ${selectedIds.includes(c.id) ? 'text-[#0077B6]' : 'text-gray-300 hover:text-gray-500'}`}
+                      >
+                        {selectedIds.includes(c.id) ? <CheckSquare size={20} /> : <Square size={20} />}
+                      </button>
                       <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xl shrink-0">
                         {c.name[0]?.toUpperCase() || 'C'}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
                           <h3 className="font-bold text-lg text-[var(--foreground)] truncate">{formatNA(c.name)}</h3>
-                          <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase ${c.source === 'excel_upload' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}`}>
-                            {c.source === 'excel_upload' ? 'Excel' : 'Online'}
+                          <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase ${c.source === 'excel_upload' || c.source === 'self' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}`}>
+                            {c.source === 'excel_upload' || c.source === 'self' ? 'Excel' : 'Online'}
                           </span>
                         </div>
                         <p className="text-sm text-[var(--muted-foreground)] truncate">{formatNA(c.currentRole || c.appliedFor || 'Candidate')}</p>
@@ -259,6 +488,9 @@ export default function FreshDumpPage() {
                             <Phone size={13} />
                           </a>
                         )}
+                        <button onClick={(e) => handleDeleteOne(c.id, e)} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition ml-auto" title="Delete Candidate">
+                          <Trash2 size={13} />
+                        </button>
                       </div>
                       <span className="text-[11px] text-[var(--muted-foreground)] shrink-0">{new Date(c.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                     </div>
