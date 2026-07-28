@@ -870,7 +870,7 @@ GoJobSync Recruitment Team
                 </div>
               ) : (
                 <div className="p-3 bg-blue-50 text-blue-800 text-sm font-medium rounded-lg border border-blue-100">
-                  You are sending an email to {mailModal.candidateIds.length} candidates. The system will automatically use each candidate's registered email and insert their name using the <span className="font-bold font-mono">`{name}`</span> variable.
+                  You are sending an email to {mailModal.candidateIds.length} candidates. The system will automatically use each candidate's registered email and insert their name using the <span className="font-bold font-mono">`{"{name}"}`</span> variable.
                 </div>
               )}
               <div>
@@ -878,7 +878,7 @@ GoJobSync Recruitment Team
                 <input type="text" value={mailModal.subject} onChange={e => setMailModal({...mailModal, subject: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition" placeholder="Email subject" disabled={sendingMail} />
               </div>
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Message {mailModal.isBulk && <span className="text-gray-500 font-normal">(Use `{name}` as placeholder)</span>}</label>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Message {mailModal.isBulk && <span className="text-gray-500 font-normal">(Use `{"{name}"}` as placeholder)</span>}</label>
                 <textarea rows={15} value={mailModal.message} onChange={e => setMailModal({...mailModal, message: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 focus:bg-white transition font-mono" placeholder="Email content..." disabled={sendingMail}></textarea>
               </div>
               <div className="pt-2 flex justify-end gap-2">
