@@ -42,6 +42,88 @@ GoJobSync Recruitment Team
   return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
 };
 
+const BULK_TEMPLATES = [
+  `Hi {name},
+
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+
+Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+
+✨ Why apply through GoJobSync?
+
+- Multiple verified job opportunities
+- Quick and easy application process
+- Track your application status in real time
+- Direct access to hiring companies
+- Absolutely FREE for job seekers
+
+Don't miss your chance to land your next job.
+
+👉 Apply Now: www.gojobsync.com/careers/register
+
+Complete your profile and start applying to jobs in just a few minutes.
+
+If you have any questions, simply reply to our email—we're happy to help.
+*(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
+
+Best Regards,
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@thejobsync.com`,
+  
+  `Hello {name},
+
+Your profile caught our attention, and we have several exciting job openings at GoJobSync that match your skills.
+
+From entry-level positions for freshers to senior roles for experienced professionals, we partner with top companies actively hiring right now.
+
+⭐ Benefits of using GoJobSync:
+- 100% Free for job seekers
+- Verified, high-quality job postings
+- Seamless and fast application tracking
+- Connect directly with top recruiters
+
+Take the next step in your career journey today!
+
+🚀 Register Here: www.gojobsync.com/careers/register
+
+It only takes a few minutes to complete your profile and start applying. 
+
+Got questions? Just reply to this email, and our team will assist you.
+*(Please check your spam/junk folder if you missed our previous emails!)*
+
+Warm Regards,
+GoJobSync Hiring Team
+🌐 www.gojobsync.com 
+📧 hr@thejobsync.com`,
+
+  `Dear {name},
+
+We are reaching out because your background looks like a great match for the latest career opportunities available on GoJobSync.
+
+Our platform connects talented individuals—both fresh graduates and seasoned experts—with companies looking to hire immediately.
+
+🔥 What makes GoJobSync different?
+- Instant access to verified employers
+- Real-time updates on your applications
+- Simple, one-click apply process
+- Completely free of charge
+
+Don't let the perfect job slip away.
+
+✅ Create Your Profile: www.gojobsync.com/careers/register
+
+Set up your account in minutes and explore jobs tailored for you.
+
+Need help? Reply to this message and we will get back to you promptly.
+*(Make sure to check your spam/junk folder so you don't miss our updates!)*
+
+Best,
+GoJobSync Talent Acquisition
+🌐 www.gojobsync.com 
+📧 hr@thejobsync.com`
+];
+
 export default function FreshDumpPage() {
   const { user } = useAuth();
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -131,6 +213,11 @@ export default function FreshDumpPage() {
     }
   };
 
+  const handleSelect500 = () => {
+    const eligibleCandidates = candidates.filter(c => activeTab === 'completed' ? c.status === 'completed' : c.status !== 'completed');
+    setSelectedIds(eligibleCandidates.slice(0, 500).map(c => c.id));
+  };
+
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return;
     if (!confirm(`Are you sure you want to delete ${selectedIds.length} selected candidate(s)?`)) return;
@@ -213,38 +300,13 @@ GoJobSync Recruitment Team
   };
 
   const handleOpenBulkMailModal = () => {
+    const randomTemplate = BULK_TEMPLATES[Math.floor(Math.random() * BULK_TEMPLATES.length)];
     setMailModal({
       isBulk: true,
       candidateIds: selectedIds,
       fromEmail: 'hr@thejobsync.com',
       subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
-      message: `Hi {name},
-
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
-
-Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
-
-✨ Why apply through GoJobSync?
-
-- Multiple verified job opportunities
-- Quick and easy application process
-- Track your application status in real time
-- Direct access to hiring companies
-- Absolutely FREE for job seekers
-
-Don't miss your chance to land your next job.
-
-👉 Apply Now: www.gojobsync.com/careers/register
-
-Complete your profile and start applying to jobs in just a few minutes.
-
-If you have any questions, simply reply to our email—we're happy to help.
-*(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
-
-Best Regards,
-GoJobSync Recruitment Team
-🌐 www.gojobsync.com 
-📧 hr@thejobsync.com`
+      message: randomTemplate
     });
   };
 
@@ -610,6 +672,9 @@ GoJobSync Recruitment Team
           )}
           {filteredCandidates.length > 0 && (
             <div className="flex items-center gap-3">
+              <button onClick={handleSelect500} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 border border-transparent hover:border-gray-200">
+                <CheckSquare size={16} className="text-[#0077B6]" /> Select 500
+              </button>
               <button onClick={handleSelectAll} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100">
                 {selectedIds.length === filteredCandidates.length && filteredCandidates.length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
               </button>
