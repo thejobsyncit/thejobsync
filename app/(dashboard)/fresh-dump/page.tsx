@@ -59,6 +59,7 @@ export default function FreshDumpPage() {
   const [mailModal, setMailModal] = useState<any>(null);
   const [sendingMail, setSendingMail] = useState(false);
   const [sendProgress, setSendProgress] = useState({ current: 0, total: 0 });
+  const [activeTab, setActiveTab] = useState<'pending' | 'completed'>('pending');
 
   const fetchFreshDump = async () => {
     try {
@@ -119,7 +120,7 @@ export default function FreshDumpPage() {
   };
 
   const handleSelectAll = () => {
-    const eligibleCandidates = candidates.filter(c => c.status !== 'completed');
+    const eligibleCandidates = candidates.filter(c => activeTab === 'completed' ? c.status === 'completed' : c.status !== 'completed');
     if (selectedIds.length === eligibleCandidates.length && eligibleCandidates.length > 0) {
       setSelectedIds([]);
     } else {
@@ -328,8 +329,10 @@ GoJobSync Recruitment Team
 
   if (loading) return <div className="p-10 flex justify-center"><div className="spinner" style={{width: 40, height: 40}} /></div>;
 
+  const filteredCandidates = candidates.filter(c => activeTab === 'completed' ? c.status === 'completed' : c.status !== 'completed');
+
   // Group candidates by Date
-  const grouped = candidates.reduce((acc: any, c: any) => {
+  const grouped = filteredCandidates.reduce((acc: any, c: any) => {
     const d = new Date(c.createdAt);
     const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     if (!acc[dateStr]) acc[dateStr] = [];
@@ -600,10 +603,10 @@ GoJobSync Recruitment Team
               </div>
             </div>
           )}
-          {candidates.length > 0 && (
+          {filteredCandidates.length > 0 && (
             <div className="flex items-center gap-3">
               <button onClick={handleSelectAll} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100">
-                {selectedIds.length === candidates.filter(c => c.status !== 'completed').length && candidates.filter(c => c.status !== 'completed').length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
+                {selectedIds.length === filteredCandidates.length && filteredCandidates.length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
               </button>
               {selectedIds.length > 0 && (
                 <>
@@ -636,6 +639,15 @@ GoJobSync Recruitment Team
           </div>
         </div>
       )}
+
+      <div className="flex bg-gray-100 p-1 rounded-lg w-fit mb-6">
+        <button onClick={() => { setActiveTab('pending'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-sm font-semibold transition ${activeTab === 'pending' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+          Pending ({candidates.filter(c => c.status !== 'completed').length})
+        </button>
+        <button onClick={() => { setActiveTab('completed'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-sm font-semibold transition ${activeTab === 'completed' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+          Completed ({candidates.filter(c => c.status === 'completed').length})
+        </button>
+      </div>
 
       <div className="animate-fade-in-up space-y-10">
         {sortedDates.length === 0 ? (
