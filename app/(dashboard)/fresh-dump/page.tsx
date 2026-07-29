@@ -124,6 +124,12 @@ GoJobSync Talent Acquisition
 📧 hr@thejobsync.com`
 ];
 
+const SENDER_EMAILS = [
+  'thejobsyncit@gmail.com',
+  'hr@thejobsync.com',
+  'mrjobsync@gmail.com'
+];
+
 export default function FreshDumpPage() {
   const { user } = useAuth();
   const [candidates, setCandidates] = useState<any[]>([]);
@@ -301,10 +307,21 @@ GoJobSync Recruitment Team
 
   const handleOpenBulkMailModal = () => {
     const randomTemplate = BULK_TEMPLATES[Math.floor(Math.random() * BULK_TEMPLATES.length)];
+    
+    // Auto-cycle sender email
+    let lastIndex = 0;
+    try {
+      lastIndex = parseInt(localStorage.getItem('lastSenderIndex') || '-1');
+    } catch(e) {}
+    const nextIndex = (lastIndex + 1) % SENDER_EMAILS.length;
+    try {
+      localStorage.setItem('lastSenderIndex', nextIndex.toString());
+    } catch(e) {}
+
     setMailModal({
       isBulk: true,
       candidateIds: selectedIds,
-      fromEmail: 'hr@thejobsync.com',
+      fromEmail: SENDER_EMAILS[nextIndex],
       subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
       message: randomTemplate
     });
@@ -997,7 +1014,15 @@ GoJobSync Recruitment Team
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">From Email (Sender)</label>
-                <input type="email" value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition" placeholder="Sender's email" disabled={sendingMail} />
+                {mailModal.isBulk ? (
+                  <select value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition font-semibold text-blue-800" disabled={sendingMail}>
+                    <option value="thejobsyncit@gmail.com">thejobsyncit@gmail.com (Server 1)</option>
+                    <option value="hr@thejobsync.com">hr@thejobsync.com (Server 2)</option>
+                    <option value="mrjobsync@gmail.com">mrjobsync@gmail.com (Server 3)</option>
+                  </select>
+                ) : (
+                  <input type="email" value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition" placeholder="Sender's email" disabled={sendingMail} />
+                )}
               </div>
               {!mailModal.isBulk ? (
                 <div>

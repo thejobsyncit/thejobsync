@@ -10,11 +10,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    let smtpUser = process.env.SMTP_EMAIL;
-    let smtpPass = process.env.SMTP_PASSWORD;
-    if (!smtpUser || !smtpPass) {
-      smtpUser = process.env.SMTP_USER;
-      smtpPass = process.env.SMTP_PASS;
+    let smtpUser = fromEmail || 'thejobsyncit@gmail.com';
+    let smtpPass = '';
+
+    if (smtpUser === 'mrjobsync@gmail.com') {
+      smtpPass = process.env.SMTP_PASS || 'pywqmcurnrlbrbex';
+    } else if (smtpUser === 'hr@thejobsync.com') {
+      smtpPass = process.env.SMTP_HR_PASS || ''; // Expects SMTP_HR_PASS in .env
+      // If no HR pass, fallback to thejobsyncit
+      if (!smtpPass) {
+        smtpUser = 'thejobsyncit@gmail.com';
+        smtpPass = process.env.SMTP_PASSWORD || 'qije cutx qixs evzi';
+      }
+    } else {
+      // Default to thejobsyncit@gmail.com
+      smtpUser = 'thejobsyncit@gmail.com';
+      smtpPass = process.env.SMTP_PASSWORD || 'qije cutx qixs evzi';
     }
 
     const transporter = nodemailer.createTransport({
