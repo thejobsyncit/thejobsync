@@ -60,6 +60,8 @@ export default function FreshDumpPage() {
   const [sendingMail, setSendingMail] = useState(false);
   const [sendProgress, setSendProgress] = useState({ current: 0, total: 0 });
   const [activeTab, setActiveTab] = useState<'pending' | 'completed'>('pending');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 30;
 
   const fetchFreshDump = async () => {
     try {
@@ -67,7 +69,8 @@ export default function FreshDumpPage() {
       if (user?.role === 'application_support') {
         url = `/api/candidates?assignedSupportId=${user.id}`;
       }
-      const res = await fetch(url);
+      url += (url.includes('?') ? '&' : '?') + `t=${Date.now()}`;
+      const res = await fetch(url, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setCandidates(data);
@@ -330,9 +333,11 @@ GoJobSync Recruitment Team
   if (loading) return <div className="p-10 flex justify-center"><div className="spinner" style={{width: 40, height: 40}} /></div>;
 
   const filteredCandidates = candidates.filter(c => activeTab === 'completed' ? c.status === 'completed' : c.status !== 'completed');
+  const totalPages = Math.ceil(filteredCandidates.length / ITEMS_PER_PAGE);
+  const paginatedCandidates = filteredCandidates.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   // Group candidates by Date
-  const grouped = filteredCandidates.reduce((acc: any, c: any) => {
+  const grouped = paginatedCandidates.reduce((acc: any, c: any) => {
     const d = new Date(c.createdAt);
     const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     if (!acc[dateStr]) acc[dateStr] = [];
@@ -641,10 +646,10 @@ GoJobSync Recruitment Team
       )}
 
       <div className="flex bg-gray-100 p-1 rounded-lg w-fit mb-6">
-        <button onClick={() => { setActiveTab('pending'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-sm font-semibold transition ${activeTab === 'pending' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+        <button onClick={() => { setActiveTab('pending'); setSelectedIds([]); setCurrentPage(1); }} className={`px-4 py-1.5 rounded-md text-sm font-semibold transition ${activeTab === 'pending' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
           Pending ({candidates.filter(c => c.status !== 'completed').length})
         </button>
-        <button onClick={() => { setActiveTab('completed'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-sm font-semibold transition ${activeTab === 'completed' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+        <button onClick={() => { setActiveTab('completed'); setSelectedIds([]); setCurrentPage(1); }} className={`px-4 py-1.5 rounded-md text-sm font-semibold transition ${activeTab === 'completed' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
           Completed ({candidates.filter(c => c.status === 'completed').length})
         </button>
       </div>
@@ -755,6 +760,14 @@ GoJobSync Recruitment Team
           ))
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8 mb-8">
+          <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-bold disabled:opacity-50 hover:bg-gray-200">Previous</button>
+          <span className="text-sm font-bold text-gray-600">Page {currentPage} of {totalPages}</span>
+          <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="px-4 py-2 bg-gray-100 rounded-lg text-sm font-bold disabled:opacity-50 hover:bg-gray-200">Next</button>
+        </div>
+      )}
 
       {/* Candidate Profile & Resume View/Attach Modal */}
       {viewResume && (
