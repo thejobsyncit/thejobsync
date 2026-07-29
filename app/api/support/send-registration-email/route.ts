@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { prisma } from '@/lib/db';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: NextRequest) {
+  const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key_for_build');
+  
   try {
     const { candidateId, fromEmail, toEmail, subject, message } = await req.json();
 
