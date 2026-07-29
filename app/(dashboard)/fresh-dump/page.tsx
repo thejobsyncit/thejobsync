@@ -218,6 +218,16 @@ export default function FreshDumpPage() {
     }
   };
 
+  const handleSelect100 = () => {
+    const eligibleCandidates = candidates.filter(c => activeTab === 'completed' ? c.status === 'completed' : c.status !== 'completed');
+    setSelectedIds(eligibleCandidates.slice(0, 100).map(c => c.id));
+  };
+
+  const handleSelect200 = () => {
+    const eligibleCandidates = candidates.filter(c => activeTab === 'completed' ? c.status === 'completed' : c.status !== 'completed');
+    setSelectedIds(eligibleCandidates.slice(0, 200).map(c => c.id));
+  };
+
   const handleSelect500 = () => {
     const eligibleCandidates = candidates.filter(c => activeTab === 'completed' ? c.status === 'completed' : c.status !== 'completed');
     setSelectedIds(eligibleCandidates.slice(0, 500).map(c => c.id));
@@ -688,6 +698,12 @@ GoJobSync Recruitment Team
           )}
           {filteredCandidates.length > 0 && (
             <div className="flex items-center gap-3">
+              <button onClick={handleSelect100} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 border border-transparent hover:border-gray-200">
+                <CheckSquare size={16} className="text-[#0077B6]" /> Select 100
+              </button>
+              <button onClick={handleSelect200} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 border border-transparent hover:border-gray-200">
+                <CheckSquare size={16} className="text-[#0077B6]" /> Select 200
+              </button>
               <button onClick={handleSelect500} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 border border-transparent hover:border-gray-200">
                 <CheckSquare size={16} className="text-[#0077B6]" /> Select 500
               </button>
