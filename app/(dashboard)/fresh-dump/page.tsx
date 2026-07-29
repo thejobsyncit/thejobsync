@@ -58,6 +58,7 @@ export default function FreshDumpPage() {
   const [metrics, setMetrics] = useState<any>(null);
   const [mailModal, setMailModal] = useState<any>(null);
   const [sendingMail, setSendingMail] = useState(false);
+  const [sendProgress, setSendProgress] = useState({ current: 0, total: 0 });
 
   const fetchFreshDump = async () => {
     try {
@@ -118,10 +119,11 @@ export default function FreshDumpPage() {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === candidates.length) {
+    const eligibleCandidates = candidates.filter(c => c.status !== 'completed');
+    if (selectedIds.length === eligibleCandidates.length && eligibleCandidates.length > 0) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(candidates.map(c => c.id));
+      setSelectedIds(eligibleCandidates.map(c => c.id));
     }
   };
 
@@ -247,26 +249,70 @@ GoJobSync Recruitment Team
       toast.error('Please provide a valid email address');
       return;
     }
+
+    if (mailModal.isBulk) {
+      setSendingMail(true);
+      setSendProgress({ current: 0, total: mailModal.candidateIds.length });
+      
+      let successCount = 0;
+      let failCount = 0;
+      
+      const chunkSize = 5;
+      for (let i = 0; i < mailModal.candidateIds.length; i += chunkSize) {
+        const chunk = mailModal.candidateIds.slice(i, i + chunkSize);
+        
+        await Promise.all(chunk.map(async (id: string) => {
+          const candidate = candidates.find(c => c.id === id);
+          if (!candidate || candidate.email.startsWith('noemail-')) {
+             failCount++;
+             return;
+          }
+          
+          const payload = {
+             candidateId: id,
+             fromEmail: mailModal.fromEmail,
+             toEmail: candidate.email,
+             subject: mailModal.subject,
+             message: mailModal.message.replace(/\{name\}/g, candidate.name || 'there')
+          };
+          
+          try {
+             const res = await fetch('/api/support/send-registration-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+             });
+             if (res.ok) successCount++;
+             else failCount++;
+          } catch {
+             failCount++;
+          }
+        }));
+        
+        setSendProgress(prev => ({ ...prev, current: Math.min(i + chunkSize, mailModal.candidateIds.length) }));
+      }
+      
+      toast.success(`Bulk emails completed! Sent: ${successCount}, Failed: ${failCount}`);
+      setMailModal(null);
+      setSendProgress({ current: 0, total: 0 });
+      setSelectedIds([]);
+      fetchFreshDump();
+      fetchMetrics();
+      setSendingMail(false);
+      return;
+    }
+
     setSendingMail(true);
     try {
-      const endpoint = mailModal.isBulk ? '/api/support/send-registration-email-bulk' : '/api/support/send-registration-email';
-      const payload = mailModal.isBulk ? {
-        candidateIds: mailModal.candidateIds,
-        fromEmail: mailModal.fromEmail,
-        subject: mailModal.subject,
-        messageTemplate: mailModal.message
-      } : mailModal;
-
-      const res = await fetch(endpoint, {
+      const res = await fetch('/api/support/send-registration-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(mailModal)
       });
       
       if (res.ok) {
-        toast.success(mailModal.isBulk ? '✅ Bulk emails sent successfully!' : '✅ Email sent and marked as completed!');
+        toast.success('✅ Email sent and marked as completed!');
         setMailModal(null);
-        if (mailModal.isBulk) setSelectedIds([]);
         fetchFreshDump();
         fetchMetrics();
       } else {
@@ -557,7 +603,7 @@ GoJobSync Recruitment Team
           {candidates.length > 0 && (
             <div className="flex items-center gap-3">
               <button onClick={handleSelectAll} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100">
-                {selectedIds.length === candidates.length && candidates.length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
+                {selectedIds.length === candidates.filter(c => c.status !== 'completed').length && candidates.filter(c => c.status !== 'completed').length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
               </button>
               {selectedIds.length > 0 && (
                 <>
@@ -885,7 +931,7 @@ GoJobSync Recruitment Team
                 <button onClick={() => setMailModal(null)} disabled={sendingMail} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-200 transition disabled:opacity-50">Cancel</button>
                 <button onClick={handleSendMail} disabled={sendingMail} className="flex items-center gap-2 px-5 py-2 bg-[#0077B6] text-white rounded-lg text-sm font-bold hover:bg-[#0077B6]/90 transition shadow-sm disabled:opacity-50">
                   {sendingMail ? <div className="spinner" style={{width: 16, height: 16, border: '2px solid white', borderTopColor: 'transparent'}} /> : <Mail size={16} />}
-                  {sendingMail ? 'Sending...' : 'Send Email'}
+                  {sendingMail ? (mailModal.isBulk ? `Sending ${sendProgress.current} / ${sendProgress.total}...` : 'Sending...') : 'Send Email'}
                 </button>
               </div>
             </div>
