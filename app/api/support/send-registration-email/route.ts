@@ -12,6 +12,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Basic email validation to prevent Resend from throwing format errors
+    // If invalid, we just mark them as completed to get them out of the pending queue.
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(toEmail)) {
+      await prisma.candidate.update({
+        where: { id: candidateId },
+        data: { status: 'completed', updatedAt: new Date() }
+      });
+      return NextResponse.json({ success: true, message: 'Invalid email format, bypassed.' });
+    }
+
     const sender = fromEmail || 'hr@gojobsync.com';
 
     const { data, error } = await resend.emails.send({
