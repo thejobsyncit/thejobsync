@@ -348,6 +348,7 @@ GoJobSync Recruitment Team
       
       let successCount = 0;
       let failCount = 0;
+      let failReasons = new Set<string>();
       
       const chunkSize = 5;
       for (let i = 0; i < mailModal.candidateIds.length; i += chunkSize) {
@@ -374,9 +375,15 @@ GoJobSync Recruitment Team
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
              });
-             if (res.ok) successCount++;
-             else failCount++;
-          } catch {
+             if (res.ok) {
+                successCount++;
+             } else {
+                const errData = await res.json().catch(() => ({}));
+                failReasons.add(errData.error || `HTTP ${res.status}`);
+                failCount++;
+             }
+          } catch (e: any) {
+             failReasons.add(e.message || 'Network error');
              failCount++;
           }
         }));
@@ -384,7 +391,12 @@ GoJobSync Recruitment Team
         setSendProgress(prev => ({ ...prev, current: Math.min(i + chunkSize, mailModal.candidateIds.length) }));
       }
       
-      toast.success(`Bulk emails completed! Sent: ${successCount}, Failed: ${failCount}`);
+      if (failCount > 0) {
+        const reasonsStr = Array.from(failReasons).join(' | ');
+        toast.error(`Finished. Sent: ${successCount}, Failed: ${failCount}. Reason: ${reasonsStr}`, { duration: 10000 });
+      } else {
+        toast.success(`Bulk emails completed! All ${successCount} sent successfully.`);
+      }
       setMailModal(null);
       setSendProgress({ current: 0, total: 0 });
       setSelectedIds([]);
