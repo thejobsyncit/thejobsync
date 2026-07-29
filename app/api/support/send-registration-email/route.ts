@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { prisma } from '@/lib/db';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,35 +12,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    let smtpUser = fromEmail || 'thejobsyncit@gmail.com';
-    let smtpPass = '';
+    const sender = fromEmail || 'hr@gojobsync.com';
 
-    if (smtpUser === 'mrjobsync@gmail.com') {
-      smtpPass = process.env.SMTP_PASS || 'pywqmcurnrlbrbex';
-    } else {
-      // Default to thejobsyncit@gmail.com
-      smtpUser = 'thejobsyncit@gmail.com';
-      smtpPass = process.env.SMTP_PASSWORD || 'qije cutx qixs evzi';
-    }
-
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: smtpUser,
-        pass: smtpPass?.replace(/\s+/g, ''),
-      },
-    });
-
-    const mailOptions = {
-      from: fromEmail || smtpUser, // Use custom fromEmail or fallback to SMTP user
-      to: toEmail,
+    const { data, error } = await resend.emails.send({
+      from: `GoJobSync <${sender}>`,
+      to: [toEmail],
       subject: subject,
       text: message,
       html: `<p style="white-space: pre-wrap;">${message}</p>`,
-    };
+    });
 
-    // Send the email
-    await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error('Resend error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
     // Update candidate status to completed
     await prisma.candidate.update({
@@ -50,9 +37,9 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    return NextResponse.json({ success: true, message: 'Email sent successfully and profile marked as completed!' });
+    return NextResponse.json({ success: true, message: 'Email sent successfully via Resend!' });
   } catch (error: any) {
     console.error('Error sending registration email:', error);
-    return NextResponse.json({ error: `SMTP Error: ${error.message || 'Unknown'}` }, { status: 500 });
+    return NextResponse.json({ error: `Server Error: ${error.message || 'Unknown'}` }, { status: 500 });
   }
 }

@@ -125,8 +125,9 @@ GoJobSync Talent Acquisition
 ];
 
 const SENDER_EMAILS = [
-  'thejobsyncit@gmail.com',
-  'mrjobsync@gmail.com'
+  'hr@gojobsync.com',
+  'careers@gojobsync.com',
+  'updates@gojobsync.com'
 ];
 
 export default function FreshDumpPage() {
@@ -1043,8 +1044,9 @@ GoJobSync Recruitment Team
                 <label className="block text-xs font-bold text-gray-700 mb-1">From Email (Sender)</label>
                 {mailModal.isBulk ? (
                   <select value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition font-semibold text-blue-800" disabled={sendingMail}>
-                    <option value="thejobsyncit@gmail.com">thejobsyncit@gmail.com (Server 1)</option>
-                    <option value="mrjobsync@gmail.com">mrjobsync@gmail.com (Server 2)</option>
+                    <option value="hr@gojobsync.com">hr@gojobsync.com (Resend Route 1)</option>
+                    <option value="careers@gojobsync.com">careers@gojobsync.com (Resend Route 2)</option>
+                    <option value="updates@gojobsync.com">updates@gojobsync.com (Resend Route 3)</option>
                   </select>
                 ) : (
                   <input type="email" value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition" placeholder="Sender's email" disabled={sendingMail} />
