@@ -126,7 +126,6 @@ GoJobSync Talent Acquisition
 
 const SENDER_EMAILS = [
   'thejobsyncit@gmail.com',
-  'hr@thejobsync.com',
   'mrjobsync@gmail.com'
 ];
 
@@ -1017,8 +1016,7 @@ GoJobSync Recruitment Team
                 {mailModal.isBulk ? (
                   <select value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition font-semibold text-blue-800" disabled={sendingMail}>
                     <option value="thejobsyncit@gmail.com">thejobsyncit@gmail.com (Server 1)</option>
-                    <option value="hr@thejobsync.com">hr@thejobsync.com (Server 2)</option>
-                    <option value="mrjobsync@gmail.com">mrjobsync@gmail.com (Server 3)</option>
+                    <option value="mrjobsync@gmail.com">mrjobsync@gmail.com (Server 2)</option>
                   </select>
                 ) : (
                   <input type="email" value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition" placeholder="Sender's email" disabled={sendingMail} />

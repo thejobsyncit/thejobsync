@@ -15,13 +15,6 @@ export async function POST(req: NextRequest) {
 
     if (smtpUser === 'mrjobsync@gmail.com') {
       smtpPass = process.env.SMTP_PASS || 'pywqmcurnrlbrbex';
-    } else if (smtpUser === 'hr@thejobsync.com') {
-      smtpPass = process.env.SMTP_HR_PASS || ''; // Expects SMTP_HR_PASS in .env
-      // If no HR pass, fallback to thejobsyncit
-      if (!smtpPass) {
-        smtpUser = 'thejobsyncit@gmail.com';
-        smtpPass = process.env.SMTP_PASSWORD || 'qije cutx qixs evzi';
-      }
     } else {
       // Default to thejobsyncit@gmail.com
       smtpUser = 'thejobsyncit@gmail.com';
