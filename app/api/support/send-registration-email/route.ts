@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       secure: false, // TLS
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
+        pass: process.env.SMTP_PASSWORD || process.env.SMTP_PASS,
       }
     });
 
