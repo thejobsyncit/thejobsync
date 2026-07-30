@@ -234,6 +234,17 @@ export default function FreshDumpPage() {
     setSelectedIds(eligibleCandidates.slice(0, 500).map(c => c.id));
   };
 
+  const handleSelectCurrentPage = () => {
+    const currentPageIds = paginatedCandidates.map((c: any) => c.id);
+    const alreadyAllSelected = currentPageIds.every((id: string) => selectedIds.includes(id)) && currentPageIds.length > 0;
+    if (alreadyAllSelected) {
+      setSelectedIds(selectedIds.filter((id: string) => !currentPageIds.includes(id)));
+    } else {
+      const merged = Array.from(new Set([...selectedIds, ...currentPageIds]));
+      setSelectedIds(merged);
+    }
+  };
+
   const handleBulkDelete = async () => {
     if (selectedIds.length === 0) return;
     if (!confirm(`Are you sure you want to delete ${selectedIds.length} selected candidate(s)?`)) return;
@@ -713,6 +724,9 @@ GoJobSync Recruitment Team
           )}
           {filteredCandidates.length > 0 && (
             <div className="flex items-center gap-3">
+              <button onClick={handleSelectCurrentPage} className="text-sm font-bold text-orange-600 hover:text-orange-800 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-orange-50 border border-transparent hover:border-orange-200">
+                <CheckSquare size={16} className="text-orange-500" /> Select This Page ({paginatedCandidates.length})
+              </button>
               <button onClick={handleSelect100} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100 border border-transparent hover:border-gray-200">
                 <CheckSquare size={16} className="text-[#0077B6]" /> Select 100
               </button>
