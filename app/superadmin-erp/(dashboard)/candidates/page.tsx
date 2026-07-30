@@ -124,6 +124,17 @@ export default function SACandidatesPage() {
     }
   };
 
+  const handleSelectCurrentPage = () => {
+    const currentPageIds = paginatedCandidates.map((c: any) => c.id);
+    const alreadyAllSelected = currentPageIds.every((id: string) => selectedIds.includes(id)) && currentPageIds.length > 0;
+    if (alreadyAllSelected) {
+      setSelectedIds(selectedIds.filter((id: string) => !currentPageIds.includes(id)));
+    } else {
+      const merged = Array.from(new Set([...selectedIds, ...currentPageIds]));
+      setSelectedIds(merged);
+    }
+  };
+
   const handleSelectRow = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (selectedIds.includes(id)) {
@@ -607,6 +618,13 @@ GoJobSync Recruitment Team
 
         {/* Search & Bulk Actions */}
         <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+          {filtered.length > 0 && (
+            <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-lg">
+              <button onClick={handleSelectCurrentPage} className="flex items-center gap-1 px-3 py-1 bg-orange-500 text-white rounded text-xs font-medium hover:bg-orange-600 transition">
+                <CheckSquare size={12} /> Select This Page ({paginatedCandidates.length})
+              </button>
+            </div>
+          )}
           {selectedIds.length > 0 && (
             <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-lg animate-fade-in">
               <span className="text-xs font-bold text-blue-700">{selectedIds.length} selected</span>
