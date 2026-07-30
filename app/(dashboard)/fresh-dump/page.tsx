@@ -251,8 +251,9 @@ export default function FreshDumpPage() {
       } else {
         toast.error("Failed to delete candidates");
       }
-    } catch {
-      toast.error("Error during deletion");
+    } catch (error: any) {
+      toast.error("Error during deletion: " + (error.message || "Network issue"));
+      console.error(error);
     }
   };
 
@@ -273,8 +274,9 @@ export default function FreshDumpPage() {
       } else {
         toast.error("Failed to delete candidate");
       }
-    } catch {
-      toast.error("Error during deletion");
+    } catch (error: any) {
+      toast.error("Error during deletion: " + (error.message || "Network issue"));
+      console.error(error);
     }
   };
 
