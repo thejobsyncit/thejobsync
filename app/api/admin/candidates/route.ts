@@ -4,10 +4,12 @@ import nodemailer from 'nodemailer';
 import { notifyCandidateStatusChange } from '@/lib/whatsapp';
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: process.env.SMTP_HOST || 'jwij4ht3pzhr.hkph.mail-manager-smtp.amazonaws.com',
+  port: 587,
+  secure: false, // TLS
   auth: {
     user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    pass: process.env.SMTP_PASSWORD,
   },
 });
 
