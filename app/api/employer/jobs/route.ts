@@ -177,22 +177,18 @@ export async function POST(req: NextRequest) {
 </html>`;
 
         if (process.env.SMTP_USER) {
-          // Send in batches of 50 BCC to avoid SMTP limits
-          const BATCH = 50;
+          // Send individually to avoid BCC issues with AWS SES sandbox
+          const BATCH = 10;
           for (let i = 0; i < candidates.length; i += BATCH) {
             const batch = candidates.slice(i, i + BATCH);
-            const bccList = batch.map(c => c.email).join(',');
-            try {
-              await transporter.sendMail({
-                from: `"The jobsync" <${process.env.SMTP_USER}>`,
-                to: process.env.SMTP_USER, // send to self
-                bcc: bccList,
-                subject: `🚀 New Job: ${title} at ${companyName} — The jobsync`,
+            await Promise.allSettled(batch.map((c: any) =>
+              transporter.sendMail({
+                from: `"GoJobSync" <hr@gojobsync.com>`,
+                to: c.email,
+                subject: `🚀 New Job: ${title} at ${companyName} — GoJobSync`,
                 html,
-              });
-            } catch (batchErr) {
-              console.error(`Email batch ${i} failed:`, batchErr);
-            }
+              }).catch((err: any) => console.error(`Failed to send to ${c.email}:`, err))
+            ));
           }
           console.log(`Job alert sent to ${candidates.length} candidates.`);
         }
