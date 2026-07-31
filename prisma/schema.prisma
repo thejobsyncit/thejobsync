@@ -86,7 +86,7 @@ model JobRequirement {
   updatedAt          DateTime @updatedAt
 
   // Relations
-  client     Client       @relation(fields: [clientId], references: [id])
+  client     Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
   candidates Candidate[]
   interviews Interview[]
   placements Placement[]
@@ -170,7 +170,7 @@ model Placement {
   // Relations
   candidate   Candidate      @relation(fields: [candidateId], references: [id])
   requirement JobRequirement @relation(fields: [requirementId], references: [id])
-  client      Client         @relation(fields: [clientId], references: [id])
+  client      Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 // ==================== NOTIFICATION ====================
