@@ -51,6 +51,31 @@ export default function CoordinatorDashboard() {
     return filteredLeads.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
   }, [filteredLeads, currentPage]);
 
+  // Group paginated leads by date
+  const groupedLeads = useMemo(() => {
+    const groups: Record<string, CompanyLead[]> = {};
+    paginatedLeads.forEach(lead => {
+      const d = new Date(lead.createdAt);
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(lead);
+    });
+    return groups;
+  }, [paginatedLeads]);
+
+  const getDateLabel = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (d.toDateString() === today.toDateString()) return 'Today';
+    if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
+  const sortedDateKeys = useMemo(() => Object.keys(groupedLeads).sort((a,b) => new Date(b).getTime() - new Date(a).getTime()), [groupedLeads]);
+
+
   useEffect(() => {
     fetchLeads();
   }, []);
@@ -68,6 +93,19 @@ export default function CoordinatorDashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVerify = async (leadId: string) => {
+    if (!confirm('Mark this lead as Verified? It will be promoted as a confirmed client.')) return;
+    try {
+      const res = await fetch(`/api/leads/${leadId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'verified' }),
+      });
+      if (res.ok) fetchLeads();
+      else alert('Failed to verify lead');
+    } catch { alert('Error verifying lead'); }
   };
 
   const handleQuickStatus = async (leadId: string, status: string) => {
@@ -382,50 +420,74 @@ export default function CoordinatorDashboard() {
           <p className="text-[var(--muted-foreground)]">{searchQuery ? `We couldn't find anything matching "${searchQuery}"` : 'You have no assigned company dumps right now.'}</p>
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
-          <div className="grid gap-4">
-            {paginatedLeads.map(lead => (
-            <div key={lead.id} className={`bg-white dark:bg-slate-900 rounded-xl border p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm transition-colors ${selectedLeads.includes(lead.id) ? 'border-blue-500 ring-1 ring-blue-500/20' : 'border-[var(--border)]'}`}>
-              <div className="flex items-start gap-4 flex-1">
-                <div className="pt-1">
-                  <input type="checkbox" className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" checked={selectedLeads.includes(lead.id)} onChange={() => handleSelect(lead.id)} />
+        <div className="flex flex-col gap-8">
+          {sortedDateKeys.map(dateKey => (
+            <div key={dateKey}>
+              {/* Date group header */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-2 bg-[#03045E] text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-sm">
+                  <span>📅 {getDateLabel(dateKey)}</span>
                 </div>
-                <div className="flex-1">
-                <div className="flex items-center gap-3 mb-1">
-                  <button onClick={() => setViewLead(lead)} className="font-bold text-lg hover:text-blue-600 transition-colors flex items-center gap-2 text-left">
-                    {lead.companyName}
-                    <Eye size={16} className="text-slate-400 opacity-50" />
-                  </button>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase ${
-                    lead.status === 'fresh' ? 'bg-purple-100 text-purple-700' :
-                    lead.status === 'interested' || lead.status === 'updated' ? 'bg-green-100 text-green-700' :
-                    'bg-slate-100 text-slate-600'
-                  }`}>{lead.status.replace('_', ' ')}</span>
-                </div>
-                <div className="text-sm text-[var(--muted-foreground)] flex items-center gap-4">
-                  <span>Phone: {lead.phone || 'N/A'}</span>
-                  <span>Email: {lead.email || 'N/A'}</span>
-                  {lead.dms?.name && <span>(Added by {lead.dms.name})</span>}
-                </div>
-                {lead.remark && <div className="text-sm mt-2 font-medium">Remark: {lead.remark}</div>}
-                </div>
+                <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                <span className="text-xs font-semibold text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
+                  {groupedLeads[dateKey].length} lead{groupedLeads[dateKey].length !== 1 ? 's' : ''}
+                </span>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {STATUS_ACTIONS.map(action => (
-                  <button
-                    key={action.value}
-                    onClick={() => handleQuickStatus(lead.id, action.value)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${action.color} hover:opacity-80`}
-                  >
-                    {action.icon} {action.label}
-                  </button>
+              <div className="grid gap-3">
+                {groupedLeads[dateKey].map(lead => (
+                  <div key={lead.id} className={`bg-white dark:bg-slate-900 rounded-xl border p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm transition-colors ${selectedLeads.includes(lead.id) ? 'border-blue-500 ring-1 ring-blue-500/20' : lead.status === 'verified' ? 'border-emerald-300 bg-emerald-50/30' : 'border-[var(--border)]'}`}>
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className="pt-1">
+                        <input type="checkbox" className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" checked={selectedLeads.includes(lead.id)} onChange={() => handleSelect(lead.id)} />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-1">
+                          <button onClick={() => setViewLead(lead)} className="font-bold text-lg hover:text-blue-600 transition-colors flex items-center gap-2 text-left">
+                            {lead.companyName}
+                            <Eye size={16} className="text-slate-400 opacity-50" />
+                          </button>
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase ${
+                            lead.status === 'fresh' ? 'bg-purple-100 text-purple-700' :
+                            lead.status === 'verified' ? 'bg-emerald-100 text-emerald-700' :
+                            lead.status === 'interested' || lead.status === 'updated' ? 'bg-green-100 text-green-700' :
+                            'bg-slate-100 text-slate-600'
+                          }`}>{lead.status.replace('_', ' ')}</span>
+                          {lead.status === 'verified' && <span className="text-xs text-emerald-600 font-bold">✅ Verified</span>}
+                        </div>
+                        <div className="text-sm text-[var(--muted-foreground)] flex items-center gap-4">
+                          <span>📞 {lead.phone || 'N/A'}</span>
+                          <span>✉️ {lead.email || 'N/A'}</span>
+                          {lead.dms?.name && <span className="text-xs bg-slate-100 px-2 py-0.5 rounded-full">Added by {lead.dms.name}</span>}
+                        </div>
+                        {lead.remark && <div className="text-sm mt-1.5 text-slate-600 italic">💬 {lead.remark}</div>}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {STATUS_ACTIONS.map(action => (
+                        <button
+                          key={action.value}
+                          onClick={() => handleQuickStatus(lead.id, action.value)}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors ${action.color} hover:opacity-80`}
+                        >
+                          {action.icon} {action.label}
+                        </button>
+                      ))}
+                      {user?.role === 'super_admin' && lead.status !== 'verified' && (
+                        <button
+                          onClick={() => handleVerify(lead.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition-colors border border-emerald-200"
+                        >
+                          ✅ Verify
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           ))}
-          </div>
-
           {totalPages > 1 && (
             <div className="flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-3 rounded-xl shadow-sm">
               <span className="text-sm text-slate-600 dark:text-slate-400">
