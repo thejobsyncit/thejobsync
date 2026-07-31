@@ -1,10 +1,12 @@
 import nodemailer from 'nodemailer';
 
 export const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: process.env.SMTP_HOST || 'jwij4ht3pzhr.hkph.mail-manager-smtp.amazonaws.com',
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    pass: process.env.SMTP_PASSWORD || process.env.SMTP_PASS,
   },
 });
 
@@ -19,7 +21,7 @@ export const sendEmail = async ({
 }) => {
   try {
     const info = await transporter.sendMail({
-      from: `"The jobsync" <${process.env.SMTP_USER}>`,
+      from: `"GoJobSync" <hr@gojobsync.com>`,
       to,
       subject,
       html,
