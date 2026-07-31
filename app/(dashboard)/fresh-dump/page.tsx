@@ -1048,14 +1048,14 @@ GoJobSync Recruitment Team
       {/* Mail Modal */}
       {mailModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4 animate-fade-in" onClick={() => !sendingMail && setMailModal(null)}>
-          <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-5 border-b pb-4">
               <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                 <Mail size={20} className="text-[#0077B6]" /> {mailModal.isBulk ? `Bulk Send Registration Email (${mailModal.candidateIds.length} profiles)` : 'Send Registration Email'}
               </h2>
               <button onClick={() => setMailModal(null)} disabled={sendingMail} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 disabled:opacity-50"><X size={20} /></button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto flex-1 pr-2 custom-scrollbar">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">From Email (Sender)</label>
                 {mailModal.isBulk ? (
