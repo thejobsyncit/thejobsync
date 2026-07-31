@@ -197,30 +197,34 @@ export default function SACompaniesPage() {
           const row = rows[i];
           if (!row || row.every(cell => !String(cell).trim())) continue;
 
-          let companyName = '', contactPerson = '', email = '', phone = '', address = '', industry = '', website = '';
+          let companyName = '', contactPerson = '', email = '', phone = '', address = '', industry = '', website = '', notes = '';
 
           bestHeaders.forEach((norm, colIndex) => {
             const strVal = String(row[colIndex] || '').trim();
             if (!strVal) return;
             
-            if (!companyName && (norm.includes('companyname') || norm === 'company' || norm === 'client' || norm === 'name')) companyName = strVal;
-            else if (!contactPerson && (norm.includes('hrname') || norm.includes('contactperson') || norm.includes('hr') || norm === 'person')) contactPerson = strVal;
+            if (!companyName && norm.includes('companyname')) companyName = strVal;
+            else if (!contactPerson && (norm.includes('hrname') || norm.includes('contactperson') || norm.includes('hr') || norm === 'person' || norm === 'name')) contactPerson = strVal;
             else if (!email && (norm.includes('email') || norm.includes('mailid') || norm.includes('mail'))) email = strVal;
             else if (!phone && (norm.includes('contactno') || norm.includes('contact') || norm.includes('phone') || norm.includes('mobile') || norm.includes('number'))) phone = strVal;
             else if (!address && (norm.includes('location') || norm.includes('address') || norm.includes('city'))) address = strVal;
             else if (!industry && (norm.includes('companytype') || norm.includes('industry') || norm.includes('sector') || norm.includes('domain'))) industry = strVal;
             else if (!website && (norm.includes('website') || norm.includes('url') || norm.includes('link'))) website = strVal;
+            else if (!notes && (norm.includes('openingdetails') || norm.includes('opening') || norm.includes('details') || norm.includes('notes') || norm.includes('description'))) notes = strVal;
           });
 
           if (companyName || email || phone) {
             companiesPayload.push({
-              companyName: companyName || 'Unknown Company',
+              companyName: companyName || 'NA',
               contactPerson: contactPerson || 'NA',
               email: email || `noemail-${companyName?.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().substring(0,10)}@example.com`,
               phone: phone || 'NA',
               address: address || 'NA',
-              industry: industry || 'General',
-              website: website || ''
+              industry: industry || 'NA',
+              website: website || 'NA',
+              notes: notes || 'NA',
+              status: 'active',
+              source: 'excel_upload'
             });
           }
         }
@@ -489,11 +493,14 @@ GoJobSync Recruitment Team
                 </th>
                 {isExcelView ? (
                   <>
+                    <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Company Name</th>
                     <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">HR Name</th>
                     <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Contact No</th>
                     <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Email ID</th>
                     <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Company type</th>
                     <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Location</th>
+                    <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Websites</th>
+                    <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 whitespace-nowrap">Opening details</th>
                     <th className="p-4 font-bold text-xs uppercase tracking-wider text-slate-500 text-right whitespace-nowrap">Actions</th>
                   </>
                 ) : (
@@ -533,11 +540,18 @@ GoJobSync Recruitment Team
                     </td>
                     {isExcelView ? (
                       <>
+                        <td className="p-4 text-sm font-semibold text-slate-800">{c.companyName || 'NA'}</td>
                         <td className="p-4 text-sm text-slate-700">{c.contactPerson && c.contactPerson !== 'NA' ? c.contactPerson : 'NA'}</td>
                         <td className="p-4 text-sm text-slate-700">{c.phone && c.phone !== 'NA' ? c.phone : 'NA'}</td>
                         <td className="p-4 text-sm text-slate-700">{c.email && c.email !== 'NA' && !c.email.startsWith('noemail-') ? c.email : 'NA'}</td>
                         <td className="p-4 text-sm text-slate-700">{c.industry && c.industry !== 'NA' ? c.industry : 'NA'}</td>
                         <td className="p-4 text-sm text-slate-700">{c.address && c.address !== 'NA' ? c.address : 'NA'}</td>
+                        <td className="p-4 text-sm text-slate-700">
+                          {c.website && c.website !== 'NA' ? (
+                            <a href={c.website.startsWith('http') ? c.website : `https://${c.website}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline" onClick={e => e.stopPropagation()}>{c.website}</a>
+                          ) : 'NA'}
+                        </td>
+                        <td className="p-4 text-sm text-slate-700 max-w-[200px] truncate" title={c.notes && c.notes !== 'NA' ? c.notes : 'NA'}>{c.notes && c.notes !== 'NA' ? c.notes : 'NA'}</td>
                         <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end gap-1.5">
                             <button onClick={(e) => handleOpenMailModal(c, e)} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Send Mail">
