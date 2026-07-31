@@ -1,7 +1,7 @@
 import React from 'react';
 import { ResumeData } from './ClassicTemplate';
 
-export default function ProfessionalTemplate({ data }: { data: ResumeData }) {
+export default function ProfessionalTemplate({ data, onFieldChange, editable }: { data: ResumeData; onFieldChange?: (field: string, value: any) => void; editable?: boolean }) {
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', color: '#1f2937', lineHeight: 1.6, background: 'white', padding: '12mm', height: '100%', boxSizing: 'border-box' }}>
       

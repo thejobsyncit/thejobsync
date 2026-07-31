@@ -11,7 +11,7 @@ const getProficiencyWidth = (prof: string) => {
   }
 };
 
-export default function ModernTemplate({ data }: { data: ResumeData }) {
+export default function ModernTemplate({ data, onFieldChange, editable }: { data: ResumeData; onFieldChange?: (field: string, value: any) => void; editable?: boolean }) {
   const theme = data.themeColor || '#d97706'; // Default orange/amber
   
   const nameParts = data.name ? data.name.split(' ') : ['Name'];

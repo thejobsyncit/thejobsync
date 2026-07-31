@@ -12,7 +12,7 @@ const getProficiencyWidth = (prof: string) => {
   }
 };
 
-export default function MinimalistTemplate({ data }: { data: ResumeData }) {
+export default function MinimalistTemplate({ data, onFieldChange, editable }: { data: ResumeData; onFieldChange?: (field: string, value: any) => void; editable?: boolean }) {
   const theme = data.themeColor || '#eab308'; // Default yellow
   
   return (
