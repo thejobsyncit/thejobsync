@@ -24,12 +24,12 @@ export async function POST(request: NextRequest) {
     // Formatting the message to preserve newlines as HTML line breaks
     const htmlMessage = message.replace(/\n/g, '<br/>');
 
-    const sender = data.fromEmail || 'hr@gojobsync.com';
+    const sender = data.fromEmail || 'hr@thejobsync.com';
 
     const mailOptions = {
-      from: `"GoJobSync Team" <${sender}>`,
+      from: `"TheJobSync Team" <${sender}>`,
       to: toEmail,
-      subject: subject || 'Partnership Opportunities with GoJobSync',
+      subject: subject || 'Partnership Opportunities with TheJobSync',
       html: `
         <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
           ${htmlMessage}

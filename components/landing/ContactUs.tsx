@@ -144,7 +144,7 @@ export default function ContactUs() {
                 </div>
               </div>
               <div>
-                <h4 className="font-extrabold text-slate-900 dark:text-white mb-2 text-lg transition-colors duration-300">The jobsync Office</h4>
+                <h4 className="font-extrabold text-slate-900 dark:text-white mb-2 text-lg transition-colors duration-300">The TheJobSync Office</h4>
                 <p className="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed transition-colors duration-300">
                   Dubai Creek Tower - 1st St<br />
                   Deira Riggat Al Buteen Dubai

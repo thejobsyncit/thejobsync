@@ -21,7 +21,7 @@ export const sendEmail = async ({
 }) => {
   try {
     const info = await transporter.sendMail({
-      from: `"GoJobSync" <hr@gojobsync.com>`,
+      from: `"TheJobSync" <hr@thejobsync.com>`,
       to,
       subject,
       html,

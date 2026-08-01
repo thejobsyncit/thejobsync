@@ -16,7 +16,7 @@ export default function MissionVision() {
     {
       id: 3,
       title: 'Our Promise',
-      desc: 'At The jobsync.com, we are more than a job portal. We are a bridge between ambition and opportunity. Job Seekers: "Search. Apply. Succeed." Employers: "Post. Connect. Hire."'
+      desc: 'At The thejobsync.com, we are more than a job portal. We are a bridge between ambition and opportunity. Job Seekers: "Search. Apply. Succeed." Employers: "Post. Connect. Hire."'
     }
   ];
 

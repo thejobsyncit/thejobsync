@@ -36,7 +36,7 @@ export default function Hero() {
           <p 
             className="text-lg md:text-xl text-slate-500 dark:text-slate-400 italic font-medium max-w-2xl mb-12 mx-auto lg:mx-0 transition-colors duration-300"
           >
-            "Lakhs of Employers. Millions of Job seekers. Endless success — only on The jobsync.com."
+            "Lakhs of Employers. Millions of Job seekers. Endless success — only on The thejobsync.com."
           </p>
           
           {/* Stats Bar */}

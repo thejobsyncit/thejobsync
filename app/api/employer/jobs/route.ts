@@ -149,8 +149,8 @@ export async function POST(req: NextRequest) {
 <body>
   <div class="container">
     <div class="header">
-      <h1>🚀 New Job Alert — The jobsync</h1>
-      <p>A new opportunity just dropped on The jobsync careers portal</p>
+      <h1>🚀 New Job Alert — The TheJobSync</h1>
+      <p>A new opportunity just dropped on The TheJobSync careers portal</p>
     </div>
     <div class="body">
       <div class="badge">New Opening</div>
@@ -169,8 +169,8 @@ export async function POST(req: NextRequest) {
       <a href="${jobUrl}" class="cta">View & Apply Now →</a>
     </div>
     <div class="footer">
-      You're receiving this because you're registered on The jobsync careers portal.<br/>
-      <a href="${jobUrl}" style="color:#0077B6;">Unsubscribe</a> · The jobsync Careers
+      You're receiving this because you're registered on The TheJobSync careers portal.<br/>
+      <a href="${jobUrl}" style="color:#0077B6;">Unsubscribe</a> · The TheJobSync Careers
     </div>
   </div>
 </body>
@@ -183,9 +183,9 @@ export async function POST(req: NextRequest) {
             const batch = candidates.slice(i, i + BATCH);
             await Promise.allSettled(batch.map((c: any) =>
               transporter.sendMail({
-                from: `"GoJobSync" <hr@gojobsync.com>`,
+                from: `"TheJobSync" <hr@thejobsync.com>`,
                 to: c.email,
-                subject: `🚀 New Job: ${title} at ${companyName} — GoJobSync`,
+                subject: `🚀 New Job: ${title} at ${companyName} — TheJobSync`,
                 html,
               }).catch((err: any) => console.error(`Failed to send to ${c.email}:`, err))
             ));
@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
                 `📍 *Location:* ${location}\n` +
                 `💼 *Experience:* ${experience || 'Any'}\n\n` +
                 `Log in to your portal to view details and apply! 🚀\n\n` +
-                `— The Jobsync Team`;
+                `— The TheJobSync Team`;
               sendWhatsApp(c.phone, msg).catch(console.error);
             }
           });

@@ -11,11 +11,11 @@ const getRegistrationWhatsAppLink = (name: string, phone: string) => {
   }
   const msg = `Hi ${name || 'there'},
 
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on TheJobSync.
 
 Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
 
-✨ Why apply through GoJobSync?
+✨ Why apply through TheJobSync?
 
 - Multiple verified job opportunities
 - Quick and easy application process
@@ -25,7 +25,7 @@ Whether you're a Fresher or an Experienced Professional, we have openings across
 
 Don't miss your chance to land your next job.
 
-👉 Apply Now: www.gojobsync.com/careers/register
+👉 Apply Now: www.thejobsync.com/careers/register
 
 Complete your profile and start applying to jobs in just a few minutes.
 
@@ -33,8 +33,8 @@ If you have any questions, simply reply to our email—we're happy to help.
 *(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
 
 Best Regards,
-GoJobSync Recruitment Team
-🌐 www.gojobsync.com 
+TheJobSync Recruitment Team
+🌐 www.thejobsync.com 
 📧 hr@thejobsync.com`;
   return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
 };
@@ -206,14 +206,14 @@ export default function SACandidatesPage() {
       name: c.name,
       fromEmail: 'hr@thejobsync.com',
       toEmail: c.email?.startsWith('noemail-') ? '' : c.email,
-      subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
+      subject: 'Job Opportunities at TheJobSync - Complete Your Registration',
       message: `Hi ${c.name},
 
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on TheJobSync.
 
 Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
 
-✨ Why apply through GoJobSync?
+✨ Why apply through TheJobSync?
 
 - Multiple verified job opportunities
 - Quick and easy application process
@@ -223,15 +223,15 @@ Whether you're a Fresher or an Experienced Professional, we have openings across
 
 Don't miss your chance to land your next job.
 
-👉 Apply Now: www.gojobsync.com/careers/register
+👉 Apply Now: www.thejobsync.com/careers/register
 
 Complete your profile and start applying to jobs in just a few minutes.
 
 If you have any questions, simply reply to this email—we're happy to help.
 
 Best Regards,
-GoJobSync Recruitment Team
-🌐 www.gojobsync.com 
+TheJobSync Recruitment Team
+🌐 www.thejobsync.com 
 📧 hr@thejobsync.com`
     });
   };
@@ -709,7 +709,7 @@ GoJobSync Recruitment Team
                           </div>
                         )}
                         {c.email && (
-                          <a href={`mailto:${c.email}?subject=Regarding Your Job Application at The JobSync`} onClick={(e) => e.stopPropagation()} className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition shadow-sm" title={`Email ${c.email}`}>
+                          <a href={`mailto:${c.email}?subject=Regarding Your Job Application at The TheJobSync`} onClick={(e) => e.stopPropagation()} className="p-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition shadow-sm" title={`Email ${c.email}`}>
                             <Mail size={14} />
                           </a>
                         )}

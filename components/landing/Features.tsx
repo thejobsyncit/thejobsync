@@ -15,7 +15,7 @@ export default function Features() {
           <p 
             className="text-slate-600 dark:text-slate-400 leading-relaxed text-[15px] md:text-[17px] font-medium max-w-3xl mx-auto transition-colors duration-300"
           >
-            We provide a centralized space to explore opportunities, apply with ease, and navigate your career journey. With thousands of applications submitted daily, The jobsync.com empowers you to connect with employers who value your talent.
+            We provide a centralized space to explore opportunities, apply with ease, and navigate your career journey. With thousands of applications submitted daily, The thejobsync.com empowers you to connect with employers who value your talent.
           </p>
         </div>
 
@@ -45,7 +45,7 @@ export default function Features() {
             </h2>
             <div className="text-slate-600 dark:text-slate-400 leading-relaxed text-[15px] md:text-[16px] font-medium italic transition-colors duration-300">
               <p>
-                "The jobsync.com enables organizations to connect with top talent effortlessly, managing the entire recruitment lifecycle—from job posting to placement, and rebuttals—all within one seamless platform."
+                "The thejobsync.com enables organizations to connect with top talent effortlessly, managing the entire recruitment lifecycle—from job posting to placement, and rebuttals—all within one seamless platform."
               </p>
             </div>
           </div>

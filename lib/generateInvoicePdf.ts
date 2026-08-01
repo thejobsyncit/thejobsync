@@ -18,11 +18,11 @@ interface InvoiceData {
 export const generateInvoicePdf = (invoice: InvoiceData) => {
   const doc = new jsPDF();
 
-  // The jobsync Logo/Header
+  // The TheJobSync Logo/Header
   doc.setFontSize(22);
   doc.setTextColor(0, 119, 182); // #0077B6
   doc.setFont('helvetica', 'bold');
-  doc.text('The jobsync', 14, 20);
+  doc.text('The TheJobSync', 14, 20);
 
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
@@ -75,7 +75,7 @@ export const generateInvoicePdf = (invoice: InvoiceData) => {
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(150, 150, 150);
-  doc.text('Thank you for choosing The jobsync!', 14, finalY + 30);
+  doc.text('Thank you for choosing The TheJobSync!', 14, finalY + 30);
   doc.text('This is a computer-generated invoice and does not require a signature.', 14, finalY + 36);
 
   // Save the PDF
