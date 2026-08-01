@@ -86,9 +86,9 @@ export default function AdminERPLayout({
         {/* Logo */}
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <img src="/loooo.jpeg" alt="The TheJobSync Logo" className="h-8 w-8 object-contain rounded-full border border-gray-700 bg-white" />
+            <img src="/loooo.jpeg" alt="The GoJobSync Logo" className="h-8 w-8 object-contain rounded-full border border-gray-700 bg-white" />
             <div>
-              <h1 className="font-bold tracking-wider text-sm">The TheJobSync</h1>
+              <h1 className="font-bold tracking-wider text-sm">The GoJobSync</h1>
               <p className="text-[10px] text-gray-300 tracking-widest uppercase">Admin Panel</p>
             </div>
           </div>
@@ -110,7 +110,7 @@ export default function AdminERPLayout({
             </div>
             <div className="min-w-0">
               <p className="text-sm font-medium truncate">Admin User</p>
-              <p className="text-xs text-gray-400 truncate">admin@thejobsync.com</p>
+              <p className="text-xs text-gray-400 truncate">admin@gojobsync.com</p>
             </div>
           </div>
         </div>

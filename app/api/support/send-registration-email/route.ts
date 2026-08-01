@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, message: 'Invalid email format, bypassed.' });
     }
 
-    const sender = fromEmail || 'hr@thejobsync.com';
+    const sender = fromEmail || 'hr@gojobsync.com';
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'jwij4ht3pzhr.hkph.mail-manager-smtp.amazonaws.com',
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     });
 
     await transporter.sendMail({
-      from: `"TheJobSync" <${sender}>`,
+      from: `"GoJobSync" <${sender}>`,
       to: toEmail,
       subject: subject,
       html: message,

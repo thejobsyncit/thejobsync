@@ -26,22 +26,22 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "TheJobSync",
-  description: "Comprehensive TheJobSync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
+  title: "GoJobSync",
+  description: "Comprehensive GoJobSync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
   icons: {
     icon: "/loooo.jpeg",
   },
   openGraph: {
-    title: "TheJobSync",
-    description: "Comprehensive TheJobSync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
-    url: "https://www.thejobsync.com",
-    siteName: "TheJobSync",
+    title: "GoJobSync",
+    description: "Comprehensive GoJobSync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
+    url: "https://www.gojobsync.com",
+    siteName: "GoJobSync",
     images: [
       {
         url: "/loooo.jpeg",
         width: 800,
         height: 600,
-        alt: "TheJobSync Logo",
+        alt: "GoJobSync Logo",
       },
     ],
     locale: "en_US",

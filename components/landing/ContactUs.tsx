@@ -59,7 +59,7 @@ export default function ContactUs() {
               <Mail size={24} />
             </div>
             <h3 className="text-[#0077B6] dark:text-[#00B4D8] font-bold text-sm tracking-widest uppercase mb-4 transition-colors duration-300">Email</h3>
-            <p className="text-[#0077B6] dark:text-[#00B4D8] font-bold text-lg mb-2 transition-colors duration-300">info@thejobsync.com</p>
+            <p className="text-[#0077B6] dark:text-[#00B4D8] font-bold text-lg mb-2 transition-colors duration-300">info@gojobsync.com</p>
             <p className="text-slate-500 dark:text-slate-400 text-sm transition-colors duration-300">Response within 24 hours</p>
           </div>
 
@@ -144,7 +144,7 @@ export default function ContactUs() {
                 </div>
               </div>
               <div>
-                <h4 className="font-extrabold text-slate-900 dark:text-white mb-2 text-lg transition-colors duration-300">The TheJobSync Office</h4>
+                <h4 className="font-extrabold text-slate-900 dark:text-white mb-2 text-lg transition-colors duration-300">The GoJobSync Office</h4>
                 <p className="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed transition-colors duration-300">
                   Dubai Creek Tower - 1st St<br />
                   Deira Riggat Al Buteen Dubai

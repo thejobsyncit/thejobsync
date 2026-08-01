@@ -83,7 +83,7 @@ export default function LoginSelectionPage() {
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
           <img 
             src="/loooo.jpeg" 
-            alt="The TheJobSync Logo" 
+            alt="The GoJobSync Logo" 
             style={{ 
               height: 96, 
               width: 96, 
@@ -97,7 +97,7 @@ export default function LoginSelectionPage() {
 
         <h1 className="welcome-title" style={{ 
           color: isDark ? 'white' : '#0f172a', 
-        }}>Sign In to TheJobSync</h1>
+        }}>Sign In to GoJobSync</h1>
         <p className="welcome-subtitle" style={{ 
           color: isDark ? '#94a3b8' : '#475569', 
         }}>Select your account type to access your portal</p>

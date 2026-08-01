@@ -14,11 +14,11 @@ const getRegistrationWhatsAppLink = (name: string, phone: string) => {
   }
   const msg = `Hi ${name || 'there'},
 
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on TheJobSync.
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
 
 Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
 
-✨ Why apply through TheJobSync?
+✨ Why apply through GoJobSync?
 
 - Multiple verified job opportunities
 - Quick and easy application process
@@ -28,7 +28,7 @@ Whether you're a Fresher or an Experienced Professional, we have openings across
 
 Don't miss your chance to land your next job.
 
-👉 Apply Now: www.thejobsync.com/careers/register
+👉 Apply Now: www.gojobsync.com/careers/register
 
 Complete your profile and start applying to jobs in just a few minutes.
 
@@ -36,20 +36,20 @@ If you have any questions, simply reply to our email—we're happy to help.
 *(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
 
 Best Regards,
-TheJobSync Recruitment Team
-🌐 www.thejobsync.com 
-📧 hr@thejobsync.com`;
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@gojobsync.com`;
   return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
 };
 
 const BULK_TEMPLATES = [
   `Hi {name},
 
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on TheJobSync.
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
 
 Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
 
-✨ Why apply through TheJobSync?
+✨ Why apply through GoJobSync?
 
 - Multiple verified job opportunities
 - Quick and easy application process
@@ -59,7 +59,7 @@ Whether you're a Fresher or an Experienced Professional, we have openings across
 
 Don't miss your chance to land your next job.
 
-👉 Apply Now: www.thejobsync.com/careers/register
+👉 Apply Now: www.gojobsync.com/careers/register
 
 Complete your profile and start applying to jobs in just a few minutes.
 
@@ -67,17 +67,17 @@ If you have any questions, simply reply to our email—we're happy to help.
 *(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
 
 Best Regards,
-TheJobSync Recruitment Team
-🌐 www.thejobsync.com 
-📧 hr@thejobsync.com`,
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@gojobsync.com`,
   
   `Hello {name},
 
-Your profile caught our attention, and we have several exciting job openings at TheJobSync that match your skills.
+Your profile caught our attention, and we have several exciting job openings at GoJobSync that match your skills.
 
 From entry-level positions for freshers to senior roles for experienced professionals, we partner with top companies actively hiring right now.
 
-⭐ Benefits of using TheJobSync:
+⭐ Benefits of using GoJobSync:
 - 100% Free for job seekers
 - Verified, high-quality job postings
 - Seamless and fast application tracking
@@ -85,7 +85,7 @@ From entry-level positions for freshers to senior roles for experienced professi
 
 Take the next step in your career journey today!
 
-🚀 Register Here: www.thejobsync.com/careers/register
+🚀 Register Here: www.gojobsync.com/careers/register
 
 It only takes a few minutes to complete your profile and start applying. 
 
@@ -93,17 +93,17 @@ Got questions? Just reply to this email, and our team will assist you.
 *(Please check your spam/junk folder if you missed our previous emails!)*
 
 Warm Regards,
-TheJobSync Hiring Team
-🌐 www.thejobsync.com 
-📧 hr@thejobsync.com`,
+GoJobSync Hiring Team
+🌐 www.gojobsync.com 
+📧 hr@gojobsync.com`,
 
   `Dear {name},
 
-We are reaching out because your background looks like a great match for the latest career opportunities available on TheJobSync.
+We are reaching out because your background looks like a great match for the latest career opportunities available on GoJobSync.
 
 Our platform connects talented individuals—both fresh graduates and seasoned experts—with companies looking to hire immediately.
 
-🔥 What makes TheJobSync different?
+🔥 What makes GoJobSync different?
 - Instant access to verified employers
 - Real-time updates on your applications
 - Simple, one-click apply process
@@ -111,7 +111,7 @@ Our platform connects talented individuals—both fresh graduates and seasoned e
 
 Don't let the perfect job slip away.
 
-✅ Create Your Profile: www.thejobsync.com/careers/register
+✅ Create Your Profile: www.gojobsync.com/careers/register
 
 Set up your account in minutes and explore jobs tailored for you.
 
@@ -119,15 +119,15 @@ Need help? Reply to this message and we will get back to you promptly.
 *(Make sure to check your spam/junk folder so you don't miss our updates!)*
 
 Best,
-TheJobSync Talent Acquisition
-🌐 www.thejobsync.com 
-📧 hr@thejobsync.com`
+GoJobSync Talent Acquisition
+🌐 www.gojobsync.com 
+📧 hr@gojobsync.com`
 ];
 
 const SENDER_EMAILS = [
-  'hr@thejobsync.com',
-  'careers@thejobsync.com',
-  'updates@thejobsync.com'
+  'hr@gojobsync.com',
+  'careers@gojobsync.com',
+  'updates@gojobsync.com'
 ];
 
 export default function FreshDumpPage() {
@@ -296,16 +296,16 @@ export default function FreshDumpPage() {
     setMailModal({
       candidateId: c.id,
       name: c.name,
-      fromEmail: 'hr@thejobsync.com',
+      fromEmail: 'hr@gojobsync.com',
       toEmail: c.email.startsWith('noemail-') ? '' : c.email,
-      subject: 'Job Opportunities at TheJobSync - Complete Your Registration',
+      subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
       message: `Hi ${c.name},
 
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on TheJobSync.
+We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
 
 Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
 
-✨ Why apply through TheJobSync?
+✨ Why apply through GoJobSync?
 
 - Multiple verified job opportunities
 - Quick and easy application process
@@ -315,16 +315,16 @@ Whether you're a Fresher or an Experienced Professional, we have openings across
 
 Don't miss your chance to land your next job.
 
-👉 Apply Now: www.thejobsync.com/careers/register
+👉 Apply Now: www.gojobsync.com/careers/register
 
 Complete your profile and start applying to jobs in just a few minutes.
 
 If you have any questions, simply reply to this email—we're happy to help.
 
 Best Regards,
-TheJobSync Recruitment Team
-🌐 www.thejobsync.com 
-📧 hr@thejobsync.com`
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@gojobsync.com`
     });
   };
 
@@ -345,7 +345,7 @@ TheJobSync Recruitment Team
       isBulk: true,
       candidateIds: selectedIds,
       fromEmail: SENDER_EMAILS[nextIndex],
-      subject: 'Job Opportunities at TheJobSync - Complete Your Registration',
+      subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
       message: randomTemplate
     });
   };
@@ -1060,9 +1060,9 @@ TheJobSync Recruitment Team
                 <label className="block text-xs font-bold text-gray-700 mb-1">From Email (Sender)</label>
                 {mailModal.isBulk ? (
                   <select value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition font-semibold text-blue-800" disabled={sendingMail}>
-                    <option value="hr@thejobsync.com">hr@thejobsync.com (Resend Route 1)</option>
-                    <option value="careers@thejobsync.com">careers@thejobsync.com (Resend Route 2)</option>
-                    <option value="updates@thejobsync.com">updates@thejobsync.com (Resend Route 3)</option>
+                    <option value="hr@gojobsync.com">hr@gojobsync.com (Resend Route 1)</option>
+                    <option value="careers@gojobsync.com">careers@gojobsync.com (Resend Route 2)</option>
+                    <option value="updates@gojobsync.com">updates@gojobsync.com (Resend Route 3)</option>
                   </select>
                 ) : (
                   <input type="email" value={mailModal.fromEmail} onChange={e => setMailModal({...mailModal, fromEmail: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm bg-blue-50/50 focus:bg-white transition" placeholder="Sender's email" disabled={sendingMail} />

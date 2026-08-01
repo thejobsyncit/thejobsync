@@ -12,17 +12,17 @@ const getCompanyWhatsAppLink = (name: string, phone: string) => {
 
 Are you looking to hire top talent quickly and effortlessly? 
 
-We invite you to join TheJobSync, the fastest-growing job portal connecting companies with pre-verified candidates across multiple industries. 
+We invite you to join GoJobSync, the fastest-growing job portal connecting companies with pre-verified candidates across multiple industries. 
 
 By registering on our employer portal, you can post unlimited job vacancies and get direct access to thousands of active job seekers—completely hassle-free.
 
-👉 Register & Post Jobs Now: www.thejobsync.com/employer/register
+👉 Register & Post Jobs Now: www.gojobsync.com/employer/register
 
 Let us know if you'd like a quick demo or assistance setting up your account.
 
 Best Regards,
-TheJobSync Team
-🌐 www.thejobsync.com`;
+GoJobSync Team
+🌐 www.gojobsync.com`;
   return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
 };
 
@@ -159,7 +159,7 @@ export default function SACompaniesPage() {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'TheJobSync_Companies_Template.csv';
+    link.download = 'GoJobSync_Companies_Template.csv';
     link.click();
   };
 
@@ -281,18 +281,18 @@ export default function SACompaniesPage() {
       companyId: c.id,
       name: c.contactPerson && c.contactPerson !== 'NA' ? c.contactPerson : 'Team',
       companyName: c.companyName,
-      fromEmail: 'hr@thejobsync.com',
+      fromEmail: 'hr@gojobsync.com',
       toEmail: c.email?.startsWith('noemail-') ? '' : c.email,
-      subject: 'Partnership Opportunities with TheJobSync',
+      subject: 'Partnership Opportunities with GoJobSync',
       message: `Hi ${c.contactPerson && c.contactPerson !== 'NA' ? c.contactPerson : 'Team'} at ${c.companyName},
 
 Are you looking to hire top talent quickly and effortlessly?
 
-We invite you to join TheJobSync, the fastest-growing job portal connecting companies with pre-verified candidates across multiple industries. 
+We invite you to join GoJobSync, the fastest-growing job portal connecting companies with pre-verified candidates across multiple industries. 
 
 By registering on our employer portal, you can post your job vacancies directly and gain instant access to thousands of active job seekers.
 
-✨ Why post your jobs on TheJobSync?
+✨ Why post your jobs on GoJobSync?
 - 🚀 Faster hiring cycle with direct candidate applications
 - 🔍 Access to pre-screened and verified candidate profiles
 - 🎯 Advanced matching to find the exact skills you need
@@ -300,14 +300,14 @@ By registering on our employer portal, you can post your job vacancies directly 
 
 Take control of your hiring process today. It takes less than 2 minutes to create your company profile and post your first job.
 
-👉 Register & Post Jobs Now: www.thejobsync.com/employer/register
+👉 Register & Post Jobs Now: www.gojobsync.com/employer/register
 
 If you have any questions or would like a quick platform walkthrough, simply reply to this email!
 
 Best Regards,
-TheJobSync Recruitment Team
-🌐 www.thejobsync.com 
-📧 hr@thejobsync.com`
+GoJobSync Recruitment Team
+🌐 www.gojobsync.com 
+📧 hr@gojobsync.com`
     });
   };
 
@@ -325,7 +325,7 @@ TheJobSync Recruitment Team
             companyId: comp.id,
             name: comp.contactPerson && comp.contactPerson !== 'NA' ? comp.contactPerson : 'Team',
             companyName: comp.companyName,
-            fromEmail: 'hr@thejobsync.com',
+            fromEmail: 'hr@gojobsync.com',
             toEmail: comp.email,
             subject: mailModal.subject,
             message: `Hi ${comp.contactPerson && comp.contactPerson !== 'NA' ? comp.contactPerson : 'Team'} at ${comp.companyName},\n\n${mailModal.message}`
@@ -455,8 +455,8 @@ TheJobSync Recruitment Team
                   setMailModal({
                     isBulk: true,
                     targetCompanies: validCompanies,
-                    subject: 'Partnership Opportunities with TheJobSync',
-                    message: `Are you looking to hire top talent quickly and effortlessly?\n\nWe invite you to join TheJobSync, the fastest-growing job portal connecting companies with pre-verified candidates across multiple industries. \n\nBy registering on our employer portal, you can post your job vacancies directly and gain instant access to thousands of active job seekers.\n\n✨ Why post your jobs on TheJobSync?\n- 🚀 Faster hiring cycle with direct candidate applications\n- 🔍 Access to pre-screened and verified candidate profiles\n- 🎯 Advanced matching to find the exact skills you need\n- 🤝 Dedicated account support for your recruitment drives\n\nTake control of your hiring process today. It takes less than 2 minutes to create your company profile and post your first job.\n\n👉 Register & Post Jobs Now: www.thejobsync.com/employer/register\n\nIf you have any questions or would like a quick platform walkthrough, simply reply to this email!\n\nBest Regards,\nTheJobSync Recruitment Team\n🌐 www.thejobsync.com \n📧 hr@thejobsync.com`
+                    subject: 'Partnership Opportunities with GoJobSync',
+                    message: `Are you looking to hire top talent quickly and effortlessly?\n\nWe invite you to join GoJobSync, the fastest-growing job portal connecting companies with pre-verified candidates across multiple industries. \n\nBy registering on our employer portal, you can post your job vacancies directly and gain instant access to thousands of active job seekers.\n\n✨ Why post your jobs on GoJobSync?\n- 🚀 Faster hiring cycle with direct candidate applications\n- 🔍 Access to pre-screened and verified candidate profiles\n- 🎯 Advanced matching to find the exact skills you need\n- 🤝 Dedicated account support for your recruitment drives\n\nTake control of your hiring process today. It takes less than 2 minutes to create your company profile and post your first job.\n\n👉 Register & Post Jobs Now: www.gojobsync.com/employer/register\n\nIf you have any questions or would like a quick platform walkthrough, simply reply to this email!\n\nBest Regards,\nGoJobSync Recruitment Team\n🌐 www.gojobsync.com \n📧 hr@gojobsync.com`
                   });
                 }}
                 className="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 rounded-lg text-sm font-bold transition"

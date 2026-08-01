@@ -15,11 +15,11 @@ const transporter = nodemailer.createTransport({
 
 const STATUS_EMAIL_TEMPLATES: Record<string, { subject: string; html: (name: string) => string }> = {
   shortlisted: {
-    subject: '🎉 Congratulations! You have been Shortlisted - The TheJobSync',
+    subject: '🎉 Congratulations! You have been Shortlisted - The GoJobSync',
     html: (name: string) => `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
         <div style="background: #1a237e; padding: 32px 24px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 2px;">The TheJobSync</h1>
+          <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 2px;">The GoJobSync</h1>
           <p style="color: rgba(255,255,255,0.7); margin: 8px 0 0; font-size: 12px; letter-spacing: 3px;">CAREER PORTAL</p>
         </div>
         <div style="padding: 32px 24px;">
@@ -34,17 +34,17 @@ const STATUS_EMAIL_TEMPLATES: Record<string, { subject: string; html: (name: str
           <p style="color: #4b5563; font-size: 14px; line-height: 1.6;">Please keep your resume and documents ready. All the best!</p>
         </div>
         <div style="background: #f9fafb; padding: 20px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
-          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 The thejobsync.com — All Rights Reserved</p>
+          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 The gojobsync.com — All Rights Reserved</p>
         </div>
       </div>
     `,
   },
   selected: {
-    subject: '✅ Job Application Update: Selected! - The TheJobSync',
+    subject: '✅ Job Application Update: Selected! - The GoJobSync',
     html: (name: string) => `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
         <div style="background: #1a237e; padding: 32px 24px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 2px;">The TheJobSync</h1>
+          <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 2px;">The GoJobSync</h1>
           <p style="color: rgba(255,255,255,0.7); margin: 8px 0 0; font-size: 12px; letter-spacing: 3px;">CAREER PORTAL</p>
         </div>
         <div style="padding: 32px 24px;">
@@ -59,17 +59,17 @@ const STATUS_EMAIL_TEMPLATES: Record<string, { subject: string; html: (name: str
           <p style="color: #4b5563; font-size: 14px; line-height: 1.6;">Congratulations on your selection!</p>
         </div>
         <div style="background: #f9fafb; padding: 20px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
-          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 The thejobsync.com — All Rights Reserved</p>
+          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 The gojobsync.com — All Rights Reserved</p>
         </div>
       </div>
     `,
   },
   rejected: {
-    subject: '📋 Job Application Status Update - The TheJobSync',
+    subject: '📋 Job Application Status Update - The GoJobSync',
     html: (name: string) => `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
         <div style="background: #1a237e; padding: 32px 24px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 2px;">The TheJobSync</h1>
+          <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 2px;">The GoJobSync</h1>
           <p style="color: rgba(255,255,255,0.7); margin: 8px 0 0; font-size: 12px; letter-spacing: 3px;">CAREER PORTAL</p>
         </div>
         <div style="padding: 32px 24px;">
@@ -83,17 +83,17 @@ const STATUS_EMAIL_TEMPLATES: Record<string, { subject: string; html: (name: str
           </p>
         </div>
         <div style="background: #f9fafb; padding: 20px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
-          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 The thejobsync.com — All Rights Reserved</p>
+          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 The gojobsync.com — All Rights Reserved</p>
         </div>
       </div>
     `,
   },
   interview_scheduled: {
-    subject: '📅 Interview Scheduled - The TheJobSync',
+    subject: '📅 Interview Scheduled - The GoJobSync',
     html: (name: string) => `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb;">
         <div style="background: #1a237e; padding: 32px 24px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 2px;">The TheJobSync</h1>
+          <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 2px;">The GoJobSync</h1>
           <p style="color: rgba(255,255,255,0.7); margin: 8px 0 0; font-size: 12px; letter-spacing: 3px;">CAREER PORTAL</p>
         </div>
         <div style="padding: 32px 24px;">
@@ -108,7 +108,7 @@ const STATUS_EMAIL_TEMPLATES: Record<string, { subject: string; html: (name: str
           <p style="color: #4b5563; font-size: 14px; line-height: 1.6;">Please keep your resume and documents ready. Good luck!</p>
         </div>
         <div style="background: #f9fafb; padding: 20px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
-          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 The thejobsync.com — All Rights Reserved</p>
+          <p style="color: #9ca3af; font-size: 12px; margin: 0;">© 2026 The gojobsync.com — All Rights Reserved</p>
         </div>
       </div>
     `,
@@ -121,7 +121,7 @@ async function sendStatusEmail(email: string, name: string, status: string) {
 
   try {
     await transporter.sendMail({
-      from: `"The TheJobSync" <${process.env.SMTP_USER}>`,
+      from: `"The GoJobSync" <${process.env.SMTP_USER}>`,
       to: email,
       subject: template.subject,
       html: template.html(name),
