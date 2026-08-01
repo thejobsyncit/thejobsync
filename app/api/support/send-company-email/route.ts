@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
     const mailOptions = {
       from: `"GoJobSync Team" <${sender}>`,
       to: toEmail,
+      replyTo: process.env.SMTP_EMAIL || 'thejobsyncit@gmail.com',
       subject: subject || 'Partnership Opportunities with GoJobSync',
       html: `
         <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
