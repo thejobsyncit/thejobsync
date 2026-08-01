@@ -137,6 +137,7 @@ export async function GET() {
   try {
     const candidates = await prisma.candidate.findMany({
       orderBy: { createdAt: 'desc' },
+      take: 1500, // Limit to prevent crashing the browser UI
       include: {
         assignedSupport: { select: { id: true, name: true } }
       } as any

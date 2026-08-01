@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
       where: where as any,
       include: { requirement: { select: { title: true } }, assignedSupport: { select: { id: true, name: true } } } as any,
       orderBy: { createdAt: 'desc' },
+      take: 1500, // Limit to prevent crashing the browser select dropdowns
     });
 
     // Defensive JSON parse helper
