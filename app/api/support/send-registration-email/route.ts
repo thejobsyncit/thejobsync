@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail({
       from: `"GoJobSync" <${sender}>`,
       to: toEmail,
-      replyTo: 'hr@thejobsync.com',
+      replyTo: process.env.SMTP_EMAIL || 'thejobsyncit@gmail.com',
       subject: subject,
       html: message,
     });
