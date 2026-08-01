@@ -185,7 +185,7 @@ export async function POST(req: NextRequest) {
               transporter.sendMail({
                 from: `"GoJobSync" <hr@gojobsync.com>`,
                 to: c.email,
-                replyTo: process.env.SMTP_EMAIL || 'thejobsyncit@gmail.com',
+                replyTo: 'hr@thejobsync.com',
                 subject: `🚀 New Job: ${title} at ${companyName} — GoJobSync`,
                 html,
               }).catch((err: any) => console.error(`Failed to send to ${c.email}:`, err))
