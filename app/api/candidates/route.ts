@@ -30,12 +30,28 @@ export async function GET(request: NextRequest) {
     if (assignedSupportId) where.assignedSupportId = assignedSupportId;
     if (source && source !== 'all') where.source = source;
 
-    const candidates = await prisma.candidate.findMany({
-      where: where as any,
+    // Always fetch ALL applied candidates matching the where clause
+    const appliedWhere = { ...where, source: 'applied' };
+    const appliedCandidates = await prisma.candidate.findMany({
+      where: appliedWhere as any,
       include: { requirement: { select: { title: true } }, assignedSupport: { select: { id: true, name: true } } } as any,
       orderBy: { createdAt: 'desc' },
-      take: 1500, // Limit to prevent crashing the browser select dropdowns
     });
+
+    // If the frontend explicitly asked for ONLY applied candidates, we can skip the next query
+    let candidates = [...appliedCandidates];
+
+    if (!source || source !== 'applied') {
+      // Fetch the most recent 1500 candidates that are NOT applied
+      const otherWhere = { ...where, source: { not: 'applied' } };
+      const otherCandidates = await prisma.candidate.findMany({
+        where: otherWhere as any,
+        include: { requirement: { select: { title: true } }, assignedSupport: { select: { id: true, name: true } } } as any,
+        orderBy: { createdAt: 'desc' },
+        take: 1500, // Limit to prevent crashing the browser select dropdowns
+      });
+      candidates = [...appliedCandidates, ...otherCandidates];
+    }
 
     // Defensive JSON parse helper
     const safeParse = (str: string) => {

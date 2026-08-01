@@ -135,13 +135,27 @@ async function sendStatusEmail(email: string, name: string, status: string) {
 
 export async function GET() {
   try {
-    const candidates = await prisma.candidate.findMany({
+    // Always fetch ALL applied candidates
+    const appliedCandidates = await prisma.candidate.findMany({
+      where: { source: 'applied' },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        assignedSupport: { select: { id: true, name: true } }
+      } as any
+    });
+
+    // Fetch the most recent 1500 candidates that are NOT applied
+    const otherCandidates = await prisma.candidate.findMany({
+      where: { source: { not: 'applied' } },
       orderBy: { createdAt: 'desc' },
       take: 1500, // Limit to prevent crashing the browser UI
       include: {
         assignedSupport: { select: { id: true, name: true } }
       } as any
     });
+
+    // Combine them, placing applied ones at the top
+    const candidates = [...appliedCandidates, ...otherCandidates];
     return NextResponse.json(candidates);
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });

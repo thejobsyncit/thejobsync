@@ -301,7 +301,7 @@ export default function InterviewsPage() {
                     <label className="label">Candidate *</label>
                     <select className={`input select ${formErrors.candidateId ? 'error' : ''}`} value={formData.candidateId || ''} onChange={e => handleChange('candidateId', e.target.value)}>
                       <option value="">Select candidate...</option>
-                      {candidates.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      {candidates.filter(c => c.source === 'applied' || c.appliedFor).map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                     {formErrors.candidateId && <span style={{ color: 'var(--destructive)', fontSize: '0.75rem' }}>{formErrors.candidateId}</span>}
                   </div>
