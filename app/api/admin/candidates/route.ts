@@ -121,7 +121,8 @@ async function sendStatusEmail(email: string, name: string, status: string) {
 
   try {
     await transporter.sendMail({
-      from: `"The GoJobSync" <${process.env.SMTP_USER}>`,
+      from: `"The GoJobSync" <hr@gojobsync.com>`,
+      replyTo: process.env.SMTP_EMAIL || 'thejobsyncit@gmail.com',
       to: email,
       subject: template.subject,
       html: template.html(name),
