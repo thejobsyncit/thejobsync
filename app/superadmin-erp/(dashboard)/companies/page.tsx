@@ -234,6 +234,7 @@ export default function SACompaniesPage() {
         
         const chunkSize = 200;
         let successCount = 0;
+        let duplicateCount = 0;
 
         for (let i = 0; i < totalRecords; i += chunkSize) {
           const chunk = companiesPayload.slice(i, i + chunkSize);
@@ -246,6 +247,7 @@ export default function SACompaniesPage() {
           if (res.ok) {
             const resData = await res.json();
             successCount += resData.count;
+            if (resData.duplicates) duplicateCount += resData.duplicates;
             setUploadProgress({ uploaded: successCount, total: totalRecords });
           } else {
             const err = await res.json();
@@ -253,7 +255,11 @@ export default function SACompaniesPage() {
           }
         }
 
-        alert(`✅ Successfully uploaded ${successCount} companies from Excel!`);
+        let msg = `✅ Successfully uploaded ${successCount} companies from Excel!`;
+        if (duplicateCount > 0) {
+          msg += `\n⚠️ Skipped ${duplicateCount} duplicate companies that were already in the system.`;
+        }
+        alert(msg);
         setShowExcelModal(false);
         fetchData();
 

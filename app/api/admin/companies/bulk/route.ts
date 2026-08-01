@@ -10,11 +10,37 @@ export async function POST(request: NextRequest) {
     }
 
     let successCount = 0;
+    let duplicateCount = 0;
 
     for (const comp of companies) {
       if (!comp.companyName || !comp.email) continue;
       
       try {
+        const orConditions: any[] = [];
+        
+        if (comp.email && comp.email !== 'NA' && !comp.email.startsWith('noemail-')) {
+          orConditions.push({ email: comp.email });
+        }
+        
+        if (comp.phone && comp.phone !== 'NA') {
+          orConditions.push({ phone: comp.phone });
+        }
+        
+        if (comp.companyName && comp.companyName !== 'NA' && comp.companyName !== 'Unknown Company') {
+          orConditions.push({ companyName: comp.companyName });
+        }
+
+        if (orConditions.length > 0) {
+          const isDuplicate = await prisma.client.findFirst({
+            where: { OR: orConditions }
+          });
+
+          if (isDuplicate) {
+            duplicateCount++;
+            continue;
+          }
+        }
+
         await prisma.client.create({
           data: {
             companyName: comp.companyName,
@@ -30,12 +56,12 @@ export async function POST(request: NextRequest) {
         });
         successCount++;
       } catch (err: any) {
-        // Skip duplicates or invalid entries silently in bulk operations
+        // Skip invalid entries silently in bulk operations
         console.error(`Failed to create company ${comp.email}:`, err.message);
       }
     }
 
-    return NextResponse.json({ message: 'Bulk upload successful', count: successCount }, { status: 201 });
+    return NextResponse.json({ message: 'Bulk upload successful', count: successCount, duplicates: duplicateCount }, { status: 201 });
   } catch (error: any) {
     console.error('Bulk upload error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
