@@ -538,7 +538,13 @@ export default function CandidateProfilePage() {
                   </Field>
                 </Grid2>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: isDark ? '#cbd5e1' : '#475569', cursor: 'pointer', marginTop: '1rem' }}>
-                  <input type="checkbox" checked={exp.current} onChange={e => { updateExp(i, 'current', e.target.checked); if (e.target.checked) updateExp(i, 'to', 'Present'); }} style={{ width: 16, height: 16 }} />
+                  <input type="checkbox" checked={exp.current} onChange={e => {
+                    const checked = e.target.checked;
+                    const updated = [...form.experiences];
+                    updated[i] = { ...updated[i], current: checked };
+                    if (checked) updated[i].to = 'Present';
+                    setForm({ ...form, experiences: updated });
+                  }} style={{ width: 16, height: 16 }} />
                   <span>I currently work here</span>
                 </label>
               </div>
@@ -579,7 +585,6 @@ export default function CandidateProfilePage() {
                       onChange={e => setForm({ ...form, preferredRoles: e.target.value })}
                       placeholder="Type your department / field here..."
                       className="focus:border-[#0077B6]"
-                      autoFocus
                     />
                   )}
                 </Field>
@@ -935,7 +940,6 @@ function SmartSelector({ value, onChange, isDark, options, placeholder, searchPl
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
-          autoFocus
         />
         <button
           type="button"
