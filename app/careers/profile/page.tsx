@@ -185,23 +185,34 @@ export default function CandidateProfilePage() {
     });
   }, [candidate]);
 
-  const profilePercent = Math.min(100, Math.round([
-    form.name, form.headline, form.summary, (form.locState && form.locCity),
-    form.educations?.[0]?.degree, form.educations?.[0]?.college, form.educations?.[0]?.cgpa,
+  const completionConditions = [
+    form.name, 
+    form.email,
+    form.phone, 
+    form.headline, 
+    form.summary, 
+    (form.locState && form.locCity),
+    form.educations?.[0]?.degree, 
+    form.educations?.[0]?.college,
     form.skillsArr?.length > 0,
-    form.experiences?.[0]?.company || form.experiences?.[0]?.role,
+    (form.experiences?.[0]?.company || form.experiences?.[0]?.role || form.educations?.[0]?.cgpa), // either exp or cgpa
     form.resumeUrl,
-  ].filter(Boolean).length * 10));
+    form.preferredRoles
+  ];
+  const filledConditions = completionConditions.filter(Boolean).length;
+  const profilePercent = Math.round((filledConditions / completionConditions.length) * 100);
 
   const missingFields: string[] = [];
   if (!form.name) missingFields.push('Full Name');
+  if (!form.email) missingFields.push('Email');
+  if (!form.phone) missingFields.push('Phone Number');
   if (!form.headline) missingFields.push('Headline');
   if (!form.summary) missingFields.push('Summary');
-  if (!form.locCountry || !form.locState || !form.locCity) missingFields.push('Location (Country, State & City)');
+  if (!form.locCountry || !form.locState || !form.locCity) missingFields.push('Location');
   if (!form.preferredRoles) missingFields.push('Department / Field');
   if (!form.educations?.[0]?.degree || !form.educations?.[0]?.college) missingFields.push('Education Details');
   if (!form.skillsArr || form.skillsArr.length === 0) missingFields.push('Skills');
-  if (!form.experiences?.[0]?.company && !form.experiences?.[0]?.role) missingFields.push('Experience Details');
+  if (!form.experiences?.[0]?.company && !form.experiences?.[0]?.role && !form.educations?.[0]?.cgpa) missingFields.push('Experience Details');
   if (!form.resumeUrl) missingFields.push('Resume');
 
   const addSkill = () => {
