@@ -4,7 +4,7 @@ import { useState, ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCandidateAuth } from '@/context/CandidateAuthContext';
-import { User, Briefcase, Bookmark, MessageSquare, LogOut, Zap, Menu, X, Sun, Moon } from 'lucide-react';
+import { User, Briefcase, Bookmark, MessageSquare, LogOut, Zap, Menu, X, Sun, Moon, Mic } from 'lucide-react';
 import { usePortalTheme } from '@/context/PortalThemeContext';
 import { motion } from 'framer-motion';
 
@@ -33,6 +33,7 @@ export default function CandidateDashboardLayout({ children }: { children: React
     { label: 'Saved Jobs', href: '/careers/saved-jobs', icon: <Bookmark size={20} /> },
     { label: 'Applications', href: '/careers/my-applications', icon: <Briefcase size={20} /> },
     { label: 'Messages', href: '/careers/messages', icon: <MessageSquare size={20} /> },
+    { label: 'AI Mock Interview', href: '/careers/mock-interview', icon: <Mic size={20} /> },
   ];
 
   return (
