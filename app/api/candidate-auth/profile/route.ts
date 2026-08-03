@@ -50,6 +50,7 @@ export async function PUT(request: NextRequest) {
           currentRole: updated.currentRole,
           expectedSalary: updated.expectedSalary,
           resumeUrl: updated.resumeUrl,
+          gender: updated.gender,
         }
       });
     }

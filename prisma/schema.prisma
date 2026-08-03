@@ -109,6 +109,7 @@ model Candidate {
   languages       String?
   location        String
   resumeUrl       String?
+  gender          String?
   status          String   @default("new") // new | shortlisted | interview_scheduled | interviewed | selected | rejected | offered | joined | withdrawn
   source          String   @default("applied") // applied | excel_upload
   appliedFor            String?  // requirementId
@@ -324,6 +325,7 @@ model CandidateAccount {
   currentRole    String?
   expectedSalary String?
   preferredRoles String?
+  gender         String?
   isVerified     Boolean   @default(true)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt

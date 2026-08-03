@@ -89,7 +89,7 @@ export default function CandidateProfilePage() {
   const photoRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<any>({
-    name: '', email: '', phone: '', headline: '', summary: '',
+    name: '', email: '', phone: '', gender: '', headline: '', summary: '',
     locCountry: 'IN', locState: '', locDistrict: '', locCity: '', locAddress: '', currentCompany: '', currentRole: '', expectedSalary: '',
     preferredRoles: '', resumeUrl: '', resumeFileName: '', photoUrl: '',
     skillsArr: [],
@@ -164,6 +164,7 @@ export default function CandidateProfilePage() {
       name: candidate.name || '',
       email: candidate.email || '',
       phone: candidate.phone || '',
+      gender: (candidate as any).gender || '',
       headline: candidate.headline || '',
       summary: (candidate as any).summary || '',
       locCountry: parsedLoc.country,
@@ -189,6 +190,7 @@ export default function CandidateProfilePage() {
     form.name, 
     form.email,
     form.phone, 
+    form.gender,
     form.headline, 
     form.summary, 
     (form.locState && form.locCity),
@@ -206,6 +208,7 @@ export default function CandidateProfilePage() {
   if (!form.name) missingFields.push('Full Name');
   if (!form.email) missingFields.push('Email');
   if (!form.phone) missingFields.push('Phone Number');
+  if (!form.gender) missingFields.push('Gender');
   if (!form.headline) missingFields.push('Headline');
   if (!form.summary) missingFields.push('Summary');
   if (!form.locCountry || !form.locState || !form.locCity) missingFields.push('Location');
@@ -335,6 +338,7 @@ export default function CandidateProfilePage() {
         id: candidate?.id,
         name: form.name,
         phone: form.phone,
+        gender: form.gender,
         headline: form.headline,
         summary: form.summary,
         location: JSON.stringify({ country: form.locCountry, state: form.locState, district: form.locDistrict, city: form.locCity, address: form.locAddress }),
@@ -425,6 +429,20 @@ export default function CandidateProfilePage() {
                 <input style={{ ...getINPUT(isDark), background: 'rgba(255,255,255,0.02)', color: '#64748b' }} value={form.email} readOnly />
               </Field>
             </Grid2>
+            <Grid2>
+              <Field label="Phone Number *">
+                <input style={getINPUT(isDark)} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Your mobile number" className="focus:border-[#0077B6]" />
+              </Field>
+              <Field label="Gender *">
+                <select style={getINPUT(isDark)} value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })} className="focus:border-[#0077B6] appearance-none">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </Field>
+            </Grid2>
             <div style={{ marginTop: 24, marginBottom: 8, fontSize: '1rem', fontWeight: 700, color: isDark ? 'white' : '#0f172a' }}>Location Details</div>
             <Grid2>
               <Field label="Country *">
@@ -453,9 +471,6 @@ export default function CandidateProfilePage() {
             </Grid2>
             <Field label="Full Address" full>
               <input style={getINPUT(isDark)} value={form.locAddress} onChange={e => setForm({ ...form, locAddress: e.target.value })} placeholder="Door No, Street Name" className="focus:border-[#0077B6]" />
-            </Field>
-            <Field label="Phone Number *">
-              <input style={getINPUT(isDark)} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Your mobile number" className="focus:border-[#0077B6]" />
             </Field>
             <Field label="Professional Headline" full>
               <input style={getINPUT(isDark)} value={form.headline} onChange={e => setForm({ ...form, headline: e.target.value })} placeholder="e.g. Senior React Developer | 5 Years Exp" className="focus:border-[#0077B6]" />

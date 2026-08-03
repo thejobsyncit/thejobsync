@@ -19,8 +19,9 @@ function getProfileCompletion(c: any): number {
   if (c.currentRole && c.currentRole.trim() !== '') score += 7;
   if (c.expectedSalary && c.expectedSalary.trim() !== '') score += 7;
   if (c.preferredRoles && c.preferredRoles.trim() !== '') score += 7;
+  if (c.gender && c.gender.trim() !== '') score += 7; // added gender (total sum may exceed 100 but capped)
 
-  return score; // Max 100
+  return Math.min(100, score); // Max 100
 }
 
 export async function GET(req: NextRequest) {
@@ -48,7 +49,8 @@ export async function GET(req: NextRequest) {
         currentCompany: true,
         currentRole: true,
         expectedSalary: true,
-        preferredRoles: true
+        preferredRoles: true,
+        gender: true
       }
     });
 
