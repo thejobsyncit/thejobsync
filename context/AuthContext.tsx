@@ -54,6 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    if (!window.confirm('Are you sure you want to log out?')) return;
     if (user) {
       try {
         await fetch('/api/auth/logout', {

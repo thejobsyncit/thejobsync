@@ -119,6 +119,7 @@ export function CandidateAuthProvider({ children }: { children: ReactNode }) {
   }, [refreshApplications]);
 
   const logout = useCallback(() => {
+    if (!window.confirm('Are you sure you want to log out?')) return;
     setCandidate(null);
     setAppliedJobs(new Set());
     localStorage.removeItem('candidate_user');

@@ -69,6 +69,7 @@ export function EmployerAuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    if (!window.confirm('Are you sure you want to log out?')) return;
     await fetch('/api/employer/me', { method: 'DELETE' });
     setEmployer(null);
   };
