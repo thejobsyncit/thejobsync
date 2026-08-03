@@ -111,6 +111,38 @@ export default function CandidateProfilePage() {
   const activeSubscription = activeSubscriptions[0];
   const canAccessATS = activeSubscription?.planName === 'JS Basic Resume' || activeSubscription?.planName === 'JS Pro Resume' || activeSubscription?.planName?.includes('Company');
 
+  const [initialFormStr, setInitialFormStr] = useState('');
+  const isDirty = initialFormStr !== '' && JSON.stringify(form) !== initialFormStr;
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
+  useEffect(() => {
+    const handleAnchorClick = (e: MouseEvent) => {
+      if (!isDirty) return;
+      const target = (e.target as HTMLElement).closest('a');
+      if (target && target.href && !target.href.includes('#') && target.target !== '_blank') {
+        const isInternal = target.href.startsWith(window.location.origin);
+        if (isInternal) {
+          if (!window.confirm("You have unsaved changes! Are you sure you want to leave without saving?")) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }
+      }
+    };
+    document.addEventListener('click', handleAnchorClick, { capture: true });
+    return () => document.removeEventListener('click', handleAnchorClick, { capture: true });
+  }, [isDirty]);
+
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push('/careers/login');
   }, [isAuthenticated, isLoading, router]);
@@ -160,7 +192,7 @@ export default function CandidateProfilePage() {
       }
     } catch {}
 
-    setForm({
+    const initialObj = {
       name: candidate.name || '',
       email: candidate.email || '',
       phone: candidate.phone || '',
@@ -183,7 +215,9 @@ export default function CandidateProfilePage() {
       languages,
       educations,
       experiences,
-    });
+    };
+    setForm(initialObj);
+    setInitialFormStr(JSON.stringify(initialObj));
   }, [candidate]);
 
   const completionConditions = [
@@ -359,6 +393,7 @@ export default function CandidateProfilePage() {
       if (res.ok) {
         const updated = await res.json();
         updateProfile(updated);
+        setInitialFormStr(JSON.stringify(form));
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
       } else {
