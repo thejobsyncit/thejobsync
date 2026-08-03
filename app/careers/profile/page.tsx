@@ -316,6 +316,19 @@ export default function CandidateProfilePage() {
   };
 
   const handleSave = async () => {
+    if (!form.name || form.name.trim() === '') {
+      toast.error('Full Name is mandatory');
+      return;
+    }
+    if (!form.email || form.email.trim() === '') {
+      toast.error('Email is mandatory');
+      return;
+    }
+    if (!form.phone || form.phone.trim() === '') {
+      toast.error('Phone Number is mandatory');
+      return;
+    }
+
     setSaving(true);
     try {
       const payload = {
