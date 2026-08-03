@@ -190,6 +190,9 @@ export async function POST(req: NextRequest) {
                 html,
               }).catch((err: any) => console.error(`Failed to send to ${c.email}:`, err))
             ));
+            
+            // Add 1.5 second delay to prevent SMTP rate limits when sending bulk alerts
+            await new Promise(r => setTimeout(r, 1500));
           }
           console.log(`Job alert sent to ${candidates.length} candidates.`);
         }
