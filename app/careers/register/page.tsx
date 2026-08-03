@@ -101,6 +101,7 @@ export default function CandidateRegisterPage() {
                 onChange={e => {
                   let val = e.target.value;
                   if (type === 'tel') val = val.replace(/[^0-9+]/g, '');
+                  if (field === 'name') val = val.replace(/[^a-zA-Z\s.]/g, '');
                   setForm({ ...form, [field]: val });
                 }}
                 maxLength={type === 'tel' ? 15 : undefined}

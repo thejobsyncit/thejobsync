@@ -458,7 +458,7 @@ export default function CandidateProfilePage() {
             </div>
             <Grid2>
               <Field label="Full Name *">
-                <input style={getINPUT(isDark)} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Your full name" className="focus:border-[#0077B6]" />
+                <input style={getINPUT(isDark)} value={form.name} onChange={e => setForm({ ...form, name: e.target.value.replace(/[^a-zA-Z\s.]/g, '') })} placeholder="Your full name" className="focus:border-[#0077B6]" />
               </Field>
               <Field label="Email Address">
                 <input style={{ ...getINPUT(isDark), background: 'rgba(255,255,255,0.02)', color: '#64748b' }} value={form.email} readOnly />
