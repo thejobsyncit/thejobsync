@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LayoutDashboard, Briefcase, Users, FileText, HelpCircle, FileCheck, Mail, Menu, X } from "lucide-react";
 
 export default function AdminERPLayout({
@@ -10,6 +11,13 @@ export default function AdminERPLayout({
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to log out?")) {
+      router.push("/admin-erp/login");
+    }
+  };
 
   const navLinks = (
     <div className="p-4 flex-1">
@@ -137,9 +145,9 @@ export default function AdminERPLayout({
           </div>
           <div className="flex items-center space-x-3">
             <button className="text-gray-500 hover:text-gray-700 text-lg">🔔</button>
-            <Link href="/admin-erp/login" className="text-sm text-red-600 font-medium hover:underline">
+            <button onClick={handleLogout} className="text-sm text-red-600 font-medium hover:underline">
               Logout
-            </Link>
+            </button>
           </div>
         </header>
 

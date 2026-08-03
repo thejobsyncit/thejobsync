@@ -125,7 +125,7 @@ export default function CandidateDashboardLayout({ children }: { children: React
           <button onClick={toggleTheme} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '0.875rem', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', color: isDark ? 'white' : '#0f172a', border: 'none', borderRadius: 12, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', marginBottom: '0.75rem' }} className="hover:bg-white/10">
             {isDark ? <Sun size={18} /> : <Moon size={18} />} {isDark ? 'Light Mode' : 'Dark Mode'}
           </button>
-          <button onClick={() => { logout(); router.push('/careers'); }} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '0.875rem', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 12, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }} className="hover:bg-red-500/20">
+          <button onClick={() => { if(window.confirm("Are you sure you want to log out?")) { logout(); router.push('/careers'); } }} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '0.875rem', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 12, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }} className="hover:bg-red-500/20">
             <LogOut size={18} /> Sign Out
           </button>
         </div>

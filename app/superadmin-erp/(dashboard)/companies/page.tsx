@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { Plus, Edit, Trash2, Search, X, Eye, Upload, FileText, CheckSquare, Square, ChevronLeft, ChevronRight, Mail, Send, Loader2 } from "lucide-react";
-import { read, utils } from "xlsx";
+import { read, utils, writeFile } from "xlsx";
 
 const getCompanyWhatsAppLink = (name: string, phone: string) => {
   let cleanPhone = phone?.toString().replace(/[^0-9]/g, '') || '';
@@ -49,6 +49,7 @@ export default function SACompaniesPage() {
   const [uploadingExcel, setUploadingExcel] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({ uploaded: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Mail Modal
   const [mailModal, setMailModal] = useState<any>(null);
@@ -161,6 +162,51 @@ export default function SACompaniesPage() {
     link.href = URL.createObjectURL(blob);
     link.download = 'GoJobSync_Companies_Template.csv';
     link.click();
+  };
+
+  const handleExportData = () => {
+    try {
+      setIsExporting(true);
+      if (filtered.length === 0) {
+        alert("No companies to export!");
+        return;
+      }
+      const dataToExport = filtered.map(c => ({
+        "Company Name": c.companyName || "NA",
+        "Contact Person": c.contactPerson || "NA",
+        "Email ID": c.email || "NA",
+        "Contact No": c.phone || "NA",
+        "Company Type/Industry": c.industry || "NA",
+        "Location/Address": c.address || "NA",
+        "Websites": c.website || "NA",
+        "Status": c.status || "NA",
+        "Added On": c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-GB') : "NA"
+      }));
+
+      const worksheet = utils.json_to_sheet(dataToExport);
+      
+      const wscols = [
+        { wch: 30 }, // Company Name
+        { wch: 20 }, // Contact Person
+        { wch: 30 }, // Email ID
+        { wch: 15 }, // Contact No
+        { wch: 25 }, // Industry
+        { wch: 40 }, // Address
+        { wch: 25 }, // Websites
+        { wch: 15 }, // Status
+        { wch: 15 }, // Added On
+      ];
+      worksheet['!cols'] = wscols;
+
+      const workbook = utils.book_new();
+      utils.book_append_sheet(workbook, worksheet, "Companies");
+      writeFile(workbook, `Companies_Export_${new Date().getTime()}.xlsx`);
+    } catch (err: any) {
+      console.error("Export Error:", err);
+      alert("Failed to export data: " + (err.message || String(err)));
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -394,6 +440,10 @@ GoJobSync Recruitment Team
         <div className="flex flex-wrap items-center gap-3">
           <button onClick={downloadSampleTemplate} className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg text-sm font-bold hover:bg-blue-100 transition shadow-sm">
             <FileText size={16} /> Sample Template
+          </button>
+          <button onClick={handleExportData} disabled={isExporting} className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 border border-indigo-200 rounded-lg text-sm font-bold hover:bg-indigo-100 transition shadow-sm disabled:opacity-50">
+            {isExporting ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
+            {isExporting ? 'Exporting...' : 'Export Data'}
           </button>
           <button onClick={() => setShowExcelModal(true)} className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700 transition shadow-sm">
             <Upload size={16} /> Upload Excel
