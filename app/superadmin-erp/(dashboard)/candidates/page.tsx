@@ -58,6 +58,7 @@ export default function SACandidatesPage() {
   const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", experience: "", education: "", location: "", skills: "" });
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const [uploadingExcel, setUploadingExcel] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState({ uploaded: 0, total: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -577,6 +578,57 @@ GoJobSync Recruitment Team
     writeFile(workbook, "Candidate_Upload_Template.xlsx");
   };
 
+  const handleExportData = async () => {
+    setIsExporting(true);
+    await new Promise(resolve => setTimeout(resolve, 50));
+    try {
+      const dataToExport = filtered.map(c => {
+        let cleanResume = c.resumeUrl || "NA";
+        if (cleanResume.startsWith('data:')) {
+           cleanResume = "Base64 Document (Too large to export)";
+        }
+        
+        return {
+          "Name": c.name || "NA",
+          "Email": c.email || "NA",
+          "Phone": c.phone || "NA",
+          "Department": c.currentRole || c.appliedFor || "NA",
+          "Education": getEducationString(c) || "NA",
+          "Location": getLocationString(c) || "NA",
+          "Skills": Array.isArray(c.skills) ? c.skills.join(', ') : (typeof c.skills === 'string' && c.skills.startsWith('[') ? (() => { try { return JSON.parse(c.skills).join(', '); } catch { return c.skills; } })() : (c.skills || "NA")),
+          "Experience": c.experience || "NA",
+          "Resume URL": cleanResume,
+          "Source": c.source || "NA",
+          "Added On": c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-GB') : "NA"
+        };
+      });
+
+      const worksheet = utils.json_to_sheet(dataToExport);
+      worksheet["!cols"] = [
+        { wch: 25 }, // Name
+        { wch: 35 }, // Email
+        { wch: 15 }, // Phone
+        { wch: 25 }, // Department
+        { wch: 30 }, // Education
+        { wch: 20 }, // Location
+        { wch: 40 }, // Skills
+        { wch: 15 }, // Experience
+        { wch: 45 }, // Resume URL
+        { wch: 15 }, // Source
+        { wch: 15 }  // Added On
+      ];
+      
+      const workbook = utils.book_new();
+      utils.book_append_sheet(workbook, worksheet, "Candidates");
+      writeFile(workbook, `Candidates_Export_${new Date().getTime()}.xlsx`);
+    } catch (err: any) {
+      console.error("Export Error:", err);
+      alert("Failed to export data: " + (err.message || String(err)));
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="p-6">
       {/* Top Bar */}
@@ -586,6 +638,9 @@ GoJobSync Recruitment Team
           <p className="text-xs text-gray-500">Manage applied candidates, upload Excel dumps, and push profiles to Application Support</p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <button onClick={handleExportData} disabled={isExporting} className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg text-sm font-semibold hover:bg-indigo-100 shadow-sm transition disabled:opacity-50" title="Export Current List to Excel">
+            <Download size={16} /> {isExporting ? "Exporting..." : "Export Data"}
+          </button>
           <button onClick={handleDownloadTemplate} className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-sm font-semibold hover:bg-blue-100 shadow-sm transition" title="Download Excel Sample Template">
             <Download size={16} /> Sample Template
           </button>

@@ -148,7 +148,6 @@ export async function GET() {
     const otherCandidates = await prisma.candidate.findMany({
       where: { source: { not: 'applied' } },
       orderBy: { createdAt: 'desc' },
-      take: 1500, // Limit to prevent crashing the browser UI
       include: {
         assignedSupport: { select: { id: true, name: true } }
       } as any

@@ -48,7 +48,6 @@ export async function GET(request: NextRequest) {
         where: otherWhere as any,
         include: { requirement: { select: { title: true } }, assignedSupport: { select: { id: true, name: true } } } as any,
         orderBy: { createdAt: 'desc' },
-        take: 1500, // Limit to prevent crashing the browser select dropdowns
       });
       candidates = [...appliedCandidates, ...otherCandidates];
     }
