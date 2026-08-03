@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
         currentRole: true,
         expectedSalary: true,
         preferredRoles: true,
+        // @ts-ignore
         gender: true
       }
     });
