@@ -476,7 +476,10 @@ export default function CandidateProfilePage() {
               <input style={getINPUT(isDark)} value={form.headline} onChange={e => setForm({ ...form, headline: e.target.value })} placeholder="e.g. Senior React Developer | 5 Years Exp" className="focus:border-[#0077B6]" />
             </Field>
             <Field label="Professional Summary" full>
-              <textarea style={{ ...getINPUT(isDark), resize: 'vertical', minHeight: 120, fontFamily: 'inherit', lineHeight: 1.6 }} value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} placeholder="Write a short summary about your skills..." rows={4} className="focus:border-[#0077B6]" />
+              <textarea style={{ ...getINPUT(isDark), resize: 'vertical', minHeight: 120, fontFamily: 'inherit', lineHeight: 1.6 }} value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} placeholder="Write a short summary about your skills..." rows={4} className="focus:border-[#0077B6]" maxLength={1000} />
+              <div style={{ textAlign: 'right', fontSize: '0.75rem', color: isDark ? '#94a3b8' : '#64748b', marginTop: '4px' }}>
+                {(form.summary || '').length} / 1000
+              </div>
             </Field>
           </Section>
 
