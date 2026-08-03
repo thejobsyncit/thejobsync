@@ -537,7 +537,7 @@ export default function CandidateProfilePage() {
                 </Grid2>
                 <Grid2>
                   <Field label="CGPA / Percentage">
-                    <input style={getINPUT(isDark)} value={edu.cgpa} onChange={e => updateEdu(i, 'cgpa', e.target.value)} placeholder="e.g. 8.5 CGPA" className="focus:border-[#0077B6]" />
+                    <input style={getINPUT(isDark)} value={edu.cgpa} onChange={e => updateEdu(i, 'cgpa', e.target.value.replace(/[^0-9.]/g, ''))} placeholder="e.g. 8.5" className="focus:border-[#0077B6]" />
                   </Field>
                   <Field label="Year of Passing">
                     <input style={getINPUT(isDark)} value={edu.year} onChange={e => updateEdu(i, 'year', e.target.value)} placeholder="e.g. 2022" type="number" className="focus:border-[#0077B6]" />
