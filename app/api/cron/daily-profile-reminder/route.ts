@@ -4,17 +4,21 @@ import nodemailer from 'nodemailer';
 
 // Helper to check profile completion percentage
 function getProfileCompletion(c: any): number {
-  let score = 0;
-  // Basic info (always present since they registered) - 20%
-  score += 20;
+  let score = 9; // Basic info (name, email, phone)
 
-  if (c.headline && c.headline.trim() !== '') score += 10;
-  if (c.summary && c.summary.trim() !== '') score += 15;
-  if (c.skills && c.skills !== '[]' && c.skills !== '') score += 15;
-  if (c.experience && c.experience.trim() !== '') score += 10;
-  if (c.education && c.education.trim() !== '') score += 10;
-  if (c.location && c.location.trim() !== '') score += 10;
-  if (c.resumeUrl && c.resumeUrl.trim() !== '') score += 10;
+  if (c.headline && c.headline.trim() !== '') score += 7;
+  if (c.summary && c.summary.trim() !== '') score += 7;
+  if (c.skills && c.skills !== '[]' && c.skills !== '') score += 7;
+  if (c.experience && c.experience.trim() !== '') score += 7;
+  if (c.education && c.education.trim() !== '') score += 7;
+  if (c.location && c.location.trim() !== '') score += 7;
+  if (c.resumeUrl && c.resumeUrl.trim() !== '') score += 7;
+  if (c.photoUrl && c.photoUrl.trim() !== '') score += 7;
+  if (c.languages && c.languages.trim() !== '') score += 7;
+  if (c.currentCompany && c.currentCompany.trim() !== '') score += 7;
+  if (c.currentRole && c.currentRole.trim() !== '') score += 7;
+  if (c.expectedSalary && c.expectedSalary.trim() !== '') score += 7;
+  if (c.preferredRoles && c.preferredRoles.trim() !== '') score += 7;
 
   return score; // Max 100
 }
@@ -38,7 +42,13 @@ export async function GET(req: NextRequest) {
         experience: true,
         education: true,
         location: true,
-        resumeUrl: true
+        resumeUrl: true,
+        photoUrl: true,
+        languages: true,
+        currentCompany: true,
+        currentRole: true,
+        expectedSalary: true,
+        preferredRoles: true
       }
     });
 
