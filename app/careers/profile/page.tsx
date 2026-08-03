@@ -431,7 +431,7 @@ export default function CandidateProfilePage() {
             </Grid2>
             <Grid2>
               <Field label="Phone Number *">
-                <input style={getINPUT(isDark)} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Your mobile number" className="focus:border-[#0077B6]" />
+                <input style={getINPUT(isDark)} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value.replace(/[^0-9+]/g, '') })} placeholder="Your mobile number" className="focus:border-[#0077B6]" maxLength={15} />
               </Field>
               <Field label="Gender *">
                 <select style={getINPUT(isDark)} value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })} className="focus:border-[#0077B6] appearance-none">
