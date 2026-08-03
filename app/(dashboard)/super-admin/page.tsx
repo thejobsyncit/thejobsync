@@ -1,6 +1,6 @@
 'use client';
 
-import { Crown, Building2, Users, Shield, Settings, BarChart3, Globe, Key, Database, FileText, Plus, RefreshCw, Clock, CheckCircle, Trash2, Calendar } from 'lucide-react';
+import { Crown, Building2, Users, Shield, Settings, BarChart3, Globe, Key, Database, FileText, Plus, RefreshCw, Clock, CheckCircle, Trash2, Calendar, Edit, X } from 'lucide-react';
 import { ROLE_LABELS, ROLE_COLORS, UserRole } from '@/lib/types';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
@@ -27,6 +27,10 @@ export default function SuperAdminPage() {
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'hr' as UserRole, phone: '' });
   const [selectedEmployeeForAttendance, setSelectedEmployeeForAttendance] = useState<any>(null);
+  
+  // Edit Employee State
+  const [editingEmployee, setEditingEmployee] = useState<any>(null);
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
 
   // Attendance State
   const [pendingAttendances, setPendingAttendances] = useState<any[]>([]);
@@ -98,9 +102,36 @@ export default function SuperAdminPage() {
         toast.error(error.error || 'Failed to create user');
       }
     } catch (error) {
-      toast.error('Error creating user');
+      toast.error('Failed to create user');
     } finally {
       setIsCreatingUser(false);
+    }
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingEmployee) return;
+    
+    setIsUpdatingUser(true);
+    try {
+      const res = await fetch(`/api/users/${editingEmployee.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingEmployee)
+      });
+      
+      if (res.ok) {
+        toast.success('Employee updated successfully');
+        setEditingEmployee(null);
+        fetchEmployees();
+      } else {
+        const error = await res.json();
+        toast.error(error.error || 'Failed to update user');
+      }
+    } catch (error) {
+      toast.error('Failed to update user');
+    } finally {
+      setIsUpdatingUser(false);
     }
   };
 
@@ -243,9 +274,14 @@ export default function SuperAdminPage() {
                         </span>
                       </td>
                       <td>
-                        <button onClick={() => handleDeleteEmployee(emp.id)} className="btn-ghost text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
-                          <Trash2 size={16} />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => setEditingEmployee(emp)} className="btn-ghost text-[#0077B6] hover:bg-[#0077B6]/10 p-2 rounded-lg transition-colors">
+                            <Edit size={16} />
+                          </button>
+                          <button onClick={() => handleDeleteEmployee(emp.id)} className="btn-ghost text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -428,11 +464,56 @@ export default function SuperAdminPage() {
         </div>
       )}
 
+      {/* Modals */}
       {selectedEmployeeForAttendance && (
         <EmployeeAttendanceModal 
           employee={selectedEmployeeForAttendance} 
           onClose={() => setSelectedEmployeeForAttendance(null)} 
         />
+      )}
+
+      {/* Edit Employee Modal */}
+      {editingEmployee && (
+        <div className="modal-overlay">
+          <div className="modal-content animate-fade-in-up" style={{ maxWidth: '500px' }}>
+            <div className="modal-header flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-lg flex items-center gap-2"><Edit size={18}/> Edit Employee</h3>
+              <button onClick={() => setEditingEmployee(null)} className="btn-ghost p-1 rounded-md hover:bg-slate-100"><X size={18}/></button>
+            </div>
+            <form onSubmit={handleUpdateUser} className="space-y-4">
+              <div className="form-group">
+                <label className="form-label">Full Name *</label>
+                <input type="text" className="form-input" required value={editingEmployee.name} onChange={e => setEditingEmployee({...editingEmployee, name: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email Address *</label>
+                <input type="email" className="form-input" required value={editingEmployee.email} onChange={e => setEditingEmployee({...editingEmployee, email: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Role *</label>
+                <select className="form-input" required value={editingEmployee.role} onChange={e => setEditingEmployee({...editingEmployee, role: e.target.value})}>
+                  <option value="hr">HR Professional</option>
+                  <option value="interviewer">Interviewer</option>
+                  <option value="placement_coordinator">Placement Coordinator</option>
+                  <option value="dms">DMS</option>
+                  <option value="coordinator">Coordinator</option>
+                  <option value="application_support">Application Support</option>
+                  <option value="super_admin">Super Admin</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Status</label>
+                <div className="flex items-center gap-2 mt-2">
+                  <input type="checkbox" id="isActiveCheck" checked={editingEmployee.isActive} onChange={e => setEditingEmployee({...editingEmployee, isActive: e.target.checked})} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                  <label htmlFor="isActiveCheck" className="text-sm text-slate-700">Account is Active</label>
+                </div>
+              </div>
+              <button type="submit" disabled={isUpdatingUser} className="btn-primary w-full mt-6 flex justify-center py-2.5">
+                {isUpdatingUser ? 'Saving Changes...' : 'Save Changes'}
+              </button>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
