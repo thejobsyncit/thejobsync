@@ -364,7 +364,7 @@ GoJobSync Recruitment Team
       let failCount = 0;
       let failReasons = new Set<string>();
       
-      const chunkSize = 5;
+      const chunkSize = 3;
       for (let i = 0; i < mailModal.candidateIds.length; i += chunkSize) {
         const chunk = mailModal.candidateIds.slice(i, i + chunkSize);
         
@@ -401,6 +401,9 @@ GoJobSync Recruitment Team
              failCount++;
           }
         }));
+        
+        // Add 1.5 second delay between chunks to prevent AWS SES / SMTP connection limits
+        await new Promise(r => setTimeout(r, 1500));
         
         setSendProgress(prev => ({ ...prev, current: Math.min(i + chunkSize, mailModal.candidateIds.length) }));
       }
