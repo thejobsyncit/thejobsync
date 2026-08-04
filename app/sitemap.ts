@@ -1,11 +1,9 @@
 import { MetadataRoute } from 'next';
-import { prisma } from '@/lib/db';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.gojobsync.com';
 
-  // Static pages
-  const staticPages: MetadataRoute.Sitemap = [
+  return [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -49,24 +47,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
   ];
-
-  // Dynamic job pages
-  let jobPages: MetadataRoute.Sitemap = [];
-  try {
-    const jobs = await prisma.jobRequirement.findMany({
-      where: { status: 'open' },
-      select: { id: true, updatedAt: true },
-      orderBy: { updatedAt: 'desc' },
-    });
-    jobPages = jobs.map((job) => ({
-      url: `${baseUrl}/careers/jobs/${job.id}`,
-      lastModified: job.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.85,
-    }));
-  } catch {
-    // prisma not available at build time — skip
-  }
-
-  return [...staticPages, ...jobPages];
 }
