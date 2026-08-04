@@ -106,8 +106,8 @@ export default function ContactUs() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 transition-colors duration-300">Subject</label>
-                <select className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-slate-700 focus:outline-none focus:border-[#0077B6] focus:ring-1 focus:ring-sky-500 text-slate-500 dark:text-slate-300 bg-white dark:bg-slate-900 transition-colors duration-300">
+                <label htmlFor="subject" className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 transition-colors duration-300">Subject</label>
+                <select id="subject" aria-label="Select a topic" className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-slate-700 focus:outline-none focus:border-[#0077B6] focus:ring-1 focus:ring-sky-500 text-slate-500 dark:text-slate-300 bg-white dark:bg-slate-900 transition-colors duration-300">
                   <option>Select a topic</option>
                   <option>General Inquiry</option>
                   <option>Support</option>

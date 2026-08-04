@@ -75,9 +75,6 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  alternates: {
-    canonical: 'https://www.gojobsync.com',
-  },
   icons: {
     icon: '/loooo.jpeg',
     shortcut: '/loooo.jpeg',
