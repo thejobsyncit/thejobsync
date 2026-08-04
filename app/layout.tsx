@@ -57,6 +57,8 @@ export const metadata: Metadata = {
     'hire talent India',
     'post jobs India',
     'free job posting',
+    'jobs',
+    
   ],
   authors: [{ name: 'GoJobSync', url: 'https://www.gojobsync.com' }],
   creator: 'GoJobSync',
@@ -108,7 +110,7 @@ export const metadata: Metadata = {
     creator: '@gojobsync',
   },
   verification: {
-    google: 'add-your-google-search-console-verification-token-here',
+    google: 'google388857ede1b48c94',
   },
 };
 
