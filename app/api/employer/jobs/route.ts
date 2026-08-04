@@ -75,11 +75,11 @@ export async function POST(req: NextRequest) {
           client = await prisma.client.create({
             data: {
               companyName: employer.companyName,
-              contactPerson: employer.contactPerson,
+              contactPerson: employer.contactPerson || 'HR',
               email: employer.email,
-              phone: employer.contactPhone,
-              address: employer.address,
-              industry: employer.industry,
+              phone: employer.contactPhone || 'N/A',
+              address: employer.address || 'N/A',
+              industry: employer.industry || 'Other',
               website: employer.website || '',
               status: 'active'
             }
