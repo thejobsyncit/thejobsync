@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
   logout: () => void;
+  updateUser: (data: Partial<User>) => void;
   isAuthenticated: boolean;
 }
 
@@ -70,6 +71,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('crm_user');
   }, [user]);
 
+  const updateUser = useCallback((data: Partial<User>) => {
+    if (!user) return;
+    const updated = { ...user, ...data };
+    setUser(updated);
+    localStorage.setItem('crm_user', JSON.stringify(updated));
+  }, [user]);
+
+
   // Idle Timeout Logic: 2 Minutes
   useEffect(() => {
     if (!user) return;
@@ -97,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, logout]);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

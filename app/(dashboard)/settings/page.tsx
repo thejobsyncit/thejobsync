@@ -6,8 +6,9 @@ import { Settings, User, Lock, Bell, Palette, Globe, Save } from 'lucide-react';
 import { useState } from 'react';
 
 export default function SettingsPage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'notifications' | 'preferences'>('profile');
+  const [isSaving, setIsSaving] = useState(false);
 
   if (!user) return null;
 
@@ -65,13 +66,41 @@ export default function SettingsPage() {
                   </span>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: 480 }}>
-                <div><label className="label">Full Name</label><input className="input" defaultValue={user.name} /></div>
-                <div><label className="label">Email Address</label><input className="input" type="email" defaultValue={user.email} /></div>
-                <div><label className="label">Phone</label><input className="input" defaultValue={user.phone} /></div>
-                <div><label className="label">Department</label><input className="input" defaultValue={user.department} /></div>
-                <button className="btn btn-primary" style={{ alignSelf: 'flex-end' }}><Save size={14} /> Save Changes</button>
-              </div>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                setIsSaving(true);
+                const formData = new FormData(e.currentTarget);
+                const name = formData.get('name') as string;
+                const phone = formData.get('phone') as string;
+                const department = formData.get('department') as string;
+
+                try {
+                  const res = await fetch(`/api/users/${user.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, department }),
+                  });
+                  if (res.ok) {
+                    const data = await res.json();
+                    updateUser(data);
+                    alert('Profile updated successfully!');
+                  } else {
+                    alert('Failed to update profile.');
+                  }
+                } catch (err) {
+                  alert('An error occurred while saving.');
+                } finally {
+                  setIsSaving(false);
+                }
+              }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: 480 }}>
+                <div><label className="label">Full Name</label><input name="name" className="input" defaultValue={user.name} required /></div>
+                <div><label className="label">Email Address</label><input className="input" type="email" defaultValue={user.email} disabled title="Email cannot be changed" style={{ opacity: 0.7, cursor: 'not-allowed' }} /></div>
+                <div><label className="label">Phone</label><input name="phone" className="input" defaultValue={user.phone} /></div>
+                <div><label className="label">Department</label><input name="department" className="input" defaultValue={user.department || ''} /></div>
+                <button type="submit" disabled={isSaving} className="btn btn-primary" style={{ alignSelf: 'flex-end', opacity: isSaving ? 0.7 : 1 }}>
+                  <Save size={14} /> {isSaving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </form>
             </div>
           )}
 
