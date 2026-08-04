@@ -26,26 +26,89 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "GoJobSync",
-  description: "Comprehensive GoJobSync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
+  metadataBase: new URL('https://www.gojobsync.com'),
+  title: {
+    default: 'GoJobSync – Find Jobs in India | Top Job Portal for IT, Engineering & More',
+    template: '%s | GoJobSync – India Job Portal',
+  },
+  description:
+    'GoJobSync is a leading job portal in India. Search thousands of jobs in IT, Engineering, Sales, Finance & more. Apply online instantly. Employers: post jobs & find top talent today.',
+  keywords: [
+    'job portal India',
+    'find jobs India',
+    'apply for jobs online',
+    'IT jobs India',
+    'engineering jobs',
+    'sales jobs',
+    'finance jobs',
+    'job vacancy India',
+    'job search India',
+    'recruitment platform India',
+    'top job portal',
+    'GoJobSync',
+    'jobs in Chennai',
+    'jobs in Bangalore',
+    'jobs in Hyderabad',
+    'jobs in Mumbai',
+    'fresher jobs India',
+    'work from home jobs India',
+    'software developer jobs',
+    'data science jobs India',
+    'hire talent India',
+    'post jobs India',
+    'free job posting',
+  ],
+  authors: [{ name: 'GoJobSync', url: 'https://www.gojobsync.com' }],
+  creator: 'GoJobSync',
+  publisher: 'GoJobSync',
+  category: 'Jobs & Careers',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: 'https://www.gojobsync.com',
+  },
   icons: {
-    icon: "/loooo.jpeg",
+    icon: '/loooo.jpeg',
+    shortcut: '/loooo.jpeg',
+    apple: '/loooo.jpeg',
   },
   openGraph: {
-    title: "GoJobSync",
-    description: "Comprehensive GoJobSync recruitment and CRM management platform for managing the complete recruitment lifecycle.",
-    url: "https://www.gojobsync.com",
-    siteName: "GoJobSync",
+    title: 'GoJobSync – Find Jobs in India | Top Job Portal',
+    description:
+      'Search thousands of jobs in IT, Engineering, Sales, Finance & more across India. Apply online instantly on GoJobSync.',
+    url: 'https://www.gojobsync.com',
+    siteName: 'GoJobSync',
     images: [
       {
-        url: "/loooo.jpeg",
-        width: 800,
-        height: 600,
-        alt: "GoJobSync Logo",
+        url: '/loooo.jpeg',
+        width: 1200,
+        height: 630,
+        alt: 'GoJobSync – India Top Job Portal',
       },
     ],
-    locale: "en_US",
-    type: "website",
+    locale: 'en_IN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GoJobSync – Find Jobs in India | Top Job Portal',
+    description:
+      'Search thousands of jobs in IT, Engineering, Sales, Finance & more across India. Apply online instantly.',
+    images: ['/loooo.jpeg'],
+    site: '@gojobsync',
+    creator: '@gojobsync',
+  },
+  verification: {
+    google: 'add-your-google-search-console-verification-token-here',
   },
 };
 
@@ -55,12 +118,70 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': 'https://www.gojobsync.com/#website',
+        url: 'https://www.gojobsync.com',
+        name: 'GoJobSync',
+        description: 'Leading job portal in India. Find IT, Engineering, Sales & Finance jobs.',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: 'https://www.gojobsync.com/careers?search={search_term_string}',
+          },
+          'query-input': 'required name=search_term_string',
+        },
+        inLanguage: 'en-IN',
+      },
+      {
+        '@type': 'Organization',
+        '@id': 'https://www.gojobsync.com/#organization',
+        name: 'GoJobSync',
+        url: 'https://www.gojobsync.com',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://www.gojobsync.com/loooo.jpeg',
+          width: 512,
+          height: 512,
+        },
+        contactPoint: {
+          '@type': 'ContactPoint',
+          telephone: '+91-9789569391',
+          contactType: 'Customer Service',
+          areaServed: 'IN',
+          availableLanguage: ['English', 'Tamil'],
+        },
+        sameAs: [
+          'https://www.linkedin.com/company/gojobsync',
+        ],
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Crizone Business Center, Ambattur OT',
+          addressLocality: 'Chennai',
+          addressRegion: 'Tamil Nadu',
+          postalCode: '600053',
+          addressCountry: 'IN',
+        },
+      },
+    ],
+  };
+
   return (
     <html
       lang="en"
       suppressHydrationWarning
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <ToastProvider>
