@@ -110,7 +110,7 @@ export const metadata: Metadata = {
     creator: '@gojobsync',
   },
   verification: {
-    google: 'hb18TRTD8ovijPazfsad__cIdETxGwXG2DqWvskp5AE',
+    google: 'JH1koYWVAU0cZR0o76BTtE_x3e7agrL0xn5XTXklBTs',
   },
 };
 
