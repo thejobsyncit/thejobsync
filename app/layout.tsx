@@ -62,7 +62,7 @@ export default function RootLayout({
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} value={{ light: 'light', dark: 'dark' }}>
           <ToastProvider>
             <AuthProvider>{children}</AuthProvider>
           </ToastProvider>

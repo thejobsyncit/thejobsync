@@ -1,13 +1,28 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { Users, Plus, Search, MapPin, Briefcase, GraduationCap, Mail, Phone, FileText, MoreVertical, Edit2, Trash2, X } from 'lucide-react';
+import { Users, Plus, Search, MapPin, Briefcase, GraduationCap, Mail, Phone, FileText, MoreVertical, Edit2, Trash2, X, Globe, Code, Terminal, Cpu, Sparkles, Palette, Link as LinkIcon, ExternalLink, Video, Download } from 'lucide-react';
 import { useDataStore } from '@/lib/useDataStore';
 import { Candidate, JobRequirement } from '@/lib/types';
 import { validateForm, validateRequired, validateEmail, validatePhone } from '@/lib/validation';
 import { useAuth } from '@/context/AuthContext';
 import { canEditModule } from '@/lib/permissions';
 import { openResumeSafe } from '@/lib/resume';
+
+const GithubIcon = ({ size = 20, color = 'currentColor' }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+    <path d="M9 18c-4.51 2-5-2-7-2" />
+  </svg>
+);
+
+const LinkedinIcon = ({ size = 20, color = 'currentColor' }: { size?: number; color?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
 
 const openResume = (url: string | null | undefined, e: React.MouseEvent) => {
   openResumeSafe(url, e);
@@ -113,6 +128,24 @@ export default function CandidatesPage() {
 
   // Detail view modal
   const [viewingCandidate, setViewingCandidate] = useState<Candidate | null>(null);
+  const [viewingVideo, setViewingVideo] = useState<any>(null);
+
+  useEffect(() => {
+    if (viewingCandidate?.email) {
+      fetch(`/api/video-introduction?email=${encodeURIComponent(viewingCandidate.email)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.video) {
+            setViewingVideo(data.video);
+          } else {
+            setViewingVideo(null);
+          }
+        })
+        .catch(() => setViewingVideo(null));
+    } else {
+      setViewingVideo(null);
+    }
+  }, [viewingCandidate?.email]);
 
   // Email Modal State
   const [showEmailModal, setShowEmailModal] = useState(false);
@@ -750,6 +783,79 @@ export default function CandidatesPage() {
                 </div>
               </div>
             )}
+
+            {/* Recruiter View: Verified Candidate Portfolio Links */}
+            <div style={{ marginBottom: '1.25rem', padding: '1rem', background: 'var(--surface-hover)', borderRadius: '0.75rem', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--primary-hover)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Globe size={14} /> Portfolio & Online Profiles
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {(viewingCandidate as any).portfolioUrl && (
+                  <a href={(viewingCandidate as any).portfolioUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', background: 'rgba(0, 180, 216, 0.1)', color: '#00B4D8', borderColor: 'rgba(0, 180, 216, 0.3)', fontWeight: 700 }}>
+                    <Globe size={14} /> Portfolio Website <ExternalLink size={12} />
+                  </a>
+                )}
+                {(viewingCandidate as any).githubUrl && (
+                  <a href={(viewingCandidate as any).githubUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', background: 'rgba(168, 85, 247, 0.1)', color: '#a855f7', borderColor: 'rgba(168, 85, 247, 0.3)', fontWeight: 700 }}>
+                    <GithubIcon size={14} /> GitHub <ExternalLink size={12} />
+                  </a>
+                )}
+                {(viewingCandidate as any).linkedinUrl && (
+                  <a href={(viewingCandidate as any).linkedinUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', background: 'rgba(2, 132, 199, 0.1)', color: '#0284c7', borderColor: 'rgba(2, 132, 199, 0.3)', fontWeight: 700 }}>
+                    <LinkedinIcon size={14} /> LinkedIn <ExternalLink size={12} />
+                  </a>
+                )}
+                {(viewingCandidate as any).leetcodeUrl && (
+                  <a href={(viewingCandidate as any).leetcodeUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', borderColor: 'rgba(245, 158, 11, 0.3)', fontWeight: 700 }}>
+                    <Code size={14} /> LeetCode <ExternalLink size={12} />
+                  </a>
+                )}
+                {(viewingCandidate as any).hackerrankUrl && (
+                  <a href={(viewingCandidate as any).hackerrankUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, textDecoration: 'none', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderColor: 'rgba(16, 185, 129, 0.3)', fontWeight: 700 }}>
+                    <Terminal size={14} /> HackerRank <ExternalLink size={12} />
+                  </a>
+                )}
+                {!(viewingCandidate as any).portfolioUrl && !(viewingCandidate as any).githubUrl && !(viewingCandidate as any).linkedinUrl && !(viewingCandidate as any).leetcodeUrl && !(viewingCandidate as any).hackerrankUrl && (
+                  <span style={{ fontSize: '0.8125rem', color: 'var(--muted-foreground)' }}>No online portfolio links provided yet.</span>
+                )}
+              </div>
+            </div>
+
+            {/* Recruiter View: Submitted Video Introduction */}
+            <div style={{ marginBottom: '1.25rem', padding: '1rem', background: 'var(--surface-hover)', borderRadius: '0.75rem', border: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--primary-hover)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Video size={14} /> Candidate Video Introduction
+                </span>
+                {viewingVideo && (
+                  <span style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', fontWeight: 600 }}>
+                    Submitted: {new Date(viewingVideo.createdAt).toLocaleDateString()} &bull; Duration: {viewingVideo.duration} mins
+                  </span>
+                )}
+              </div>
+
+              {viewingVideo?.videoUrl ? (
+                <div>
+                  <div style={{ borderRadius: '0.5rem', overflow: 'hidden', background: '#000000', marginBottom: '0.75rem', aspectRatio: '16/9' }}>
+                    <video src={viewingVideo.videoUrl} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <a
+                      href={viewingVideo.videoUrl}
+                      download={`Video_Introduction_${viewingCandidate.name.replace(/\s+/g, '_')}.webm`}
+                      className="btn btn-secondary btn-sm"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                    >
+                      <Download size={13} /> Download Video File
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ fontSize: '0.8125rem', color: 'var(--muted-foreground)' }}>
+                  No video introduction submitted yet.
+                </div>
+              )}
+            </div>
 
             {/* Action buttons */}
             <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid var(--border)', flexWrap: 'wrap' }}>

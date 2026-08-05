@@ -12,7 +12,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-:root {
+:root, :root.dark, :root[data-theme="dark"], html.dark {
   /* =============================================
      The jobsync — Blue Ocean Palette (Dark Mode)
      #03045E | #0077B6 | #00B4D8 | #90E0EF | #CAF0F8
@@ -67,7 +67,7 @@
   --radius-full: 9999px;
 }
 
-:root.light, :root[data-theme="light"] {
+:root.light, :root[data-theme="light"], html.light, html[data-theme="light"] {
   /* =============================================
      The jobsync — Blue Ocean Palette (Light Mode)
      ============================================= */
@@ -78,8 +78,8 @@
   --surface-active: #caf0f8;
   --border: #90E0EF;
   --border-light: #caf0f8;
-  --muted: #0077B6;
-  --muted-foreground: #03045E;
+  --muted: #64748b;
+  --muted-foreground: #475569;
 
   --glass-bg: rgba(255, 255, 255, 0.75);
   --glass-border: rgba(0, 119, 182, 0.15);
