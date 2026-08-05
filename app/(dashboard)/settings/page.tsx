@@ -232,14 +232,19 @@ export default function SettingsPage() {
                 setPreferences(prefs);
                 
                 const langMap: Record<string, string> = {
-                  'English': '/en/en',
+                  'English': '',
                   'Hindi': '/en/hi',
                   'Tamil': '/en/ta',
                   'Telugu': '/en/te'
                 };
                 const selectedLang = prefs.language;
-                if (langMap[selectedLang]) {
+                if (selectedLang === 'English') {
+                  // Clear Google Translate cookie to reset to default language
+                  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+                } else if (langMap[selectedLang]) {
                   document.cookie = `googtrans=${langMap[selectedLang]}; path=/`;
+                  document.cookie = `googtrans=${langMap[selectedLang]}; path=/; domain=` + window.location.hostname;
                 }
                 
                 setTimeout(() => {
