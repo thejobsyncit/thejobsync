@@ -239,12 +239,25 @@ export default function SettingsPage() {
                 };
                 const selectedLang = prefs.language;
                 if (selectedLang === 'English') {
-                  // Clear Google Translate cookie to reset to default language
-                  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname;
+                  const domain = window.location.hostname;
+                  const parts = domain.split('.');
+                  const rootDomain = parts.length > 2 ? parts.slice(1).join('.') : domain;
+                  
+                  const expire = "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+                  document.cookie = "googtrans" + expire;
+                  document.cookie = "googtrans" + expire + "; domain=" + domain;
+                  document.cookie = "googtrans" + expire + "; domain=." + domain;
+                  document.cookie = "googtrans" + expire + "; domain=" + rootDomain;
+                  document.cookie = "googtrans" + expire + "; domain=." + rootDomain;
+                  
+                  document.cookie = "googtrans=/en/en; path=/";
+                  document.cookie = "googtrans=/en/en; path=/; domain=." + rootDomain;
                 } else if (langMap[selectedLang]) {
+                  const rootDomain = window.location.hostname.split('.').length > 2 
+                    ? window.location.hostname.split('.').slice(1).join('.') 
+                    : window.location.hostname;
                   document.cookie = `googtrans=${langMap[selectedLang]}; path=/`;
-                  document.cookie = `googtrans=${langMap[selectedLang]}; path=/; domain=` + window.location.hostname;
+                  document.cookie = `googtrans=${langMap[selectedLang]}; path=/; domain=.${rootDomain}`;
                 }
                 
                 setTimeout(() => {
