@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
 
     const { password: _, ...safeAccount } = account;
     return NextResponse.json(safeAccount);
-  } catch (error) {
-    console.error('Candidate login route error:', error);
-    return NextResponse.json({ error: 'Login failed' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Candidate login API error:', error);
+    return NextResponse.json({ error: 'Login failed: ' + (error.message || 'Unknown error') }, { status: 500 });
   }
 }
