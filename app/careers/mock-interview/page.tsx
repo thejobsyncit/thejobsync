@@ -192,7 +192,7 @@ export default function AIMockInterviewPage() {
       skills: parsedSkills,
       experience: candidate?.experience || undefined,
       headline: candidate?.headline || undefined,
-      summary: candidate?.summary || undefined,
+      summary: (candidate as any)?.summary || undefined,
       currentRole: candidate?.currentRole || undefined,
       experienceLevel: experienceLevel,
       portfolioUrl: portfolioData?.portfolioUrl,
