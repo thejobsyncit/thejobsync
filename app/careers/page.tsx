@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCandidateAuth } from '@/context/CandidateAuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePortalTheme } from '@/context/PortalThemeContext';
+import { formatLocation } from '@/lib/utils';
 import { DEPARTMENTS } from '@/lib/constants';
 import {
   Search, MapPin, Briefcase, DollarSign, Users, Clock,
@@ -29,7 +31,6 @@ const HERO_STATS = [
   { label: 'Syncs Daily', value: '10K+' },
 ];
 
-import { usePortalTheme } from '@/context/PortalThemeContext';
 
 export default function CareersPage() {
   const { theme, toggleTheme, isDark } = usePortalTheme();
@@ -165,7 +166,7 @@ export default function CareersPage() {
                 <Link href="/careers/profile" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', padding: '0.5rem 1rem', background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', borderRadius: 10, color: isDark ? 'white' : '#0f172a', fontSize: '0.9rem', fontWeight: 600, transition: 'all 0.2s' }} className="hover:bg-white/20">
                   <User size={18} />{candidate.name.split(' ')[0]}
                 </Link>
-                <button onClick={logout} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0.5rem 1rem', background: 'none', border: `1px solid ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)'}`, borderRadius: 10, color: isDark ? '#94a3b8' : '#475569', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s' }} className="hover:text-red-500 hidden-mobile">
+                <button onClick={() => { if(window.confirm("Are you sure you want to log out?")) logout(); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0.5rem 1rem', background: 'none', border: `1px solid ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)'}`, borderRadius: 10, color: isDark ? '#94a3b8' : '#475569', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s' }} className="hover:text-red-500 hidden-mobile">
                   <LogOut size={18} /> Sign Out
                 </button>
               </>
@@ -250,7 +251,7 @@ export default function CareersPage() {
                     <User size={18} /> My Profile ({candidate.name.split(' ')[0]})
                   </Link>
                   <button
-                    onClick={() => { logout(); setMobileMenuOpen(false); }}
+                    onClick={() => { if(window.confirm("Are you sure you want to log out?")) { logout(); setMobileMenuOpen(false); } }}
                     style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '0.75rem 1rem', background: 'rgba(239, 68, 68, 0.1)', border: 'none', borderRadius: 10, color: '#ef4444', fontWeight: 700, cursor: 'pointer' }}
                   >
                     <LogOut size={18} /> Sign Out
@@ -609,9 +610,7 @@ function JobCard({ job, candidate, delay = 0, isRecommended = false, isDark = tr
   const companyInitial = (job.client?.companyName || 'C')[0].toUpperCase();
   const hue = job.client?.companyName ? [...job.client.companyName].reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360 : 200;
 
-  const jLocation = job.location?.startsWith('{') 
-    ? (() => { try { const l = JSON.parse(job.location); return [l.city, l.district, l.state, l.country].filter(Boolean).join(', '); } catch { return job.location; } })()
-    : job.location;
+  const jLocation = formatLocation(job.location);
 
   return (
     <motion.div

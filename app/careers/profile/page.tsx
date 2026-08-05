@@ -89,7 +89,7 @@ export default function CandidateProfilePage() {
   const photoRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<any>({
-    name: '', email: '', phone: '', headline: '', summary: '',
+    name: '', email: '', phone: '', gender: '', headline: '', summary: '',
     locCountry: 'IN', locState: '', locDistrict: '', locCity: '', locAddress: '', currentCompany: '', currentRole: '', expectedSalary: '',
     preferredRoles: '', resumeUrl: '', resumeFileName: '', photoUrl: '',
     skillsArr: [],
@@ -110,6 +110,38 @@ export default function CandidateProfilePage() {
     .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const activeSubscription = activeSubscriptions[0];
   const canAccessATS = activeSubscription?.planName === 'JS Basic Resume' || activeSubscription?.planName === 'JS Pro Resume' || activeSubscription?.planName?.includes('Company');
+
+  const [initialFormStr, setInitialFormStr] = useState('');
+  const isDirty = initialFormStr !== '' && JSON.stringify(form) !== initialFormStr;
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
+
+  useEffect(() => {
+    const handleAnchorClick = (e: MouseEvent) => {
+      if (!isDirty) return;
+      const target = (e.target as HTMLElement).closest('a');
+      if (target && target.href && !target.href.includes('#') && target.target !== '_blank') {
+        const isInternal = target.href.startsWith(window.location.origin);
+        if (isInternal) {
+          if (!window.confirm("You have unsaved changes! Are you sure you want to leave without saving?")) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }
+      }
+    };
+    document.addEventListener('click', handleAnchorClick, { capture: true });
+    return () => document.removeEventListener('click', handleAnchorClick, { capture: true });
+  }, [isDirty]);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push('/careers/login');
@@ -160,10 +192,11 @@ export default function CandidateProfilePage() {
       }
     } catch {}
 
-    setForm({
+    const initialObj = {
       name: candidate.name || '',
       email: candidate.email || '',
       phone: candidate.phone || '',
+      gender: (candidate as any).gender || '',
       headline: candidate.headline || '',
       summary: (candidate as any).summary || '',
       locCountry: parsedLoc.country,
@@ -182,26 +215,41 @@ export default function CandidateProfilePage() {
       languages,
       educations,
       experiences,
-    });
+    };
+    setForm(initialObj);
+    setInitialFormStr(JSON.stringify(initialObj));
   }, [candidate]);
 
-  const profilePercent = Math.min(100, Math.round([
-    form.name, form.headline, form.summary, (form.locState && form.locCity),
-    form.educations?.[0]?.degree, form.educations?.[0]?.college, form.educations?.[0]?.cgpa,
+  const completionConditions = [
+    form.name, 
+    form.email,
+    form.phone, 
+    form.gender,
+    form.headline, 
+    form.summary, 
+    (form.locState && form.locCity),
+    form.educations?.[0]?.degree, 
+    form.educations?.[0]?.college,
     form.skillsArr?.length > 0,
-    form.experiences?.[0]?.company || form.experiences?.[0]?.role,
+    (form.experiences?.[0]?.company || form.experiences?.[0]?.role || form.educations?.[0]?.cgpa), // either exp or cgpa
     form.resumeUrl,
-  ].filter(Boolean).length * 10));
+    form.preferredRoles
+  ];
+  const filledConditions = completionConditions.filter(Boolean).length;
+  const profilePercent = Math.round((filledConditions / completionConditions.length) * 100);
 
   const missingFields: string[] = [];
   if (!form.name) missingFields.push('Full Name');
+  if (!form.email) missingFields.push('Email');
+  if (!form.phone) missingFields.push('Phone Number');
+  if (!form.gender) missingFields.push('Gender');
   if (!form.headline) missingFields.push('Headline');
   if (!form.summary) missingFields.push('Summary');
-  if (!form.locCountry || !form.locState || !form.locCity) missingFields.push('Location (Country, State & City)');
+  if (!form.locCountry || !form.locState || !form.locCity) missingFields.push('Location');
   if (!form.preferredRoles) missingFields.push('Department / Field');
   if (!form.educations?.[0]?.degree || !form.educations?.[0]?.college) missingFields.push('Education Details');
   if (!form.skillsArr || form.skillsArr.length === 0) missingFields.push('Skills');
-  if (!form.experiences?.[0]?.company && !form.experiences?.[0]?.role) missingFields.push('Experience Details');
+  if (!form.experiences?.[0]?.company && !form.experiences?.[0]?.role && !form.educations?.[0]?.cgpa) missingFields.push('Experience Details');
   if (!form.resumeUrl) missingFields.push('Resume');
 
   const addSkill = () => {
@@ -305,12 +353,26 @@ export default function CandidateProfilePage() {
   };
 
   const handleSave = async () => {
+    if (!form.name || form.name.trim() === '') {
+      toast.error('Full Name is mandatory');
+      return;
+    }
+    if (!form.email || form.email.trim() === '') {
+      toast.error('Email is mandatory');
+      return;
+    }
+    if (!form.phone || form.phone.trim() === '') {
+      toast.error('Phone Number is mandatory');
+      return;
+    }
+
     setSaving(true);
     try {
       const payload = {
         id: candidate?.id,
         name: form.name,
         phone: form.phone,
+        gender: form.gender,
         headline: form.headline,
         summary: form.summary,
         location: JSON.stringify({ country: form.locCountry, state: form.locState, district: form.locDistrict, city: form.locCity, address: form.locAddress }),
@@ -331,6 +393,7 @@ export default function CandidateProfilePage() {
       if (res.ok) {
         const updated = await res.json();
         updateProfile(updated);
+        setInitialFormStr(JSON.stringify(form));
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
       } else {
@@ -370,10 +433,20 @@ export default function CandidateProfilePage() {
                 <div
                   onClick={() => photoRef.current?.click()}
                   style={{ width: 120, height: 140, borderRadius: 16, background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.02)', border: `2px dashed ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', position: 'relative' }}
-                  className="hover:opacity-80 transition-opacity"
+                  className="group hover:opacity-90 transition-opacity"
                 >
                   {form.photoUrl ? (
-                    <img src={form.photoUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <>
+                      <img src={form.photoUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setForm({ ...form, photoUrl: '' }); }}
+                        style={{ position: 'absolute', top: 6, right: 6, background: 'rgba(239, 68, 68, 0.9)', border: 'none', borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
+                        title="Remove Photo"
+                        className="opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-200"
+                      >
+                        <X size={14} color="white" />
+                      </button>
+                    </>
                   ) : (
                     <>
                       <Camera size={28} color="#94a3b8" style={{ marginBottom: 8 }} />
@@ -395,10 +468,24 @@ export default function CandidateProfilePage() {
             </div>
             <Grid2>
               <Field label="Full Name *">
-                <input style={getINPUT(isDark)} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Your full name" className="focus:border-[#0077B6]" />
+                <input style={getINPUT(isDark)} value={form.name} onChange={e => setForm({ ...form, name: e.target.value.replace(/[^a-zA-Z\s.]/g, '') })} placeholder="Your full name" className="focus:border-[#0077B6]" />
               </Field>
               <Field label="Email Address">
                 <input style={{ ...getINPUT(isDark), background: 'rgba(255,255,255,0.02)', color: '#64748b' }} value={form.email} readOnly />
+              </Field>
+            </Grid2>
+            <Grid2>
+              <Field label="Phone Number *">
+                <input style={getINPUT(isDark)} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value.replace(/[^0-9+]/g, '') })} placeholder="Your mobile number" className="focus:border-[#0077B6]" maxLength={15} />
+              </Field>
+              <Field label="Gender *">
+                <select style={getINPUT(isDark)} value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })} className="focus:border-[#0077B6] appearance-none">
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
               </Field>
             </Grid2>
             <div style={{ marginTop: 24, marginBottom: 8, fontSize: '1rem', fontWeight: 700, color: isDark ? 'white' : '#0f172a' }}>Location Details</div>
@@ -430,14 +517,14 @@ export default function CandidateProfilePage() {
             <Field label="Full Address" full>
               <input style={getINPUT(isDark)} value={form.locAddress} onChange={e => setForm({ ...form, locAddress: e.target.value })} placeholder="Door No, Street Name" className="focus:border-[#0077B6]" />
             </Field>
-            <Field label="Phone Number *">
-              <input style={getINPUT(isDark)} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Your mobile number" className="focus:border-[#0077B6]" />
-            </Field>
             <Field label="Professional Headline" full>
               <input style={getINPUT(isDark)} value={form.headline} onChange={e => setForm({ ...form, headline: e.target.value })} placeholder="e.g. Senior React Developer | 5 Years Exp" className="focus:border-[#0077B6]" />
             </Field>
             <Field label="Professional Summary" full>
-              <textarea style={{ ...getINPUT(isDark), resize: 'vertical', minHeight: 120, fontFamily: 'inherit', lineHeight: 1.6 }} value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} placeholder="Write a short summary about your skills..." rows={4} className="focus:border-[#0077B6]" />
+              <textarea style={{ ...getINPUT(isDark), resize: 'vertical', minHeight: 120, fontFamily: 'inherit', lineHeight: 1.6 }} value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} placeholder="Write a short summary about your skills..." rows={4} className="focus:border-[#0077B6]" maxLength={1000} />
+              <div style={{ textAlign: 'right', fontSize: '0.75rem', color: isDark ? '#94a3b8' : '#64748b', marginTop: '4px' }}>
+                {(form.summary || '').length} / 1000
+              </div>
             </Field>
           </Section>
 
@@ -460,7 +547,7 @@ export default function CandidateProfilePage() {
                 </Grid2>
                 <Grid2>
                   <Field label="CGPA / Percentage">
-                    <input style={getINPUT(isDark)} value={edu.cgpa} onChange={e => updateEdu(i, 'cgpa', e.target.value)} placeholder="e.g. 8.5 CGPA" className="focus:border-[#0077B6]" />
+                    <input style={getINPUT(isDark)} value={edu.cgpa} onChange={e => updateEdu(i, 'cgpa', e.target.value.replace(/[^0-9.]/g, ''))} placeholder="e.g. 8.5" className="focus:border-[#0077B6]" />
                   </Field>
                   <Field label="Year of Passing">
                     <input style={getINPUT(isDark)} value={edu.year} onChange={e => updateEdu(i, 'year', e.target.value)} placeholder="e.g. 2022" type="number" className="focus:border-[#0077B6]" />
@@ -499,7 +586,13 @@ export default function CandidateProfilePage() {
                   </Field>
                 </Grid2>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', color: isDark ? '#cbd5e1' : '#475569', cursor: 'pointer', marginTop: '1rem' }}>
-                  <input type="checkbox" checked={exp.current} onChange={e => { updateExp(i, 'current', e.target.checked); if (e.target.checked) updateExp(i, 'to', 'Present'); }} style={{ width: 16, height: 16 }} />
+                  <input type="checkbox" checked={exp.current} onChange={e => {
+                    const checked = e.target.checked;
+                    const updated = [...form.experiences];
+                    updated[i] = { ...updated[i], current: checked };
+                    if (checked) updated[i].to = 'Present';
+                    setForm({ ...form, experiences: updated });
+                  }} style={{ width: 16, height: 16 }} />
                   <span>I currently work here</span>
                 </label>
               </div>
@@ -540,7 +633,6 @@ export default function CandidateProfilePage() {
                       onChange={e => setForm({ ...form, preferredRoles: e.target.value })}
                       placeholder="Type your department / field here..."
                       className="focus:border-[#0077B6]"
-                      autoFocus
                     />
                   )}
                 </Field>
@@ -896,7 +988,6 @@ function SmartSelector({ value, onChange, isDark, options, placeholder, searchPl
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
-          autoFocus
         />
         <button
           type="button"

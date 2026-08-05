@@ -73,11 +73,12 @@ export default function Navbar() {
                 <button
                   onClick={handleToggleTheme}
                   className="text-[#03045E] dark:text-[#CAF0F8] hover:text-[#0077B6] transition-colors p-2"
+                  aria-label="Toggle dark mode"
                 >
                   {currentTheme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
                 </button>
               )}
-              <button onClick={() => setIsOpen(!isOpen)} className="text-[#03045E] dark:text-[#CAF0F8] hover:text-[#0077B6] transition-colors p-2">
+              <button onClick={() => setIsOpen(!isOpen)} className="text-[#03045E] dark:text-[#CAF0F8] hover:text-[#0077B6] transition-colors p-2" aria-label={isOpen ? 'Close menu' : 'Open menu'}>
                 {isOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
             </div>

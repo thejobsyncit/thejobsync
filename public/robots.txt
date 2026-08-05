@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+Allow: /careers
+Allow: /careers/jobs/
+Allow: /companies
+Allow: /about
+Allow: /contact
+Allow: /pricing
+Allow: /post-job
+
+Disallow: /admin-erp
+Disallow: /superadmin-erp
+Disallow: /crm
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /employer/dashboard
+Disallow: /employer/candidates
+Disallow: /careers/profile
+Disallow: /careers/my-applications
+Disallow: /careers/messages
+
+Sitemap: https://www.gojobsync.com/sitemap.xml

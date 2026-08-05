@@ -34,7 +34,7 @@ export default function SuperAdminERPLogin() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Invalid credentials");
 
-        if (data.role === "super_admin") {
+        if (data.role === "super_admin" || data.role === "super_admin_erp") {
           router.push("/superadmin-erp");
         } else {
           throw new Error("Unauthorized role. You are not a Super Admin.");

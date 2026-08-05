@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/daily-profile-reminder",
+      "schedule": "30 4,10 * * *"
+    },
+    {
+      "path": "/api/cron/daily-job-reminder",
+      "schedule": "30 4,10 * * *"
+    }
+  ]
+}

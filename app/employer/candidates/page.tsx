@@ -29,6 +29,8 @@ interface Candidate {
   photoUrl?: string | null;
   createdAt: string;
   isSaved?: boolean;
+  hasApplied?: boolean;
+  appliedJobs?: string[];
   languages?: string | null;
 }
 
@@ -758,6 +760,19 @@ export default function EmployerCandidatesPage() {
                     </div>
                   </div>
                 </div>
+
+                {selectedCandidate.hasApplied && selectedCandidate.appliedJobs && selectedCandidate.appliedJobs.length > 0 && (
+                  <div className="mb-6 bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+                    <div className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-2">Applied Roles (Your Jobs)</div>
+                    <div className="flex flex-col gap-2">
+                      {selectedCandidate.appliedJobs.map((job, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-sm font-bold text-indigo-900 bg-white px-3 py-2 rounded-lg border border-indigo-100 shadow-sm">
+                          <Briefcase size={14} className="text-indigo-500" /> {job}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div>
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Skills</div>

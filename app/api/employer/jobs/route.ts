@@ -75,11 +75,11 @@ export async function POST(req: NextRequest) {
           client = await prisma.client.create({
             data: {
               companyName: employer.companyName,
-              contactPerson: employer.contactPerson,
+              contactPerson: employer.contactPerson || 'HR',
               email: employer.email,
-              phone: employer.contactPhone,
-              address: employer.address,
-              industry: employer.industry,
+              phone: employer.contactPhone || 'N/A',
+              address: employer.address || 'N/A',
+              industry: employer.industry || 'Other',
               website: employer.website || '',
               status: 'active'
             }
@@ -190,6 +190,9 @@ export async function POST(req: NextRequest) {
                 html,
               }).catch((err: any) => console.error(`Failed to send to ${c.email}:`, err))
             ));
+            
+            // Add 1.5 second delay to prevent SMTP rate limits when sending bulk alerts
+            await new Promise(r => setTimeout(r, 1500));
           }
           console.log(`Job alert sent to ${candidates.length} candidates.`);
         }

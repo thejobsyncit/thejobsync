@@ -1,6 +1,6 @@
 'use client';
 
-import { Crown, Building2, Users, Shield, Settings, BarChart3, Globe, Key, Database, FileText, Plus, RefreshCw, Clock, CheckCircle, Trash2, Calendar } from 'lucide-react';
+import { Crown, Building2, Users, Shield, Settings, BarChart3, Globe, Key, Database, FileText, Plus, RefreshCw, Clock, CheckCircle, Trash2, Calendar, Edit, X } from 'lucide-react';
 import { ROLE_LABELS, ROLE_COLORS, UserRole } from '@/lib/types';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
@@ -27,6 +27,10 @@ export default function SuperAdminPage() {
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'hr' as UserRole, phone: '' });
   const [selectedEmployeeForAttendance, setSelectedEmployeeForAttendance] = useState<any>(null);
+  
+  // Edit Employee State
+  const [editingEmployee, setEditingEmployee] = useState<any>(null);
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
 
   // Attendance State
   const [pendingAttendances, setPendingAttendances] = useState<any[]>([]);
@@ -58,7 +62,10 @@ export default function SuperAdminPage() {
   const fetchPendingAttendances = async () => {
     try {
       const res = await fetch('/api/attendance?pending=true');
-      if (res.ok) setPendingAttendances(await res.json());
+      if (res.ok) {
+        setPendingAttendances(await res.json());
+        toast.success('Refreshed successfully');
+      }
     } catch (error) {
       toast.error('Failed to load attendance records');
     }
@@ -67,7 +74,10 @@ export default function SuperAdminPage() {
   const fetchLeaveRequests = async () => {
     try {
       const res = await fetch('/api/leave?role=super_admin');
-      if (res.ok) setLeaveRequests(await res.json());
+      if (res.ok) {
+        setLeaveRequests(await res.json());
+        toast.success('Refreshed successfully');
+      }
     } catch (error) {
       toast.error('Failed to load leave requests');
     }
@@ -98,9 +108,36 @@ export default function SuperAdminPage() {
         toast.error(error.error || 'Failed to create user');
       }
     } catch (error) {
-      toast.error('Error creating user');
+      toast.error('Failed to create user');
     } finally {
       setIsCreatingUser(false);
+    }
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingEmployee) return;
+    
+    setIsUpdatingUser(true);
+    try {
+      const res = await fetch(`/api/users/${editingEmployee.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingEmployee)
+      });
+      
+      if (res.ok) {
+        toast.success('Employee updated successfully');
+        setEditingEmployee(null);
+        fetchEmployees();
+      } else {
+        const error = await res.json();
+        toast.error(error.error || 'Failed to update user');
+      }
+    } catch (error) {
+      toast.error('Failed to update user');
+    } finally {
+      setIsUpdatingUser(false);
     }
   };
 
@@ -194,9 +231,12 @@ export default function SuperAdminPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
                 { label: 'Manage Employees', icon: <Users size={16} />, color: '#0077B6', onClick: () => setActiveTab('employees') },
-                { label: 'Permission Matrix', icon: <Key size={16} />, color: '#22c55e', onClick: () => {} },
+                { label: 'Attendance', icon: <Clock size={16} />, color: '#8b5cf6', onClick: () => setActiveTab('attendance') },
+                { label: 'Leave Requests', icon: <Calendar size={16} />, color: '#ec4899', onClick: () => setActiveTab('leaves') },
+                { label: 'Master Data', icon: <FileText size={16} />, color: '#14b8a6', onClick: () => setActiveTab('master') },
                 { label: 'Company Settings', icon: <Settings size={16} />, color: '#f97316', onClick: () => setActiveTab('company') },
-                { label: 'Database Management', icon: <Database size={16} />, color: '#0077B6', onClick: () => {} },
+                { label: 'Permission Matrix', icon: <Key size={16} />, color: '#22c55e', onClick: () => toast('Permission Matrix is coming soon!', { icon: 'ℹ️' }) },
+                { label: 'Database Management', icon: <Database size={16} />, color: '#0077B6', onClick: () => toast('Database Management is coming soon!', { icon: 'ℹ️' }) },
               ].map(action => (
                 <button key={action.label} onClick={action.onClick} className="btn btn-secondary" style={{ justifyContent: 'flex-start', width: '100%' }}>
                   <span style={{ color: action.color }}>{action.icon}</span> {action.label}
@@ -243,9 +283,14 @@ export default function SuperAdminPage() {
                         </span>
                       </td>
                       <td>
-                        <button onClick={() => handleDeleteEmployee(emp.id)} className="btn-ghost text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
-                          <Trash2 size={16} />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => setEditingEmployee(emp)} className="btn-ghost text-[#0077B6] hover:bg-[#0077B6]/10 p-2 rounded-lg transition-colors">
+                            <Edit size={16} />
+                          </button>
+                          <button onClick={() => handleDeleteEmployee(emp.id)} className="btn-ghost text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -281,6 +326,8 @@ export default function SuperAdminPage() {
                   <option value="application_support">Application Support</option>
                   <option value="admin">Admin</option>
                   <option value="super_admin">Super Admin</option>
+                  <option value="admin_erp">Admin ERP</option>
+                  <option value="super_admin_erp">Super Admin ERP</option>
                 </select>
               </div>
               <div className="form-group">
@@ -405,7 +452,7 @@ export default function SuperAdminPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div><label className="label">Company Name</label><input className="input" defaultValue="Enterprise HRMS Solutions" /></div>
             <div><label className="label">Company Email</label><input className="input" defaultValue="admin@hrms.com" /></div>
-            <div><label className="label">Phone</label><input className="input" defaultValue="+91 80 1234 5678" /></div>
+            <div><label className="label">Phone</label><input className="input" type="tel" maxLength={15} onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, ''); }} defaultValue="+918012345678" /></div>
             <div><label className="label">Address</label><textarea className="textarea" defaultValue="Tech Park, Bangalore" /></div>
             <button className="btn btn-primary" style={{ alignSelf: 'flex-end' }}>Save Changes</button>
           </div>
@@ -428,11 +475,59 @@ export default function SuperAdminPage() {
         </div>
       )}
 
+      {/* Modals */}
       {selectedEmployeeForAttendance && (
         <EmployeeAttendanceModal 
           employee={selectedEmployeeForAttendance} 
           onClose={() => setSelectedEmployeeForAttendance(null)} 
         />
+      )}
+
+      {/* Edit Employee Modal */}
+      {editingEmployee && (
+        <div className="modal-overlay">
+          <div className="modal-content animate-fade-in-up" style={{ maxWidth: '500px' }}>
+            <div className="modal-header flex justify-between items-center mb-4">
+              <h3 className="font-semibold text-lg flex items-center gap-2"><Edit size={18}/> Edit Employee</h3>
+              <button onClick={() => setEditingEmployee(null)} className="btn-ghost p-1 rounded-md hover:bg-slate-100"><X size={18}/></button>
+            </div>
+            <form onSubmit={handleUpdateUser} className="space-y-4">
+              <div className="form-group">
+                <label className="form-label">Full Name *</label>
+                <input type="text" className="form-input" required value={editingEmployee.name} onChange={e => setEditingEmployee({...editingEmployee, name: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email Address *</label>
+                <input type="email" className="form-input" required value={editingEmployee.email} onChange={e => setEditingEmployee({...editingEmployee, email: e.target.value})} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Role *</label>
+                <select className="form-input" required value={editingEmployee.role} onChange={e => setEditingEmployee({...editingEmployee, role: e.target.value})}>
+                  <option value="hr">HR Professional</option>
+                  <option value="interviewer">Interviewer</option>
+                  <option value="placement_coordinator">Placement Coordinator</option>
+                  <option value="dms">DMS</option>
+                  <option value="coordinator">Coordinator</option>
+                  <option value="application_support">Application Support</option>
+                  <option value="admin">Admin</option>
+                  <option value="super_admin">Super Admin</option>
+                  <option value="admin_erp">Admin ERP</option>
+                  <option value="super_admin_erp">Super Admin ERP</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Status</label>
+                <div className="flex items-center gap-2 mt-2">
+                  <input type="checkbox" id="isActiveCheck" checked={editingEmployee.isActive} onChange={e => setEditingEmployee({...editingEmployee, isActive: e.target.checked})} className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+                  <label htmlFor="isActiveCheck" className="text-sm text-slate-700">Account is Active</label>
+                </div>
+              </div>
+              <button type="submit" disabled={isUpdatingUser} className="btn-primary w-full mt-6 flex justify-center py-2.5">
+                {isUpdatingUser ? 'Saving Changes...' : 'Save Changes'}
+              </button>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

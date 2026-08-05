@@ -226,8 +226,10 @@ export default function EmployerDashboard() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    router.push('/employer/login');
+    if (window.confirm("Are you sure you want to log out?")) {
+      await logout();
+      router.push('/employer/login');
+    }
   };
 
   if (isLoading || !employer) {

@@ -126,7 +126,6 @@ export default function CandidateDashboardLayout({ children }: { children: React
               <div style={{ fontSize: '0.75rem', color: isDark ? '#94a3b8' : '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{candidate.email}</div>
             </div>
           </div>
-          
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', width: '100%' }}>
             <button 
               onClick={toggleTheme} 
@@ -158,7 +157,7 @@ export default function CandidateDashboardLayout({ children }: { children: React
             </button>
 
             <button 
-              onClick={() => { logout(); router.push('/careers'); }} 
+              onClick={() => { if(window.confirm("Are you sure you want to log out?")) { logout(); router.push('/careers'); } }} 
               style={{
                 width: '100%',
                 height: '42px',

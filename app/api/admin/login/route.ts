@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
     }
 
-    if (user.role !== 'admin' && user.role !== 'super_admin') {
+    if (user.role !== 'admin' && user.role !== 'super_admin' && user.role !== 'admin_erp' && user.role !== 'super_admin_erp') {
       return NextResponse.json({ message: 'Unauthorized. Not an admin account.' }, { status: 403 });
     }
 

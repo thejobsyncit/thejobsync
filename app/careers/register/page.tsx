@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -98,7 +98,13 @@ export default function CandidateRegisterPage() {
               <input
                 required type={type} placeholder={placeholder}
                 value={(form as any)[field]}
-                onChange={e => setForm({ ...form, [field]: e.target.value })}
+                onChange={e => {
+                  let val = e.target.value;
+                  if (type === 'tel') val = val.replace(/[^0-9+]/g, '');
+                  if (field === 'name') val = val.replace(/[^a-zA-Z\s.]/g, '');
+                  setForm({ ...form, [field]: val });
+                }}
+                maxLength={type === 'tel' ? 15 : undefined}
                 className="w-full border border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/50 text-slate-900 dark:text-white rounded-xl py-3.5 pl-11 pr-4 text-[15px] outline-none transition-colors focus:border-[#0077B6] dark:focus:border-[#0077B6] placeholder-slate-400 dark:placeholder-slate-500"
               />
             </div>

@@ -7,13 +7,24 @@ export default function BlogPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: "", content: "", excerpt: "", author: "", status: "draft" });
+  const [form, setForm] = useState({ title: "", content: "", excerpt: "", author: "", status: "draft", coverImage: "" });
 
   const fetchData = () => { fetch("/api/admin/blog").then(r => r.json()).then(d => { setPosts(Array.isArray(d) ? d : []); setLoading(false); }); };
   useEffect(() => { fetchData(); }, []);
 
-  const openAdd = () => { setEditId(null); setForm({ title: "", content: "", excerpt: "", author: "", status: "draft" }); setShowModal(true); };
-  const openEdit = (p: any) => { setEditId(p.id); setForm({ title: p.title, content: p.content, excerpt: p.excerpt || "", author: p.author, status: p.status }); setShowModal(true); };
+  const openAdd = () => { setEditId(null); setForm({ title: "", content: "", excerpt: "", author: "", status: "draft", coverImage: "" }); setShowModal(true); };
+  const openEdit = (p: any) => { setEditId(p.id); setForm({ title: p.title, content: p.content, excerpt: p.excerpt || "", author: p.author, status: p.status, coverImage: p.coverImage || "" }); setShowModal(true); };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm({ ...form, coverImage: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = async () => {
     const method = editId ? "PUT" : "POST";
@@ -68,6 +79,16 @@ export default function BlogPage() {
               <input placeholder="Title" value={form.title} onChange={e => setForm({...form, title: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
               <input placeholder="Author" value={form.author} onChange={e => setForm({...form, author: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
               <input placeholder="Excerpt (short summary)" value={form.excerpt} onChange={e => setForm({...form, excerpt: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1 ml-1">Cover Image</label>
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="w-full p-2.5 border rounded-lg text-sm bg-gray-50 cursor-pointer" />
+                {form.coverImage && (
+                  <div className="mt-2 relative inline-block">
+                    <img src={form.coverImage} alt="Cover Preview" className="h-24 w-auto object-cover rounded border" />
+                    <button type="button" onClick={() => setForm({...form, coverImage: ""})} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 shadow-sm"><X size={14}/></button>
+                  </div>
+                )}
+              </div>
               <textarea placeholder="Content..." rows={6} value={form.content} onChange={e => setForm({...form, content: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm resize-none" />
               <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm">
                 <option value="draft">Draft</option>
@@ -76,7 +97,7 @@ export default function BlogPage() {
             </div>
             <div className="flex justify-end gap-3 mt-6">
               <button onClick={() => setShowModal(false)} className="px-4 py-2 border rounded-lg text-sm">Cancel</button>
-              <button onClick={handleSave} className="px-4 py-2 bg-[#0f172a] text-white rounded-lg text-sm font-medium">Save</button>
+              <button onClick={handleSave} className="px-4 py-2 bg-[#0f172a] text-white rounded-lg text-sm font-medium">{editId ? "Update" : "Save"}</button>
             </div>
           </div>
         </div>

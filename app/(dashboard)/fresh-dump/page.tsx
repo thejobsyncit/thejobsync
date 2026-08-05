@@ -364,7 +364,7 @@ GoJobSync Recruitment Team
       let failCount = 0;
       let failReasons = new Set<string>();
       
-      const chunkSize = 5;
+      const chunkSize = 3;
       for (let i = 0; i < mailModal.candidateIds.length; i += chunkSize) {
         const chunk = mailModal.candidateIds.slice(i, i + chunkSize);
         
@@ -401,6 +401,9 @@ GoJobSync Recruitment Team
              failCount++;
           }
         }));
+        
+        // Add 1.5 second delay between chunks to prevent AWS SES / SMTP connection limits
+        await new Promise(r => setTimeout(r, 1500));
         
         setSendProgress(prev => ({ ...prev, current: Math.min(i + chunkSize, mailModal.candidateIds.length) }));
       }
@@ -739,6 +742,11 @@ GoJobSync Recruitment Team
               <button onClick={handleSelectAll} className="text-sm font-bold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-gray-100">
                 {selectedIds.length === filteredCandidates.length && filteredCandidates.length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
               </button>
+              {selectedIds.length > 0 && (
+                <button onClick={() => setSelectedIds([])} className="text-sm font-bold text-red-600 hover:text-red-800 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-200">
+                  <X size={16} /> Unselect All
+                </button>
+              )}
               {selectedIds.length > 0 && (
                 <>
                   <button onClick={handleOpenBulkMailModal} className="px-3 py-1.5 bg-[#0077B6] text-white rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-[#0077B6]/90 transition shadow-sm">

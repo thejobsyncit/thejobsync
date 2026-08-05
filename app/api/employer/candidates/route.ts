@@ -49,6 +49,7 @@ export async function GET(req: NextRequest) {
 
   const appliedParam = searchParams.get('applied') === 'true';
   let appliedIdsSet = new Set<string>();
+  const appliedJobsMap = new Map<string, string[]>();
   
   // Fetch employer to link to Client and find JobRequirements
   const employer = await prisma.employer.findUnique({ where: { id: employerId } });
@@ -58,7 +59,7 @@ export async function GET(req: NextRequest) {
         OR: [
           { email: employer.email },
           { companyName: employer.companyName },
-          { companyName: { contains: employer.companyName.substring(0, Math.max(3, employer.companyName.length / 2)) } }
+          { companyName: { contains: employer.companyName.substring(0, Math.max(3, employer.companyName.length / 2)), mode: 'insensitive' } }
         ]
       }
     });
@@ -72,10 +73,19 @@ export async function GET(req: NextRequest) {
     
     const applications = await prisma.candidateApplication.findMany({
       where: { requirementId: { in: reqIds } },
-      select: { candidateAccountId: true }
+      select: { candidateAccountId: true, requirement: { select: { title: true } } }
     });
     
-    appliedIdsSet = new Set(applications.map(a => a.candidateAccountId));
+    applications.forEach(a => {
+      if (a.requirement) {
+        if (!appliedJobsMap.has(a.candidateAccountId)) {
+          appliedJobsMap.set(a.candidateAccountId, []);
+        }
+        appliedJobsMap.get(a.candidateAccountId)!.push(a.requirement.title);
+      }
+    });
+    
+    appliedIdsSet = new Set(appliedJobsMap.keys());
   }
 
   if (appliedParam) {
@@ -144,7 +154,8 @@ export async function GET(req: NextRequest) {
   const formattedCandidates = candidates.map(c => ({
     ...c,
     isSaved: savedIds.has(c.id),
-    hasApplied: appliedIdsSet.has(c.id)
+    hasApplied: appliedIdsSet.has(c.id),
+    appliedJobs: appliedJobsMap.get(c.id) || []
   }));
 
   return NextResponse.json({

@@ -1,19 +1,20 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import type { User, UserRole } from '@/lib/types';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
-  logout: () => void;
+  logout: (skipConfirm?: boolean) => void;
+  updateUser: (data: Partial<User>) => void;
   isAuthenticated: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: { children: React.ReactNode }): React.ReactElement {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -53,7 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const logout = useCallback(async () => {
+  const logout = useCallback(async (skipConfirm: boolean = false) => {
+    if (!skipConfirm && !window.confirm('Are you sure you want to log out?')) return;
     if (user) {
       try {
         await fetch('/api/auth/logout', {
@@ -69,6 +71,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('crm_user');
   }, [user]);
 
+  const updateUser = useCallback((data: Partial<User>) => {
+    if (!user) return;
+    const updated = { ...user, ...data };
+    setUser(updated);
+    localStorage.setItem('crm_user', JSON.stringify(updated));
+  }, [user]);
+
+
   // Idle Timeout Logic: 2 Minutes
   useEffect(() => {
     if (!user) return;
@@ -79,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       clearTimeout(timeoutId);
       // 2 minutes = 120,000 milliseconds
       timeoutId = setTimeout(() => {
-        logout();
+        logout(true);
       }, 120000);
     };
 
@@ -96,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, logout]);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, updateUser, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

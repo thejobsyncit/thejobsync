@@ -104,8 +104,8 @@ export default function SACandidatesPage() {
                           c.phone?.includes(search) ||
                           c.currentRole?.toLowerCase().includes(search.toLowerCase());
     if (!matchesSearch) return false;
-    if (sourceTab === 'applied') return !!(c.appliedFor || c.requirementTitle);
-    if (sourceTab === 'registered') return !(c.appliedFor || c.requirementTitle) && c.source !== 'excel_upload';
+    if (sourceTab === 'applied') return c.source === 'applied' || !!(c.appliedFor || c.requirementTitle);
+    if (sourceTab === 'registered') return c.source !== 'applied' && !(c.appliedFor || c.requirementTitle) && c.source !== 'excel_upload';
     if (sourceTab === 'excel_upload') return c.source === 'excel_upload';
     return true;
   });

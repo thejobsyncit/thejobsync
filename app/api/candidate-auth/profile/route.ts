@@ -29,6 +29,10 @@ export async function PUT(request: NextRequest) {
     delete updateData.password; // Never update password via this route
     delete updateData.email;
 
+    if (updateData.summary && updateData.summary.length > 1000) {
+      updateData.summary = updateData.summary.substring(0, 1000);
+    }
+
     const updated = await (prisma as any).candidateAccount.update({
       where: { id },
       data: updateData
@@ -50,6 +54,8 @@ export async function PUT(request: NextRequest) {
           currentRole: updated.currentRole,
           expectedSalary: updated.expectedSalary,
           resumeUrl: updated.resumeUrl,
+          // @ts-ignore
+          gender: (updated as any).gender,
         }
       });
     }
