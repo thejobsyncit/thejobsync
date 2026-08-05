@@ -3,6 +3,8 @@ import { Inter, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { CandidateAuthProvider } from "@/context/CandidateAuthContext";
+import { PortalThemeProvider } from "@/context/PortalThemeContext";
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/context/ToastContext";
@@ -221,10 +223,14 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <div id="google_translate_element"></div>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} value={{ light: 'light', dark: 'dark' }}>
-          <ToastProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </ToastProvider>
-          <Toaster position="top-right" />
+          <PortalThemeProvider>
+            <CandidateAuthProvider>
+              <ToastProvider>
+                <AuthProvider>{children}</AuthProvider>
+              </ToastProvider>
+              <Toaster position="top-right" />
+            </CandidateAuthProvider>
+          </PortalThemeProvider>
         </ThemeProvider>
       </body>
     </html>
