@@ -6,6 +6,7 @@ import { ROLE_LABELS, ROLE_COLORS } from '@/lib/types';
 import { Bell, Search, LogOut, Menu, Moon, Sun } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
+import { toggleGlobalTheme } from '@/lib/theme';
 import { MOCK_NOTIFICATIONS } from '@/lib/mock-data';
 
 interface TopbarProps {
@@ -16,10 +17,11 @@ interface TopbarProps {
 export default function Topbar({ sidebarCollapsed, onMobileMenuToggle }: TopbarProps) {
   const { user, logout } = useAuth();
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const currentTheme = resolvedTheme || theme || 'dark';
 
   useEffect(() => {
     setMounted(true);
@@ -61,10 +63,13 @@ export default function Topbar({ sidebarCollapsed, onMobileMenuToggle }: TopbarP
         {mounted && (
           <button
             className="btn-ghost btn-icon"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            onClick={() => {
+              const next = toggleGlobalTheme(currentTheme as any);
+              setTheme(next);
+            }}
+            title={currentTheme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {currentTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         )}
 

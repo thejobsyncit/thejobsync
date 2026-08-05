@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
     const result = await prisma.candidate.createMany({
       data: finalCandidatesToInsert,
       skipDuplicates: true // highly recommended for massive bulk uploads
-    });
+    } as any);
 
     return NextResponse.json({
       message: `Successfully uploaded ${result.count} candidates (skipped ${candidatesData.length - result.count} duplicates)`,

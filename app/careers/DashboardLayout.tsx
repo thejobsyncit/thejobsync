@@ -4,7 +4,7 @@ import { useState, ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCandidateAuth } from '@/context/CandidateAuthContext';
-import { User, Briefcase, Bookmark, MessageSquare, LogOut, Zap, Menu, X, Sun, Moon } from 'lucide-react';
+import { User, Briefcase, Bookmark, MessageSquare, LogOut, Zap, Menu, X, Sun, Moon, Mic, Award, Globe, Video } from 'lucide-react';
 import { usePortalTheme } from '@/context/PortalThemeContext';
 import { motion } from 'framer-motion';
 
@@ -30,9 +30,12 @@ export default function CandidateDashboardLayout({ children }: { children: React
 
   const navItems = [
     { label: 'My Profile', href: '/careers/profile', icon: <User size={20} /> },
+    { label: 'Portfolio', href: '/careers/portfolio', icon: <Globe size={20} /> },
     { label: 'Saved Jobs', href: '/careers/saved-jobs', icon: <Bookmark size={20} /> },
     { label: 'Applications', href: '/careers/my-applications', icon: <Briefcase size={20} /> },
     { label: 'Messages', href: '/careers/messages', icon: <MessageSquare size={20} /> },
+    { label: 'AI Mock Interview', href: '/careers/mock-interview', icon: <Mic size={20} /> },
+    { label: 'My Score Reports', href: '/careers/assessment-reports', icon: <Award size={20} /> },
   ];
 
   return (
@@ -74,10 +77,10 @@ export default function CandidateDashboardLayout({ children }: { children: React
       {/* Sidebar */}
       <aside 
         className={`candidate-sidebar ${mobileOpen ? 'open' : ''}`}
-        style={{ width: 280, background: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)', borderRight: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, position: 'fixed', height: '100vh', display: 'flex', flexDirection: 'column', zIndex: 50 }}
+        style={{ width: 280, background: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)', borderRight: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, position: 'fixed', top: 0, bottom: 0, left: 0, height: '100vh', display: 'flex', flexDirection: 'column', zIndex: 50 }}
       >
-        <div style={{ padding: '2rem 1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3rem' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexShrink: 0 }}>
             <Link href="/careers" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
               <img src="/loooo.jpeg" alt="The jobsync Logo" style={{ height: 36, width: 36, objectFit: 'contain', borderRadius: '50%' }} />
               <span style={{ fontWeight: 800, fontSize: '1.25rem', color: isDark ? 'white' : '#0f172a', letterSpacing: '-0.5px' }}>The Job<span style={{ color: '#00B4D8' }}>Sync</span></span>
@@ -91,17 +94,18 @@ export default function CandidateDashboardLayout({ children }: { children: React
             </button>
           </div>
 
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             {navItems.map(item => {
               const active = pathname === item.href;
               return (
                 <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
                   <div style={{
-                    display: 'flex', alignItems: 'center', gap: 12, padding: '1rem', borderRadius: 12,
-                    background: active ? 'rgba(56,189,248,0.1)' : 'transparent',
-                    color: active ? '#00B4D8' : (isDark ? '#94a3b8' : '#64748b'),
-                    fontWeight: active ? 700 : 500,
-                    transition: 'all 0.2s', border: `1px solid ${active ? 'rgba(56,189,248,0.2)' : 'transparent'}`
+                    display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem 1rem', borderRadius: 12,
+                    background: active ? 'rgba(56,189,248,0.12)' : 'transparent',
+                    color: active ? '#00B4D8' : (isDark ? '#cbd5e1' : '#475569'),
+                    fontWeight: active ? 700 : 600,
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s', border: `1px solid ${active ? 'rgba(56,189,248,0.25)' : 'transparent'}`
                   }}
                     className="hover:bg-sky-900/20 hover:text-sky-300">
                     {item.icon} {item.label}
@@ -112,22 +116,75 @@ export default function CandidateDashboardLayout({ children }: { children: React
           </nav>
         </div>
 
-        <div style={{ marginTop: 'auto', padding: '1.5rem', borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}` }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: '1.5rem' }}>
-            <div style={{ width: 42, height: 42, borderRadius: 12, background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: isDark ? '#cbd5e1' : '#475569' }}>
+        <div style={{ flexShrink: 0, padding: '1.25rem 1.25rem', borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, background: isDark ? 'rgba(15,23,42,0.98)' : 'rgba(255,255,255,0.98)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: '1rem' }}>
+            <div style={{ width: 38, height: 38, borderRadius: 12, background: 'linear-gradient(135deg, #0077B6 0%, #00B4D8 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#ffffff', flexShrink: 0 }}>
               {candidate.name[0].toUpperCase()}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: isDark ? 'white' : '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{candidate.name}</div>
-              <div style={{ fontSize: '0.8rem', color: isDark ? '#64748b' : '#475569', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{candidate.email}</div>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: isDark ? 'white' : '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{candidate.name}</div>
+              <div style={{ fontSize: '0.75rem', color: isDark ? '#94a3b8' : '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{candidate.email}</div>
             </div>
           </div>
-          <button onClick={toggleTheme} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '0.875rem', background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', color: isDark ? 'white' : '#0f172a', border: 'none', borderRadius: 12, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', marginBottom: '0.75rem' }} className="hover:bg-white/10">
-            {isDark ? <Sun size={18} /> : <Moon size={18} />} {isDark ? 'Light Mode' : 'Dark Mode'}
-          </button>
-          <button onClick={() => { if(window.confirm("Are you sure you want to log out?")) { logout(); router.push('/careers'); } }} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '0.875rem', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 12, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }} className="hover:bg-red-500/20">
-            <LogOut size={18} /> Sign Out
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', width: '100%' }}>
+            <button 
+              onClick={toggleTheme} 
+              style={{
+                width: '100%',
+                height: '42px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0 1rem',
+                margin: 0,
+                borderRadius: '10px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxSizing: 'border-box',
+                outline: 'none',
+                background: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+                color: isDark ? '#f8fafc' : '#0f172a',
+                border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+              }} 
+              className="hover:scale-[1.01] active:scale-[0.98] hover:bg-sky-500/10 hover:border-sky-500/30 dark:hover:bg-white/10 dark:hover:border-white/20"
+              title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDark ? <Sun size={18} className="flex-shrink-0" /> : <Moon size={18} className="flex-shrink-0" />}
+              <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+
+            <button 
+              onClick={() => { if(window.confirm("Are you sure you want to log out?")) { logout(); router.push('/careers'); } }} 
+              style={{
+                width: '100%',
+                height: '42px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0 1rem',
+                margin: 0,
+                borderRadius: '10px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxSizing: 'border-box',
+                outline: 'none',
+                background: 'rgba(239, 68, 68, 0.08)',
+                color: '#ef4444',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+              }} 
+              className="hover:scale-[1.01] active:scale-[0.98] hover:bg-red-500/15 hover:border-red-500/40"
+              title="Sign Out"
+            >
+              <LogOut size={18} className="flex-shrink-0" />
+              <span>Sign Out</span>
+            </button>
+          </div>
         </div>
       </aside>
 

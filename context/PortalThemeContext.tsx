@@ -1,11 +1,11 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-type Theme = 'light' | 'dark';
+import { useTheme } from 'next-themes';
+import { AppTheme, getStoredTheme, applyGlobalTheme, toggleGlobalTheme } from '@/lib/theme';
 
 interface PortalThemeContextType {
-  theme: Theme;
+  theme: AppTheme;
   toggleTheme: () => void;
   isDark: boolean;
 }
@@ -13,27 +13,28 @@ interface PortalThemeContextType {
 const PortalThemeContext = createContext<PortalThemeContextType | undefined>(undefined);
 
 export function PortalThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const { setTheme: setNextTheme } = useTheme();
+  const [themeState, setThemeState] = useState<AppTheme>('dark');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('portal_theme') as Theme;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
+    const initial = getStoredTheme();
+    setThemeState(initial);
+    applyGlobalTheme(initial);
+    try { setNextTheme(initial); } catch {}
     setMounted(true);
-  }, []);
+  }, [setNextTheme]);
 
   const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    localStorage.setItem('portal_theme', nextTheme);
+    const nextTheme = toggleGlobalTheme(themeState);
+    setThemeState(nextTheme);
+    try { setNextTheme(nextTheme); } catch {}
   };
 
-  const isDark = theme === 'dark';
+  const isDark = themeState === 'dark';
 
   return (
-    <PortalThemeContext.Provider value={{ theme, toggleTheme, isDark }}>
+    <PortalThemeContext.Provider value={{ theme: themeState, toggleTheme, isDark }}>
       {!mounted ? (
         <div style={{ visibility: 'hidden' }}>{children}</div>
       ) : (
@@ -46,7 +47,13 @@ export function PortalThemeProvider({ children }: { children: ReactNode }) {
 export function usePortalTheme() {
   const context = useContext(PortalThemeContext);
   if (context === undefined) {
-    throw new Error('usePortalTheme must be used within a PortalThemeProvider');
+    const initial = getStoredTheme();
+    const isDark = initial === 'dark';
+    return {
+      theme: initial,
+      toggleTheme: () => toggleGlobalTheme(initial),
+      isDark,
+    };
   }
   return context;
 }

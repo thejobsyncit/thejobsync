@@ -109,6 +109,15 @@ model Candidate {
   languages       String?
   location        String
   resumeUrl       String?
+  portfolioUrl    String?
+  githubUrl       String?
+  linkedinUrl     String?
+  leetcodeUrl     String?
+  hackerrankUrl   String?
+  codechefUrl     String?
+  codeforcesUrl   String?
+  designUrl       String?
+  otherUrl        String?
   gender          String?
   status          String   @default("new") // new | shortlisted | interview_scheduled | interviewed | selected | rejected | offered | joined | withdrawn
   source          String   @default("applied") // applied | excel_upload
@@ -321,6 +330,15 @@ model CandidateAccount {
   location       String?
   resumeUrl      String?
   photoUrl       String?
+  portfolioUrl   String?
+  githubUrl      String?
+  linkedinUrl    String?
+  leetcodeUrl    String?
+  hackerrankUrl  String?
+  codechefUrl    String?
+  codeforcesUrl  String?
+  designUrl      String?
+  otherUrl       String?
   currentCompany String?
   currentRole    String?
   expectedSalary String?
@@ -622,4 +640,56 @@ model PasswordReset {
   role      String   // user | candidate | employer
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+// ==================== ASSESSMENT RESULT ====================
+model AssessmentResult {
+  id                    String   @id @default(cuid())
+  candidateId           String?
+  candidateName         String
+  email                 String
+  jobRole               String
+  assessmentName        String   @default("AI Technical & Coding Interview")
+  difficulty            String
+  codingSubDifficulty   String?
+  duration              String
+  totalQuestions        Int
+  attemptedQuestions    Int
+  unansweredQuestions   Int
+  finalScore            Float
+  percentage            Float
+  overallResult         String   // Pass | Fail
+  performanceLevel      String   // Excellent | Good | Average | Needs Improvement
+  hiringRecommendation  String   // Highly Recommended | Recommended with Training | Not Recommended
+  recommendationReason  String
+  
+  // Dynamic Score Calculation Breakdown (JSON)
+  sectionScoresJson     String   // JSON string of section-wise breakdown
+  codingDetailsJson     String   // JSON string of detailed coding test execution
+  skillAnalysisJson     String   // JSON string of skill radar/bar chart scores
+  questionReviewJson    String   // JSON string of detailed question review & marks
+  strengthsJson         String   // JSON array string of strengths
+  improvementsJson      String   // JSON array string of weak areas
+  scoreFormulaJson      String   // JSON string of score calculation formula & weights
+  
+  mcqScore              Float    @default(0)
+  codingScore           Float    @default(0)
+  scenarioScore         Float    @default(0)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// ==================== VIDEO INTRODUCTION ====================
+model VideoIntroduction {
+  id            String   @id @default(cuid())
+  candidateId   String?
+  candidateName String
+  email         String
+  videoUrl      String   // Base64 Data URL or media URL
+  duration      String   // e.g. "01:25"
+  durationSec   Int      // seconds e.g. 85
+  status        String   @default("submitted") // submitted | under_review | approved
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

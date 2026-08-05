@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         companyName: {
           equals: companyName.trim(),
           mode: 'insensitive'
-        }
+        } as any
       }
     });
 

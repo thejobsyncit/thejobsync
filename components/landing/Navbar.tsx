@@ -4,18 +4,25 @@ import { usePathname } from 'next/navigation';
 import { User, LogIn, Menu, X, Moon, Sun } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
+import { toggleGlobalTheme } from '@/lib/theme';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const isActive = (path: string) => pathname === path;
   
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const currentTheme = resolvedTheme || theme || 'dark';
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleToggleTheme = () => {
+    const next = toggleGlobalTheme(currentTheme as any);
+    setTheme(next);
+  };
 
   return (
     <>
@@ -42,11 +49,11 @@ export default function Navbar() {
             <div className="hidden md:flex items-center space-x-4">
               {mounted && (
                 <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  onClick={handleToggleTheme}
                   className="p-2 text-[#03045E] dark:text-[#CAF0F8] hover:text-[#0077B6] dark:hover:text-[#00B4D8] transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-white/10"
                   aria-label="Toggle Theme"
                 >
-                  {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                  {currentTheme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
               )}
               
@@ -64,11 +71,11 @@ export default function Navbar() {
             <div className="lg:hidden flex items-center space-x-2">
               {mounted && (
                 <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  onClick={handleToggleTheme}
                   className="text-[#03045E] dark:text-[#CAF0F8] hover:text-[#0077B6] transition-colors p-2"
                   aria-label="Toggle dark mode"
                 >
-                  {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
+                  {currentTheme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
                 </button>
               )}
               <button onClick={() => setIsOpen(!isOpen)} className="text-[#03045E] dark:text-[#CAF0F8] hover:text-[#0077B6] transition-colors p-2" aria-label={isOpen ? 'Close menu' : 'Open menu'}>

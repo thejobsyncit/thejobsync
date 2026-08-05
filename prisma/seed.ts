@@ -8,6 +8,12 @@ async function main() {
   // Clear existing data (order matters for foreign keys)
   await prisma.auditLog.deleteMany();
   await prisma.notification.deleteMany();
+  await prisma.companyLead.deleteMany();
+  await prisma.ticketMessage.deleteMany();
+  await prisma.ticket.deleteMany();
+  await prisma.attendance.deleteMany();
+  await prisma.leaveRequest.deleteMany();
+  await prisma.followUp.deleteMany();
   await prisma.placement.deleteMany();
   await prisma.interview.deleteMany();
   await prisma.candidate.deleteMany();
