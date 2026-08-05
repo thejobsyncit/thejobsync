@@ -7,6 +7,7 @@ import { Briefcase, MapPin, DollarSign, Clock, CheckCircle, XCircle, Phone, Star
 import DashboardLayout from '../DashboardLayout';
 import { motion } from 'framer-motion';
 import { usePortalTheme } from '@/context/PortalThemeContext';
+import { formatLocation } from '@/lib/utils';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
   applied:             { label: 'Applied',            color: '#00B4D8', bg: 'rgba(56,189,248,0.1)', icon: <Clock size={14} /> },
@@ -132,7 +133,7 @@ export default function MyApplicationsPage() {
 
                   {job && (
                     <div className="app-meta" style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: isDark ? '#cbd5e1' : '#475569' }}>
-                      {job.location && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={14} color="#64748b" />{job.location.startsWith('{') ? (() => { try { const l = JSON.parse(job.location); return [l.city, l.district, l.state, l.country].filter(Boolean).join(', '); } catch { return job.location; } })() : job.location}</span>}
+                      {job.location && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={14} color="#64748b" />{formatLocation(job.location)}</span>}
                       {job.salaryRange && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><DollarSign size={14} color="#64748b" />{job.salaryRange}</span>}
                       {job.experience && <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Briefcase size={14} color="#64748b" />{job.experience}</span>}
                     </div>

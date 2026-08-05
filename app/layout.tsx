@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 
@@ -180,8 +181,23 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <Script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" strategy="afterInteractive" />
+        <Script id="google-translate-init" strategy="afterInteractive">
+          {`
+            function googleTranslateElementInit() {
+              new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element');
+            }
+          `}
+        </Script>
+        <style dangerouslySetInnerHTML={{ __html: `
+          body { top: 0 !important; }
+          .skiptranslate iframe, .goog-te-banner-frame { display: none !important; }
+          #google_translate_element { display: none !important; }
+          .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
+        `}} />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <div id="google_translate_element"></div>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <ToastProvider>
             <AuthProvider>{children}</AuthProvider>

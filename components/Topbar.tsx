@@ -52,18 +52,8 @@ export default function Topbar({ sidebarCollapsed, onMobileMenuToggle }: TopbarP
         <Menu size={20} />
       </button>
 
-      {/* Search */}
-      <div style={{ position: 'relative', flex: 1 }}>
-        <Search size={16} style={{
-          position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
-          color: 'var(--muted)',
-        }} />
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search clients, candidates, requirements..."
-        />
-      </div>
+      {/* Spacer */}
+      <div style={{ flex: 1 }}></div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '1rem' }}>
         

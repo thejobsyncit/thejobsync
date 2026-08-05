@@ -19,8 +19,8 @@ export async function proxy(request: NextRequest) {
       );
       const { payload } = await jwtVerify(token, JWT_SECRET);
       
-      // If they are not a super_admin, redirect to login
-      if (payload.role !== 'super_admin') {
+      // If they are not a super_admin or super_admin_erp, redirect to login
+      if (payload.role !== 'super_admin' && payload.role !== 'super_admin_erp') {
         return NextResponse.redirect(new URL('/superadmin-erp/login', request.url));
       }
     } catch (error) {
@@ -43,8 +43,13 @@ export async function proxy(request: NextRequest) {
       );
       const { payload } = await jwtVerify(token, JWT_SECRET);
       
-      // Both admin and super_admin can access admin-erp
-      if (payload.role !== 'admin' && payload.role !== 'super_admin') {
+      // Admin, super_admin, and their ERP counterparts can access admin-erp
+      if (
+        payload.role !== 'admin' && 
+        payload.role !== 'super_admin' && 
+        payload.role !== 'admin_erp' && 
+        payload.role !== 'super_admin_erp'
+      ) {
         return NextResponse.redirect(new URL('/admin-erp/login', request.url));
       }
     } catch (error) {

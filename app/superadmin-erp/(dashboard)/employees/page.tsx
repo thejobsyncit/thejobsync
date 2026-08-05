@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, X } from "lucide-react";
+import { Plus, Edit, Trash2, X, Eye, EyeOff } from "lucide-react";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<any[]>([]);
@@ -8,6 +8,7 @@ export default function EmployeesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", email: "", password: "", phone: "", role: "admin", department: "" });
+  const [showPassword, setShowPassword] = useState(false);
 
   const fetchData = () => { fetch("/api/admin/employees").then(r => r.json()).then(d => { setEmployees(Array.isArray(d) ? d : []); setLoading(false); }); };
   useEffect(() => { fetchData(); }, []);
@@ -59,7 +60,12 @@ export default function EmployeesPage() {
             <div className="space-y-3">
               <input placeholder="Full Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
               {!editId && <input placeholder="Email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />}
-              <input placeholder={editId ? "New Password (leave blank to keep)" : "Password"} type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
+              <div className="relative">
+                <input placeholder={editId ? "New Password (leave blank to keep)" : "Password"} type={showPassword ? "text" : "password"} value={form.password} onChange={e => setForm({...form, password: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm pr-10" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
               <input placeholder="Phone" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
               <select value={form.role} onChange={e => setForm({...form, role: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm">
                 <option value="admin">Admin</option>
@@ -68,6 +74,8 @@ export default function EmployeesPage() {
                 <option value="hr">HR</option>
                 <option value="interviewer">Interviewer</option>
                 <option value="application_support">Application Support</option>
+                <option value="admin_erp">Admin ERP</option>
+                <option value="super_admin_erp">Super Admin ERP</option>
               </select>
               <input placeholder="Department (optional)" value={form.department} onChange={e => setForm({...form, department: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
             </div>

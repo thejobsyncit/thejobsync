@@ -62,7 +62,10 @@ export default function SuperAdminPage() {
   const fetchPendingAttendances = async () => {
     try {
       const res = await fetch('/api/attendance?pending=true');
-      if (res.ok) setPendingAttendances(await res.json());
+      if (res.ok) {
+        setPendingAttendances(await res.json());
+        toast.success('Refreshed successfully');
+      }
     } catch (error) {
       toast.error('Failed to load attendance records');
     }
@@ -71,7 +74,10 @@ export default function SuperAdminPage() {
   const fetchLeaveRequests = async () => {
     try {
       const res = await fetch('/api/leave?role=super_admin');
-      if (res.ok) setLeaveRequests(await res.json());
+      if (res.ok) {
+        setLeaveRequests(await res.json());
+        toast.success('Refreshed successfully');
+      }
     } catch (error) {
       toast.error('Failed to load leave requests');
     }
@@ -225,9 +231,12 @@ export default function SuperAdminPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
                 { label: 'Manage Employees', icon: <Users size={16} />, color: '#0077B6', onClick: () => setActiveTab('employees') },
-                { label: 'Permission Matrix', icon: <Key size={16} />, color: '#22c55e', onClick: () => {} },
+                { label: 'Attendance', icon: <Clock size={16} />, color: '#8b5cf6', onClick: () => setActiveTab('attendance') },
+                { label: 'Leave Requests', icon: <Calendar size={16} />, color: '#ec4899', onClick: () => setActiveTab('leaves') },
+                { label: 'Master Data', icon: <FileText size={16} />, color: '#14b8a6', onClick: () => setActiveTab('master') },
                 { label: 'Company Settings', icon: <Settings size={16} />, color: '#f97316', onClick: () => setActiveTab('company') },
-                { label: 'Database Management', icon: <Database size={16} />, color: '#0077B6', onClick: () => {} },
+                { label: 'Permission Matrix', icon: <Key size={16} />, color: '#22c55e', onClick: () => toast('Permission Matrix is coming soon!', { icon: 'ℹ️' }) },
+                { label: 'Database Management', icon: <Database size={16} />, color: '#0077B6', onClick: () => toast('Database Management is coming soon!', { icon: 'ℹ️' }) },
               ].map(action => (
                 <button key={action.label} onClick={action.onClick} className="btn btn-secondary" style={{ justifyContent: 'flex-start', width: '100%' }}>
                   <span style={{ color: action.color }}>{action.icon}</span> {action.label}
@@ -317,6 +326,8 @@ export default function SuperAdminPage() {
                   <option value="application_support">Application Support</option>
                   <option value="admin">Admin</option>
                   <option value="super_admin">Super Admin</option>
+                  <option value="admin_erp">Admin ERP</option>
+                  <option value="super_admin_erp">Super Admin ERP</option>
                 </select>
               </div>
               <div className="form-group">
@@ -441,7 +452,7 @@ export default function SuperAdminPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div><label className="label">Company Name</label><input className="input" defaultValue="Enterprise HRMS Solutions" /></div>
             <div><label className="label">Company Email</label><input className="input" defaultValue="admin@hrms.com" /></div>
-            <div><label className="label">Phone</label><input className="input" defaultValue="+91 80 1234 5678" /></div>
+            <div><label className="label">Phone</label><input className="input" type="tel" maxLength={15} onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, ''); }} defaultValue="+918012345678" /></div>
             <div><label className="label">Address</label><textarea className="textarea" defaultValue="Tech Park, Bangalore" /></div>
             <button className="btn btn-primary" style={{ alignSelf: 'flex-end' }}>Save Changes</button>
           </div>
@@ -498,7 +509,10 @@ export default function SuperAdminPage() {
                   <option value="dms">DMS</option>
                   <option value="coordinator">Coordinator</option>
                   <option value="application_support">Application Support</option>
+                  <option value="admin">Admin</option>
                   <option value="super_admin">Super Admin</option>
+                  <option value="admin_erp">Admin ERP</option>
+                  <option value="super_admin_erp">Super Admin ERP</option>
                 </select>
               </div>
               <div className="form-group">

@@ -18,7 +18,7 @@ export default function ContactUs() {
               <span>Home</span>
             </Link>
             <ChevronRight size={14} className="text-gray-400" />
-            <span className="text-gray-300">Contact Us</span>
+            <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact Us</Link>
           </div>
         </div>
       </div>
@@ -48,7 +48,7 @@ export default function ContactUs() {
               <Phone size={24} />
             </div>
             <h3 className="text-[#0077B6] dark:text-[#00B4D8] font-bold text-sm tracking-widest uppercase mb-4 transition-colors duration-300">Phone</h3>
-            <p className="text-slate-900 dark:text-white font-bold text-lg mb-2 transition-colors duration-300">+971 54 740 5625</p>
+            <p className="text-slate-900 dark:text-white font-bold text-lg mb-2 transition-colors duration-300">9003096078</p>
             <p className="text-slate-500 dark:text-slate-400 text-sm transition-colors duration-300">Mon-Fri, 9am-6pm GST</p>
           </div>
 
@@ -59,7 +59,7 @@ export default function ContactUs() {
               <Mail size={24} />
             </div>
             <h3 className="text-[#0077B6] dark:text-[#00B4D8] font-bold text-sm tracking-widest uppercase mb-4 transition-colors duration-300">Email</h3>
-            <p className="text-[#0077B6] dark:text-[#00B4D8] font-bold text-lg mb-2 transition-colors duration-300">info@gojobsync.com</p>
+            <a href="mailto:hr@gojobsync.com" className="block text-[#0077B6] dark:text-[#00B4D8] hover:text-[#00B4D8] dark:hover:text-white font-bold text-lg mb-2 transition-colors duration-300">hr@gojobsync.com</a>
             <p className="text-slate-500 dark:text-slate-400 text-sm transition-colors duration-300">Response within 24 hours</p>
           </div>
 

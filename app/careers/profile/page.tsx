@@ -433,10 +433,20 @@ export default function CandidateProfilePage() {
                 <div
                   onClick={() => photoRef.current?.click()}
                   style={{ width: 120, height: 140, borderRadius: 16, background: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.02)', border: `2px dashed ${isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden', position: 'relative' }}
-                  className="hover:opacity-80 transition-opacity"
+                  className="group hover:opacity-90 transition-opacity"
                 >
                   {form.photoUrl ? (
-                    <img src={form.photoUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <>
+                      <img src={form.photoUrl} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setForm({ ...form, photoUrl: '' }); }}
+                        style={{ position: 'absolute', top: 6, right: 6, background: 'rgba(239, 68, 68, 0.9)', border: 'none', borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 10 }}
+                        title="Remove Photo"
+                        className="opacity-0 group-hover:opacity-100 hover:scale-110 transition-all duration-200"
+                      >
+                        <X size={14} color="white" />
+                      </button>
+                    </>
                   ) : (
                     <>
                       <Camera size={28} color="#94a3b8" style={{ marginBottom: 8 }} />

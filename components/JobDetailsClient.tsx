@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MapPin, Briefcase, DollarSign, Clock, Users, ArrowLeft, Building2 } from 'lucide-react';
 import ApplyButton from '@/components/ApplyButton';
 import SaveJobButton from '@/components/SaveJobButton';
+import { formatLocation } from '@/lib/utils';
 import { usePortalTheme } from '@/context/PortalThemeContext';
 
 export default function JobDetailsClient({ job, similarJobs, skills, companyInitial, hue }: {
@@ -60,7 +61,7 @@ export default function JobDetailsClient({ job, similarJobs, skills, companyInit
             </div>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', fontSize: '0.95rem', color: isDark ? '#cbd5e1' : '#475569', marginBottom: '2rem', paddingBottom: '2rem', borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}` }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={18} color="#94a3b8" /> {job.location}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><MapPin size={18} color="#94a3b8" /> {formatLocation(job.location)}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Briefcase size={18} color="#94a3b8" /> {job.experience}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><DollarSign size={18} color="#94a3b8" /> {job.salaryRange}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Clock size={18} color="#94a3b8" /> Posted Recently</span>
@@ -124,7 +125,7 @@ export default function JobDetailsClient({ job, similarJobs, skills, companyInit
                   <Link key={sj.id} href={`/careers/jobs/${sj.id}`} style={{ textDecoration: 'none' }} className="group">
                     <div style={{ fontWeight: 700, color: isDark ? 'white' : '#0f172a', fontSize: '1.05rem', marginBottom: 4, transition: 'color 0.2s' }} className="group-hover:text-[#0077B6]">{sj.title}</div>
                     <div style={{ fontSize: '0.85rem', color: isDark ? '#94a3b8' : '#64748b', display: 'flex', gap: 12 }}>
-                      <span>{sj.location}</span>
+                      <span>{formatLocation(sj.location)}</span>
                       <span>•</span>
                       <span>{sj.experience}</span>
                     </div>

@@ -743,6 +743,11 @@ GoJobSync Recruitment Team
                 {selectedIds.length === filteredCandidates.length && filteredCandidates.length > 0 ? <CheckSquare size={16} className="text-[#0077B6]" /> : <Square size={16} />} Select All
               </button>
               {selectedIds.length > 0 && (
+                <button onClick={() => setSelectedIds([])} className="text-sm font-bold text-red-600 hover:text-red-800 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-200">
+                  <X size={16} /> Unselect All
+                </button>
+              )}
+              {selectedIds.length > 0 && (
                 <>
                   <button onClick={handleOpenBulkMailModal} className="px-3 py-1.5 bg-[#0077B6] text-white rounded-lg text-sm font-bold flex items-center gap-1.5 hover:bg-[#0077B6]/90 transition shadow-sm">
                     <Mail size={14} /> Send Mail to Selected ({selectedIds.length})

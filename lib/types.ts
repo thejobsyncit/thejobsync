@@ -13,7 +13,9 @@ export type UserRole =
   | 'tester'
   | 'dms'
   | 'coordinator'
-  | 'application_support';
+  | 'application_support'
+  | 'super_admin_erp'
+  | 'admin_erp';
 
 export type RequirementStatus = 'open' | 'in_progress' | 'on_hold' | 'closed' | 'cancelled';
 export type CandidateStatus = 'new' | 'shortlisted' | 'interview_scheduled' | 'interviewed' | 'selected' | 'rejected' | 'offered' | 'joined' | 'withdrawn';
@@ -223,6 +225,8 @@ export const ROLE_LABELS: Partial<Record<UserRole, string>> = {
   dms: 'DMS',
   coordinator: 'Coordinator',
   application_support: 'Application Support',
+  super_admin_erp: 'Super Admin ERP',
+  admin_erp: 'Admin ERP',
 };
 
 export const ROLE_COLORS: Partial<Record<UserRole, string>> = {
@@ -239,6 +243,8 @@ export const ROLE_COLORS: Partial<Record<UserRole, string>> = {
   dms: '#f43f5e',         // rose
   coordinator: '#8b5cf6', // violet
   application_support: '#06b6d4', // cyan
+  super_admin_erp: '#b91c1c', // darker red
+  admin_erp: '#d97706', // darker amber
 };
 
 export const STATUS_COLORS: Record<string, string> = {

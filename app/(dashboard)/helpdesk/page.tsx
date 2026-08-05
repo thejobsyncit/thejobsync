@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
@@ -248,11 +248,11 @@ export default function HelpdeskPage() {
               <form onSubmit={handleApplyLeave} className="space-y-4">
                 <div className="form-group">
                   <label className="form-label">Start Date *</label>
-                  <input type="date" className="form-input" required value={newLeave.startDate} onChange={e => setNewLeave({...newLeave, startDate: e.target.value})} />
+                  <input type="date" className="form-input" required min={new Date().toISOString().split('T')[0]} value={newLeave.startDate} onChange={e => setNewLeave({...newLeave, startDate: e.target.value})} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">End Date *</label>
-                  <input type="date" className="form-input" required value={newLeave.endDate} onChange={e => setNewLeave({...newLeave, endDate: e.target.value})} />
+                  <input type="date" className="form-input" required min={newLeave.startDate || new Date().toISOString().split('T')[0]} value={newLeave.endDate} onChange={e => setNewLeave({...newLeave, endDate: e.target.value})} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Reason *</label>

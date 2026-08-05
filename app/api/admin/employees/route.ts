@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const role = searchParams.get('role');
-    const where: any = role ? { role } : { role: { in: ['admin', 'super_admin', 'recruiter', 'hr', 'interviewer', 'application_support', 'dms', 'coordinator'] } };
+    const where: any = role ? { role } : { role: { in: ['admin', 'super_admin', 'recruiter', 'hr', 'interviewer', 'application_support', 'dms', 'coordinator', 'admin_erp', 'super_admin_erp'] } };
     const employees = await prisma.user.findMany({
       where,
       orderBy: { createdAt: 'desc' },

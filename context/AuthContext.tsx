@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
-  logout: () => void;
+  logout: (skipConfirm?: boolean) => void;
   updateUser: (data: Partial<User>) => void;
   isAuthenticated: boolean;
 }
@@ -54,8 +54,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
     }
   }, []);
 
-  const logout = useCallback(async () => {
-    if (!window.confirm('Are you sure you want to log out?')) return;
+  const logout = useCallback(async (skipConfirm: boolean = false) => {
+    if (!skipConfirm && !window.confirm('Are you sure you want to log out?')) return;
     if (user) {
       try {
         await fetch('/api/auth/logout', {
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): React
       clearTimeout(timeoutId);
       // 2 minutes = 120,000 milliseconds
       timeoutId = setTimeout(() => {
-        logout();
+        logout(true);
       }, 120000);
     };
 

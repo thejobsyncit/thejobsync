@@ -36,7 +36,7 @@ export default function FAQ() {
   const currentFaqs = faqsData[activeTab] || [];
 
   return (
-    <section className="bg-white dark:bg-slate-900 transition-colors duration-300">
+    <section id="faq" className="bg-white dark:bg-slate-900 transition-colors duration-300">
       {/* Header Banner */}
       <div className="bg-slate-900 dark:bg-slate-950 text-white py-16 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">

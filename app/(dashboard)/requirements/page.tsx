@@ -7,6 +7,7 @@ import { JobRequirement, Client } from '@/lib/types';
 import { validateForm, validateRequired, validateNumber } from '@/lib/validation';
 import { useAuth } from '@/context/AuthContext';
 import { canEditModule } from '@/lib/permissions';
+import { formatLocation } from '@/lib/utils';
 
 const PRIORITY_COLORS = { low: '#22c55e', medium: '#0077B6', high: '#f97316', urgent: '#ef4444' };
 const STATUS_COLORS: Record<string, string> = {
@@ -252,7 +253,7 @@ export default function RequirementsPage() {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid var(--border)', flexWrap: 'wrap', gap: '0.5rem' }}>
                   <div style={{ display: 'flex', gap: '1rem', fontSize: '0.75rem', color: 'var(--muted-foreground)' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><MapPin size={12} /> {req.location}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><MapPin size={12} /> {formatLocation(req.location)}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Users size={12} /> {req.filledPositions}/{req.positions} filled</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Clock size={12} /> {new Date(req.deadline).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                   </div>
@@ -417,7 +418,7 @@ export default function RequirementsPage() {
               </div>
               <div>
                 <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Location</div>
-                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={13} /> {viewingReq.location}</div>
+                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={13} /> {formatLocation(viewingReq.location)}</div>
               </div>
               <div>
                 <div style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Salary</div>

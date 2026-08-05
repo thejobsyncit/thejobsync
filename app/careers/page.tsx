@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCandidateAuth } from '@/context/CandidateAuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePortalTheme } from '@/context/PortalThemeContext';
+import { formatLocation } from '@/lib/utils';
 import { DEPARTMENTS } from '@/lib/constants';
 import {
   Search, MapPin, Briefcase, DollarSign, Users, Clock,
@@ -29,7 +31,6 @@ const HERO_STATS = [
   { label: 'Syncs Daily', value: '10K+' },
 ];
 
-import { usePortalTheme } from '@/context/PortalThemeContext';
 
 export default function CareersPage() {
   const { theme, toggleTheme, isDark } = usePortalTheme();
@@ -609,9 +610,7 @@ function JobCard({ job, candidate, delay = 0, isRecommended = false, isDark = tr
   const companyInitial = (job.client?.companyName || 'C')[0].toUpperCase();
   const hue = job.client?.companyName ? [...job.client.companyName].reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360 : 200;
 
-  const jLocation = job.location?.startsWith('{') 
-    ? (() => { try { const l = JSON.parse(job.location); return [l.city, l.district, l.state, l.country].filter(Boolean).join(', '); } catch { return job.location; } })()
-    : job.location;
+  const jLocation = formatLocation(job.location);
 
   return (
     <motion.div
