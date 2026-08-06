@@ -83,8 +83,14 @@ function executeUserCodeInVM(
         // Remove class wrapper
         .replace(/public\s+class\s+\w+\s*\{/g, '')
         .replace(/class\s+\w+\s*\{/g, '')
+        .replace(/\};\s*$/g, '')
         // Remove access modifiers (will be re-handled in function detection)
         .replace(/\b(?:public|private|protected|static|final|synchronized)\s+/g, '')
+        .replace(/public:|private:|protected:/g, '')
+        // Remove C++ includes and namespaces
+        .replace(/#include\s*<[^>]+>\s*/g, '')
+        .replace(/using\s+namespace\s+std;\s*/g, '')
+        .replace(/std::/g, '')
         // Java generics: HashMap<X,Y> var = new HashMap<>() or new HashMap<X,Y>()
         .replace(/java\.util\.HashMap\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.HashMap\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Map()')
         .replace(/HashMap\s*<[^>]*>\s+(\w+)\s*=\s*new\s+HashMap\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Map()')
@@ -97,6 +103,15 @@ function executeUserCodeInVM(
         .replace(/java\.util\.List\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
         .replace(/java\.util\.List\s*<[^>]*>\s+(\w+)\s*=\s*new\s+ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
         .replace(/List\s*<[^>]*>\s+(\w+)\s*=\s*new\s+ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
+        // C++ Map -> JS Object
+        .replace(/unordered_map\s*<[^>]*>\s+(\w+)\s*;/g, 'let $1 = {};')
+        // C++ Vector -> JS Array
+        .replace(/vector\s*<[^>]*>\s+(\w+)\s*;/g, 'let $1 = [];')
+        // C++ Map find: numMap.find(comp) != numMap.end() -> numMap[comp] !== undefined
+        .replace(/(\w+)\.find\(([^)]+)\)\s*!=\s*\1\.end\(\)/g, '$1[$2] !== undefined')
+        // C++ Return vector initializer list: return {x, y}; -> return [x, y];
+        .replace(/return\s+\{([^}]*)\}/g, 'return [$1]')
+        .replace(/return\s+\{\}/g, 'return []')
         // HashMap methods
         .replace(/\.containsKey\(/g, '.has(')
         .replace(/\.containsValue\(/g, '.has(')
@@ -112,9 +127,9 @@ function executeUserCodeInVM(
         .replace(/new\s+boolean\[\]\s*\{([^}]*)\}/g, '[$1]')
         // STEP 1: Convert method signatures with array/generic return types → function
         // Must run BEFORE type-in-param stripping
-        .replace(/(?:java\.util\.List\s*<[^>]*>|java\.util\.ArrayList\s*<[^>]*>|java\.util\.Map\s*<[^>]*>|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|List<[^>]*>|Map<[^>]*>|void)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m: string, name: string, params: string) => {
+        .replace(/(?:vector\s*<[^>]*>|java\.util\.List\s*<[^>]*>|java\.util\.ArrayList\s*<[^>]*>|java\.util\.Map\s*<[^>]*>|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|List<[^>]*>|Map<[^>]*>|void)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m: string, name: string, params: string) => {
           // Strip types from params
-          const cleanParams = params.replace(/(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
+          const cleanParams = params.replace(/(?:vector\s*<[^>]*>&?|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
           return `function ${name}(${cleanParams}) {`;
         })
         .replace(/(?:int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m, name, params) => {
