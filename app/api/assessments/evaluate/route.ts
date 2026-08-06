@@ -80,19 +80,68 @@ function executeUserCodeInVM(
       }
     } else if (language === 'Java' || language === 'C++' || language === 'C') {
       jsCode = userCode
-        .replace(/public\s+class\s+Solution\s*\{/g, '')
-        .replace(/class\s+Solution\s*\{/g, '')
-        .replace(/public:|private:|protected:/g, '')
-        .replace(/(?:public|static|final|bool|boolean|int|double|float|String|void|int\[\])\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*\{/g, 'function $1($2) {')
-        .replace(/\bboolean\b/g, 'let')
-        .replace(/\bint\b/g, 'let')
-        .replace(/\bString\b/g, 'let')
-        .replace(/\bNULL\b/g, 'null');
+        // Remove class wrapper
+        .replace(/public\s+class\s+\w+\s*\{/g, '')
+        .replace(/class\s+\w+\s*\{/g, '')
+        // Remove access modifiers (will be re-handled in function detection)
+        .replace(/\b(?:public|private|protected|static|final|synchronized)\s+/g, '')
+        // Java generics: HashMap<X,Y> var = new HashMap<>() or new HashMap<X,Y>()
+        .replace(/java\.util\.HashMap\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.HashMap\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Map()')
+        .replace(/HashMap\s*<[^>]*>\s+(\w+)\s*=\s*new\s+HashMap\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Map()')
+        .replace(/LinkedHashMap\s*<[^>]*>\s+(\w+)\s*=\s*new\s+LinkedHashMap\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Map()')
+        .replace(/HashSet\s*<[^>]*>\s+(\w+)\s*=\s*new\s+HashSet\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Set()')
+        .replace(/java\.util\.HashSet\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.HashSet\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Set()')
+        .replace(/ArrayList\s*<[^>]*>\s+(\w+)\s*=\s*new\s+ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
+        .replace(/java\.util\.ArrayList\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
+        // HashMap methods
+        .replace(/\.containsKey\(/g, '.has(')
+        .replace(/\.containsValue\(/g, '.has(')
+        .replace(/\.put\(/g, '.set(')
+        .replace(/\.add\(([^)]+)\)/g, '.push($1)')
+        .replace(/\.size\(\)/g, '.length')
+        // Array initializers
+        .replace(/new\s+int\[\]\s*\{([^}]*)\}/g, '[$1]')
+        .replace(/new\s+int\[0\]/g, '[]')
+        .replace(/new\s+int\[\s*(\w+)\s*\]/g, 'new Array($1).fill(0)')
+        .replace(/new\s+Integer\[\]\s*\{([^}]*)\}/g, '[$1]')
+        .replace(/new\s+String\[\]\s*\{([^}]*)\}/g, '[$1]')
+        .replace(/new\s+boolean\[\]\s*\{([^}]*)\}/g, '[$1]')
+        // STEP 1: Convert method signatures with array/generic return types → function
+        // Must run BEFORE type-in-param stripping
+        .replace(/(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|List<[^>]*>|Map<[^>]*>|void)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m, name, params) => {
+          // Strip types from params
+          const cleanParams = params.replace(/(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
+          return `function ${name}(${cleanParams}) {`;
+        })
+        .replace(/(?:int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m, name, params) => {
+          const cleanParams = params.replace(/(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
+          return `function ${name}(${cleanParams}) {`;
+        })
+        // STEP 2: Strip type declarations from variable declarations (NOT params — already handled)
+        .replace(/\b(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\])\s+(\w+)(?=\s*[=;,)])/g, 'let $1')
+        .replace(/\b(?:int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)(?=\s*[=;,)])/g, 'let $1')
+        // Type casts like (int)x → x
+        .replace(/\(\s*(?:int|long|double|float|char)\s*\)\s*([a-zA-Z0-9_.()\[\]]+)/g, '$1')
+        // String conversions
+        .replace(/Integer\.toString\(([^)]+)\)/g, 'String($1)')
+        .replace(/String\.valueOf\(([^)]+)\)/g, 'String($1)')
+        // @Override
+        .replace(/@Override\s*/g, '')
+        // C++ specifics
+        .replace(/\bNULL\b/g, 'null')
+        .replace(/\bnullptr\b/g, 'null')
+        .replace(/System\.out\.println\(/g, 'console.log(')
+        .replace(/System\.out\.print\(/g, 'console.log(');
 
+      // Balance braces
       const openBraces = (jsCode.match(/\{/g) || []).length;
       const closeBraces = (jsCode.match(/\}/g) || []).length;
       if (openBraces > closeBraces) {
         jsCode += '}'.repeat(openBraces - closeBraces);
+      }
+      // If class wrapper removal left a trailing extra }, remove it
+      if (closeBraces > openBraces) {
+        jsCode = jsCode.replace(/\}\s*$/, '');
       }
     } else if (language === 'TypeScript') {
       jsCode = userCode.replace(/:\s*[a-zA-Z0-9_\[\]<>\s|]+/g, '');
@@ -135,7 +184,7 @@ function executeUserCodeInVM(
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { challengeId, userCode, language } = body;
+    const { challengeId, userCode, language, customInput } = body;
 
     const challenge = CODING_CHALLENGES.find(c => c.id === Number(challengeId));
     if (!challenge) {
@@ -143,6 +192,87 @@ export async function POST(req: Request) {
     }
 
     const langKey = language || 'JavaScript';
+
+    // CUSTOM INPUT EXECUTION
+    if (customInput) {
+      try {
+        let parsedParams: any[];
+        try {
+          parsedParams = JSON.parse(customInput);
+          if (!Array.isArray(parsedParams)) {
+            parsedParams = [parsedParams];
+          }
+        } catch (e) {
+          return NextResponse.json({ error: 'Invalid custom input JSON format. Must be an array of arguments.' }, { status: 400 });
+        }
+
+        let actualOutput: any = undefined;
+        let execError: string | undefined = undefined;
+
+        if (langKey === 'Python') {
+          const tempDir = os.tmpdir();
+          const scriptPath = path.join(tempDir, `test_custom_${Date.now()}_${Math.random().toString(36).substring(7)}.py`);
+          try {
+            const pyScript = `
+import json, sys
+
+${userCode}
+
+if __name__ == '__main__':
+    params = json.loads(${JSON.stringify(JSON.stringify(parsedParams))})
+    if '${challenge.functionName}' not in globals():
+        print(json.dumps({"error": "Function '${challenge.functionName}' is not defined"}))
+        sys.exit(1)
+    res = ${challenge.functionName}(*params)
+    print("OUTPUT_BEGIN")
+    print(json.dumps(res))
+`;
+            fs.writeFileSync(scriptPath, pyScript);
+            let stdout = '';
+            let executionSuccess = false;
+            try {
+              const execRes = await execFileAsync('python', [scriptPath], { timeout: 2000 });
+              stdout = execRes.stdout;
+              executionSuccess = true;
+            } catch (pyCmdErr: any) {
+              try {
+                const execRes2 = await execFileAsync('python3', [scriptPath], { timeout: 2000 });
+                stdout = execRes2.stdout;
+                executionSuccess = true;
+              } catch (py3Err: any) {}
+            }
+
+            if (executionSuccess && stdout.includes('OUTPUT_BEGIN')) {
+              const jsonStr = stdout.split('OUTPUT_BEGIN')[1].trim();
+              actualOutput = JSON.parse(jsonStr);
+            } else {
+              const vmEval = executeUserCodeInVM(userCode, challenge.functionName, parsedParams, null, 'Python');
+              actualOutput = vmEval.actualOutput;
+              execError = vmEval.error;
+            }
+          } catch (err: any) {
+            actualOutput = 'Runtime Error';
+            execError = err.message;
+          } finally {
+            if (fs.existsSync(scriptPath)) fs.unlinkSync(scriptPath);
+          }
+        } else if (langKey === 'SQL' || challenge.category === 'Database & SQL') {
+          actualOutput = "SQL custom execution not fully supported.";
+        } else {
+          const vmEval = executeUserCodeInVM(userCode, challenge.functionName, parsedParams, null, langKey);
+          actualOutput = vmEval.actualOutput;
+          execError = vmEval.error;
+        }
+
+        return NextResponse.json({
+          success: true,
+          actualOutput: actualOutput !== undefined ? JSON.stringify(actualOutput) : 'Error',
+          error: execError
+        });
+      } catch (err: any) {
+        return NextResponse.json({ error: err.message }, { status: 500 });
+      }
+    }
 
     // 1. Strict Validation: Empty Code
     if (!userCode || userCode.trim().length === 0) {

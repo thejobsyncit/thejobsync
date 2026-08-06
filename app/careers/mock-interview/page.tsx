@@ -55,6 +55,8 @@ export default function AIMockInterviewPage() {
   // Code Execution Output State
   const [testResults, setTestResults] = useState<Record<number, any>>({});
   const [isExecuting, setIsExecuting] = useState(false);
+  const [customInputParams, setCustomInputParams] = useState('');
+  const [customInputResult, setCustomInputResult] = useState<{ output?: string, error?: string, isRunning?: boolean } | null>(null);
   const [submittedReport, setSubmittedReport] = useState<ReportData | null>(null);
   const [isSubmittingReport, setIsSubmittingReport] = useState(false);
 
@@ -274,6 +276,42 @@ export default function AIMockInterviewPage() {
       }));
     } finally {
       setIsExecuting(false);
+    }
+  };
+
+  // Run Custom Code Execution Action
+  const handleRunCustomCode = async () => {
+    const currentChallenge = codingChallenges[currentIndex];
+    if (!currentChallenge) return;
+
+    if (!customInputParams.trim()) {
+      setCustomInputResult({ error: 'Please enter custom input parameters first.' });
+      return;
+    }
+
+    const currentCode = codeAnswers[currentIndex]?.[selectedLanguage] || currentChallenge.starterCode[selectedLanguage] || '';
+
+    setCustomInputResult({ isRunning: true });
+    try {
+      const res = await fetch('/api/assessments/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          challengeId: currentChallenge.id,
+          userCode: currentCode,
+          language: selectedLanguage,
+          customInput: customInputParams
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setCustomInputResult({ output: data.actualOutput, error: data.error });
+      } else {
+        setCustomInputResult({ error: data.error || 'Failed to execute custom input' });
+      }
+    } catch (err: any) {
+      setCustomInputResult({ error: err?.message || 'Execution error' });
     }
   };
 
@@ -1363,15 +1401,14 @@ export default function AIMockInterviewPage() {
 
             {/* ==================== HARD MODE: LIVE CODING ASSESSMENT ENVIRONMENT ==================== */}
             {difficulty === 'Hard' && codingChallenges.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.25fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '42% 58%', gap: '0', marginBottom: '1.5rem', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(56, 189, 248, 0.2)', boxShadow: '0 16px 40px rgba(0,0,0,0.4)', height: 700 }}>
                 
                 {/* Left Pane: Problem Description & Constraints */}
                 <div style={{
-                  background: isDark ? 'rgba(30, 41, 59, 0.7)' : 'rgba(255, 255, 255, 0.95)',
-                  border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
-                  borderRadius: 20,
+                  background: isDark ? '#1a2232' : '#ffffff',
+                  borderRight: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
                   padding: '1.75rem',
-                  maxHeight: 650,
+                  height: '100%',
                   overflowY: 'auto'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
@@ -1422,15 +1459,13 @@ export default function AIMockInterviewPage() {
 
                 {/* Right Pane: Live Code Editor */}
                 <div style={{
-                  background: isDark ? '#0f172a' : '#1e293b',
-                  borderRadius: 20,
-                  padding: '1.5rem',
+                  background: '#0d1117',
                   display: 'flex',
                   flexDirection: 'column',
-                  border: '1px solid rgba(56, 189, 248, 0.3)',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                  height: '100%',
+                  overflow: 'hidden'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid rgba(255,255,255,0.07)', background: '#161b22' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#38bdf8', fontWeight: 800, fontSize: '0.9rem' }}>
                       <Code size={18} />
                       Solution Editor ({selectedLanguage})
@@ -1440,8 +1475,8 @@ export default function AIMockInterviewPage() {
                       onClick={handleRunCode}
                       disabled={isExecuting}
                       style={{
-                        padding: '0.45rem 1rem',
-                        borderRadius: 10,
+                        padding: '0.45rem 1.1rem',
+                        borderRadius: 8,
                         background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
                         color: '#ffffff',
                         border: 'none',
@@ -1460,7 +1495,7 @@ export default function AIMockInterviewPage() {
 
                   {/* Code Editor Textarea */}
                   <textarea
-                    rows={18}
+                    rows={20}
                     value={codeAnswers[currentIndex]?.[selectedLanguage] || codingChallenges[currentIndex]?.starterCode[selectedLanguage] || ''}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -1472,21 +1507,97 @@ export default function AIMockInterviewPage() {
                         }
                       }));
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const textarea = e.currentTarget;
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const spaces = '    '; // 4 spaces
+                        const currentVal = textarea.value;
+                        const newVal = currentVal.substring(0, start) + spaces + currentVal.substring(end);
+                        setCodeAnswers(prev => ({
+                          ...prev,
+                          [currentIndex]: {
+                            ...(prev[currentIndex] || {}),
+                            [selectedLanguage]: newVal
+                          }
+                        }));
+                        // Move cursor after inserted spaces
+                        requestAnimationFrame(() => {
+                          textarea.selectionStart = start + spaces.length;
+                          textarea.selectionEnd = start + spaces.length;
+                        });
+                      }
+                    }}
                     style={{
                       width: '100%',
                       flex: 1,
-                      padding: '1.15rem',
-                      borderRadius: 14,
-                      background: '#020617',
+                      padding: '1rem',
+                      borderRadius: 0,
+                      background: '#0d1117',
                       color: '#f8fafc',
                       fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
                       fontSize: '0.925rem',
-                      lineHeight: 1.6,
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      lineHeight: 1.65,
+                      border: 'none',
+                      borderTop: '1px solid rgba(255,255,255,0.05)',
                       outline: 'none',
-                      resize: 'none'
+                      resize: 'none',
+                      minHeight: 320
                     }}
                   />
+
+                  {/* Custom Input Section */}
+                  <div style={{ padding: '0.75rem 1rem', borderTop: '1px solid rgba(255,255,255,0.07)', background: '#161b22' }}>
+                    <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: 6, fontWeight: 600 }}>Custom Input <span style={{ color: '#64748b', fontWeight: 400 }}>(JSON array of arguments, e.g. [[2,7,11,15], 9])</span></div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input
+                        type="text"
+                        placeholder="e.g. [[2,7,11,15], 9]"
+                        value={customInputParams}
+                        onChange={(e) => setCustomInputParams(e.target.value)}
+                        style={{
+                          flex: 1,
+                          padding: '0.55rem 0.85rem',
+                          borderRadius: 8,
+                          background: '#0d1117',
+                          color: '#f8fafc',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          outline: 'none',
+                          fontFamily: 'monospace',
+                          fontSize: '0.85rem'
+                        }}
+                      />
+                      <button
+                        onClick={handleRunCustomCode}
+                        disabled={customInputResult?.isRunning}
+                        style={{
+                          padding: '0 1rem',
+                          borderRadius: 8,
+                          background: 'rgba(56, 189, 248, 0.1)',
+                          color: '#38bdf8',
+                          border: '1px solid rgba(56, 189, 248, 0.3)',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          fontSize: '0.85rem'
+                        }}
+                      >
+                        {customInputResult?.isRunning ? 'Running...' : 'Test Custom Input'}
+                      </button>
+                    </div>
+
+                    {/* Custom Input Result */}
+                    {customInputResult && !customInputResult.isRunning && (
+                      <div style={{ marginTop: '0.5rem', padding: '0.75rem', borderRadius: 8, background: customInputResult.error ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)', border: customInputResult.error ? '1px solid rgba(239, 68, 68, 0.2)' : '1px solid rgba(34, 197, 94, 0.2)', fontSize: '0.85rem', fontFamily: 'monospace' }}>
+                        {customInputResult.error ? (
+                          <span style={{ color: '#f87171' }}>Error: {customInputResult.error}</span>
+                        ) : (
+                          <span style={{ color: '#4ade80' }}>Output: {customInputResult.output}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
 
                   {/* Execution Console Output */}
                   {testResults[currentIndex] && (
