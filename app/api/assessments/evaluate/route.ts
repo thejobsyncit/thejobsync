@@ -93,6 +93,10 @@ function executeUserCodeInVM(
         .replace(/java\.util\.HashSet\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.HashSet\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Set()')
         .replace(/ArrayList\s*<[^>]*>\s+(\w+)\s*=\s*new\s+ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
         .replace(/java\.util\.ArrayList\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
+        // List<X> var = new ArrayList<>() — left type can be List, right can be ArrayList
+        .replace(/java\.util\.List\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
+        .replace(/java\.util\.List\s*<[^>]*>\s+(\w+)\s*=\s*new\s+ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
+        .replace(/List\s*<[^>]*>\s+(\w+)\s*=\s*new\s+ArrayList\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = []')
         // HashMap methods
         .replace(/\.containsKey\(/g, '.has(')
         .replace(/\.containsValue\(/g, '.has(')
@@ -108,7 +112,7 @@ function executeUserCodeInVM(
         .replace(/new\s+boolean\[\]\s*\{([^}]*)\}/g, '[$1]')
         // STEP 1: Convert method signatures with array/generic return types → function
         // Must run BEFORE type-in-param stripping
-        .replace(/(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|List<[^>]*>|Map<[^>]*>|void)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m, name, params) => {
+        .replace(/(?:java\.util\.List\s*<[^>]*>|java\.util\.ArrayList\s*<[^>]*>|java\.util\.Map\s*<[^>]*>|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|List<[^>]*>|Map<[^>]*>|void)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m: string, name: string, params: string) => {
           // Strip types from params
           const cleanParams = params.replace(/(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
           return `function ${name}(${cleanParams}) {`;
