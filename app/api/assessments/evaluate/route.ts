@@ -62,8 +62,8 @@ function executeUserCodeInVM(
   expectedOutput: any,
   language: string
 ): { passed: boolean; actualOutput: any; error?: string } {
+  let jsCode = userCode;
   try {
-    let jsCode = userCode;
     let evalParams = [...params];
 
     if (language === 'C') {
