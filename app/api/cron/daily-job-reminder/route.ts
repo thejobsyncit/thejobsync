@@ -56,13 +56,25 @@ export async function GET(req: NextRequest) {
       const unappliedJobs = activeJobs.filter(j => !appliedIds.has(j.id)).slice(0, 5);
 
       if (unappliedJobs.length > 0) {
-        const jobsHtml = unappliedJobs.map(j => `
+        const jobsHtml = unappliedJobs.map(j => {
+          let formattedLocation = j.location || 'Remote';
+          try {
+            const loc = JSON.parse(j.location);
+            const parts = [loc.city, loc.state, loc.country].filter(Boolean).map(s => s.trim());
+            const uniqueParts = parts.filter((item, pos) => parts.indexOf(item) === pos);
+            formattedLocation = uniqueParts.join(', ');
+          } catch (e) {
+            // keep as original string if not JSON
+          }
+          
+          return `
           <div style="background: #f8fafc; padding: 16px; margin-bottom: 12px; border-radius: 8px; border-left: 4px solid #0077B6;">
             <h3 style="margin: 0 0 4px 0; color: #0f172a; font-size: 16px;">${j.title}</h3>
-            <p style="margin: 0 0 8px 0; color: #64748b; font-size: 14px;">${j.client?.companyName} &bull; ${j.location}</p>
+            <p style="margin: 0 0 8px 0; color: #64748b; font-size: 14px;">${j.client?.companyName} &bull; ${formattedLocation}</p>
             <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://www.gojobsync.com'}/careers/jobs/${j.id}" style="display: inline-block; background: #0077B6; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: bold;">View Job &rarr;</a>
           </div>
-        `).join('');
+          `;
+        }).join('');
 
         const html = `
           <!DOCTYPE html>
