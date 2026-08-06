@@ -11,7 +11,10 @@ export async function POST(request: NextRequest) {
     }
 
     const user = await prisma.user.findFirst({
-      where: { email: email.toLowerCase().trim(), isActive: true },
+      where: { 
+        email: { equals: email.trim(), mode: 'insensitive' }, 
+        isActive: true 
+      },
     });
 
     if (!user) {
