@@ -42,7 +42,8 @@ export default function AIMockInterviewPage() {
   const [answerMode, setAnswerMode] = useState<'Text' | 'Speech'>('Text');
 
   // Interview Session State
-  const [step, setStep] = useState<'setup' | 'interview' | 'results'>('setup');
+  const [step, setStep] = useState<'setup' | 'loading' | 'interview' | 'results'>('setup');
+  const [loadingText, setLoadingText] = useState('Generating your assessment...');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [codingChallenges, setCodingChallenges] = useState<CodingChallenge[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<CodingLanguage>('JavaScript');
@@ -189,7 +190,7 @@ export default function AIMockInterviewPage() {
     : [];
 
   // Start Interview Action
-  const handleStartInterview = () => {
+  const handleStartInterview = async () => {
     const candidateContext = {
       skills: parsedSkills,
       experience: candidate?.experience || undefined,
@@ -204,33 +205,92 @@ export default function AIMockInterviewPage() {
       hackerrankUrl: portfolioData?.hackerrankUrl
     };
 
-    if (difficulty === 'Hard') {
-      // Coding Assessment Mode
-      const cList = getCodingChallenges(roleName, codingSubDifficulty);
-      const targetChallenges = cList.length > 0 ? cList : CODING_CHALLENGES;
-      setCodingChallenges(targetChallenges);
-      
-      // Initialize code answers with starter templates
-      const initialCodeMap: Record<number, Record<string, string>> = {};
-      targetChallenges.forEach((c, idx) => {
-        initialCodeMap[idx] = { ...c.starterCode };
-      });
-      setCodeAnswers(initialCodeMap);
-    } else {
-      const targetCount = difficulty === 'Easy' ? 50 : 25;
-      const qList = getQuestionsForInterview(roleName, difficulty, targetCount, candidateContext);
-      setQuestions(qList);
-    }
+    setStep('loading');
+    setLoadingText('AI is analyzing your profile and generating personalized questions for ' + roleName + '...');
 
-    setCurrentIndex(0);
-    setUserAnswers({});
-    setMcqAnswers({});
-    setTestResults({});
-    
-    const totalSecs = duration === '10 Minutes' ? 600 : duration === '20 Minutes' ? 1200 : 1800;
-    setInitialSeconds(totalSecs);
-    setTimeLeft(totalSecs);
-    setStep('interview');
+    try {
+      const res = await fetch('/api/assessments/generate-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          role: roleName,
+          difficulty,
+          count: difficulty === 'Easy' ? 50 : 25,
+          candidateContext
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to generate questions. Falling back to default questions.');
+      }
+
+      const data = await res.json();
+      const generatedQuestions = data.questions || [];
+      const isITRole = data.isITRole;
+
+      if (generatedQuestions.length === 0) {
+        throw new Error('No questions generated');
+      }
+
+      if (difficulty === 'Hard' && isITRole) {
+        // Coding Assessment Mode for IT Roles
+        const cList = getCodingChallenges(roleName, codingSubDifficulty);
+        const targetChallenges = cList.length > 0 ? cList : CODING_CHALLENGES;
+        setCodingChallenges(targetChallenges);
+        
+        // Initialize code answers with starter templates
+        const initialCodeMap: Record<number, Record<string, string>> = {};
+        targetChallenges.forEach((c, idx) => {
+          initialCodeMap[idx] = { ...c.starterCode };
+        });
+        setCodeAnswers(initialCodeMap);
+        setQuestions([]); // No standard questions in IT hard mode
+      } else {
+        // Non-IT Hard mode or Easy/Medium mode: Use Gemini Questions
+        setQuestions(generatedQuestions);
+        setCodingChallenges([]); // Disable coding challenges
+      }
+
+      setCurrentIndex(0);
+      setUserAnswers({});
+      setMcqAnswers({});
+      setTestResults({});
+      
+      const totalSecs = duration === '10 Minutes' ? 600 : duration === '20 Minutes' ? 1200 : 1800;
+      setInitialSeconds(totalSecs);
+      setTimeLeft(totalSecs);
+      setStep('interview');
+
+    } catch (err) {
+      console.error('Gemini API Error:', err);
+      alert('Failed to generate AI questions. Make sure the API key is set in .env. Falling back to default questions.');
+      
+      // Fallback to original logic if API fails
+      if (difficulty === 'Hard') {
+        const cList = getCodingChallenges(roleName, codingSubDifficulty);
+        const targetChallenges = cList.length > 0 ? cList : CODING_CHALLENGES;
+        setCodingChallenges(targetChallenges);
+        const initialCodeMap: Record<number, Record<string, string>> = {};
+        targetChallenges.forEach((c, idx) => {
+          initialCodeMap[idx] = { ...c.starterCode };
+        });
+        setCodeAnswers(initialCodeMap);
+      } else {
+        const targetCount = difficulty === 'Easy' ? 50 : 25;
+        const qList = getQuestionsForInterview(roleName, difficulty, targetCount, candidateContext);
+        setQuestions(qList);
+      }
+
+      setCurrentIndex(0);
+      setUserAnswers({});
+      setMcqAnswers({});
+      setTestResults({});
+      
+      const totalSecs = duration === '10 Minutes' ? 600 : duration === '20 Minutes' ? 1200 : 1800;
+      setInitialSeconds(totalSecs);
+      setTimeLeft(totalSecs);
+      setStep('interview');
+    }
   };
 
   // Run & Test Code Execution Action calling Server Evaluation Engine
@@ -1276,6 +1336,52 @@ export default function AIMockInterviewPage() {
               </button>
 
             </div>
+          </motion.div>
+        )}
+
+        {/* ==================== LOADING STEP ==================== */}
+        {step === 'loading' && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4rem 2rem',
+              background: isDark ? 'rgba(30, 41, 59, 0.7)' : 'rgba(255, 255, 255, 0.9)',
+              border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
+              borderRadius: 24,
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 20px 40px -10px rgba(0,0,0,0.15)',
+              textAlign: 'center'
+            }}
+          >
+            <div style={{ marginBottom: '1.5rem', color: '#00B4D8' }}>
+              <div className="spinner" style={{
+                width: '50px',
+                height: '50px',
+                border: '4px solid rgba(0, 180, 216, 0.2)',
+                borderTop: '4px solid #00B4D8',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                margin: '0 auto'
+              }}></div>
+              <style>{`
+                @keyframes spin {
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
+                }
+              `}</style>
+            </div>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', marginBottom: '0.75rem' }}>
+              Generating Interview...
+            </h2>
+            <p style={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: '1.05rem', maxWidth: 450 }}>
+              {loadingText}
+            </p>
           </motion.div>
         )}
 

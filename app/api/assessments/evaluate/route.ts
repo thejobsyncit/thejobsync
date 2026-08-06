@@ -64,6 +64,23 @@ function executeUserCodeInVM(
 ): { passed: boolean; actualOutput: any; error?: string } {
   try {
     let jsCode = userCode;
+    let evalParams = [...params];
+
+    if (language === 'C') {
+      // C often passes array sizes and return sizes explicitly.
+      // E.g. int* twoSum(int* nums, int numsSize, int target, int* returnSize)
+      // We dynamically inject these so the JS evaluation receives all arguments.
+      const transformedParams = [];
+      for (const p of params) {
+        transformedParams.push(p);
+        if (Array.isArray(p)) {
+          transformedParams.push(p.length);
+        }
+      }
+      // Add a dummy returnSize pointer equivalent at the end
+      transformedParams.push(0);
+      evalParams = transformedParams;
+    }
 
     if (language === 'Python') {
       jsCode = userCode
@@ -91,6 +108,12 @@ function executeUserCodeInVM(
         .replace(/#include\s*<[^>]+>\s*/g, '')
         .replace(/using\s+namespace\s+std;\s*/g, '')
         .replace(/std::/g, '')
+        // C pointer assignments: *returnSize = 2 -> returnSize = 2
+        .replace(/\*(\w+)\s*=/g, '$1 =')
+        // (int*) typecasts
+        .replace(/\(\s*(?:int\s*\*|int|long|double|float|char)\s*\)\s*/g, '')
+        // C malloc/calloc to array
+        .replace(/\b(?:malloc|calloc)\s*\([^;]+\)/g, '[]')
         // Java generics: HashMap<X,Y> var = new HashMap<>() or new HashMap<X,Y>()
         .replace(/java\.util\.HashMap\s*<[^>]*>\s+(\w+)\s*=\s*new\s+java\.util\.HashMap\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Map()')
         .replace(/HashMap\s*<[^>]*>\s+(\w+)\s*=\s*new\s+HashMap\s*<[^>]*>\s*\(\s*\)/g, 'let $1 = new Map()')
@@ -127,20 +150,20 @@ function executeUserCodeInVM(
         .replace(/new\s+boolean\[\]\s*\{([^}]*)\}/g, '[$1]')
         // STEP 1: Convert method signatures with array/generic return types → function
         // Must run BEFORE type-in-param stripping
-        .replace(/(?:vector\s*<[^>]*>|java\.util\.List\s*<[^>]*>|java\.util\.ArrayList\s*<[^>]*>|java\.util\.Map\s*<[^>]*>|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|List<[^>]*>|Map<[^>]*>|void)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m: string, name: string, params: string) => {
+        .replace(/(?:int\s*\*|vector\s*<[^>]*>|java\.util\.List\s*<[^>]*>|java\.util\.ArrayList\s*<[^>]*>|java\.util\.Map\s*<[^>]*>|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|List<[^>]*>|Map<[^>]*>|void)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m: string, name: string, params: string) => {
           // Strip types from params
-          const cleanParams = params.replace(/(?:vector\s*<[^>]*>&?|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
+          const cleanParams = params.replace(/(?:int\s*\*|vector\s*<[^>]*>&?|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
           return `function ${name}(${cleanParams}) {`;
         })
         .replace(/(?:int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, (m, name, params) => {
-          const cleanParams = params.replace(/(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
+          const cleanParams = params.replace(/(?:int\s*\*|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\]|int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)/g, '$1');
           return `function ${name}(${cleanParams}) {`;
         })
         // STEP 2: Strip type declarations from variable declarations (NOT params — already handled)
-        .replace(/\b(?:int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\])\s+(\w+)(?=\s*[=;,)])/g, 'let $1')
+        .replace(/\b(?:int\s*\*|int\[\]|String\[\]|boolean\[\]|double\[\]|long\[\]|char\[\])\s+(\w+)(?=\s*[=;,)])/g, 'let $1')
         .replace(/\b(?:int|long|double|float|boolean|char|byte|short|String|Integer|Long|Double|Boolean)\s+(\w+)(?=\s*[=;,)])/g, 'let $1')
         // Type casts like (int)x → x
-        .replace(/\(\s*(?:int|long|double|float|char)\s*\)\s*([a-zA-Z0-9_.()\[\]]+)/g, '$1')
+        .replace(/\(\s*(?:int\s*\*|int|long|double|float|char)\s*\)\s*([a-zA-Z0-9_.()\[\]]+)/g, '$1')
         // String conversions
         .replace(/Integer\.toString\(([^)]+)\)/g, 'String($1)')
         .replace(/String\.valueOf\(([^)]+)\)/g, 'String($1)')
@@ -152,22 +175,25 @@ function executeUserCodeInVM(
         .replace(/System\.out\.println\(/g, 'console.log(')
         .replace(/System\.out\.print\(/g, 'console.log(');
 
-      // Balance braces
+      // Since we removed 'class {', there might be an extra '}' at the end of valid code.
+      // We should ONLY remove ONE trailing '}' if there is a mismatch.
       const openBraces = (jsCode.match(/\{/g) || []).length;
       const closeBraces = (jsCode.match(/\}/g) || []).length;
-      if (openBraces > closeBraces) {
-        jsCode += '}'.repeat(openBraces - closeBraces);
-      }
-      // If class wrapper removal left a trailing extra }, remove it
       if (closeBraces > openBraces) {
         jsCode = jsCode.replace(/\}\s*$/, '');
       }
     } else if (language === 'TypeScript') {
-      jsCode = userCode.replace(/:\s*[a-zA-Z0-9_\[\]<>\s|]+/g, '');
+      jsCode = userCode
+        // Remove generic type arguments (e.g. <number, number>)
+        .replace(/<\s*[a-zA-Z0-9_\[\]\s,]+\s*>/g, '')
+        // Remove return types and variable types (e.g. : number[])
+        .replace(/:\s*[a-zA-Z0-9_\[\]\s|]+/g, '')
+        // Remove non-null assertion operator ! (before commas, parentheses, semicolons, or closing brackets)
+        .replace(/!\s*(?=[,)\}\];])/g, '');
     }
 
     const sandbox: any = {
-      __params: params,
+      __params: evalParams,
       console: { log: () => {}, error: () => {} },
       Math,
       Set,
@@ -177,7 +203,10 @@ function executeUserCodeInVM(
       Number,
       Object,
       JSON,
-      RegExp
+      RegExp,
+      malloc: () => [],
+      calloc: () => [],
+      sizeof: 1
     };
 
     const scriptCode = `
@@ -196,7 +225,7 @@ function executeUserCodeInVM(
     const passed = compareOutputs(actualOutput, expectedOutput);
     return { passed, actualOutput };
   } catch (err: any) {
-    return { passed: false, actualOutput: 'Execution Error', error: err.message };
+    return { passed: false, actualOutput: 'Error (Compilation Error)', error: err.message + '\n\nJS Code:\n' + jsCode };
   }
 }
 
