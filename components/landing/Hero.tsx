@@ -7,7 +7,7 @@ const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   show: (i: number = 0) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.7, delay: i * 0.15, ease: "easeOut" },
+    transition: { duration: 0.7, delay: i * 0.15 },
   }),
 };
 
@@ -91,7 +91,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, x: 60, scale: 0.92 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.9, delay: 0.3 }}
             className="flex-1 w-full max-w-lg"
           >
             <div className="relative">

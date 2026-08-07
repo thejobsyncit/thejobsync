@@ -6,7 +6,7 @@ const fadeUp = {
   hidden: { opacity: 0, y: 40 },
   show: (i: number = 0) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.7, delay: i * 0.12, ease: "easeOut" },
+    transition: { duration: 0.7, delay: i * 0.12 },
   }),
 };
 
@@ -39,7 +39,7 @@ export default function AboutUs() {
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
           {/* Left – image */}
           <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "easeOut" }} className="w-full lg:w-1/2">
+            transition={{ duration: 0.8 }} className="w-full lg:w-1/2">
             <div className="relative">
               <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-[#0077B6]/15 to-transparent blur-2xl" />
               <div className="relative rounded-[2rem] overflow-hidden border border-[#0077B6]/20 shadow-[0_32px_80px_rgba(0,119,182,0.08)] dark:shadow-[0_32px_80px_rgba(0,0,0,0.5)]">

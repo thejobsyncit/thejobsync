@@ -6,7 +6,7 @@ const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   show: (i: number = 0) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.7, delay: i * 0.1, ease: "easeOut" },
+    transition: { duration: 0.7, delay: i * 0.1 },
   }),
 };
 
@@ -66,7 +66,7 @@ export default function ContactUs() {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Contact Form */}
           <motion.div initial={{ opacity: 0, x: -40 }} whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7, ease: "easeOut" }}
+            viewport={{ once: true }} transition={{ duration: 0.7 }}
             className="w-full lg:w-[60%] rounded-[2rem] border border-slate-200 dark:border-[#0077B6]/15 bg-white dark:bg-[#03045E]/20 p-8 md:p-12 shadow-sm dark:shadow-none">
             <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Send Us a Message</h3>
             <p className="text-slate-400 dark:text-[#90E0EF]/60 font-medium mb-8">Fill out the form and our team will get back to you as soon as possible.</p>
@@ -116,7 +116,7 @@ export default function ContactUs() {
 
           {/* Right – Map + Hours */}
           <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+            viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.15 }}
             className="w-full lg:w-[40%] space-y-6">
             <div className="rounded-2xl border border-slate-200 dark:border-[#0077B6]/15 bg-white dark:bg-[#03045E]/20 overflow-hidden shadow-sm dark:shadow-none">
               <div className="relative h-52">
