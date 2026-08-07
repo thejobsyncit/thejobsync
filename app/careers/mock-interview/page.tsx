@@ -1393,17 +1393,14 @@ export default function AIMockInterviewPage() {
             transition={{ duration: 0.3 }}
           >
             {/* Top Bar Navigation with Exit to Setup Button & Timer */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+            <div className="flex-stack-mobile" style={{
               marginBottom: '1.5rem',
               padding: '1rem 1.25rem',
               background: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.9)',
               borderRadius: 16,
               border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                 {/* Back to Setup Button */}
                 <button
                   type="button"
@@ -1439,7 +1436,7 @@ export default function AIMockInterviewPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', marginTop: 10 }}>
                 {/* Select Programming Language for Coding Mode */}
                 {difficulty === 'Hard' && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1507,7 +1504,7 @@ export default function AIMockInterviewPage() {
 
             {/* ==================== HARD MODE: LIVE CODING ASSESSMENT ENVIRONMENT ==================== */}
             {difficulty === 'Hard' && codingChallenges.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: '42% 58%', gap: '0', marginBottom: '1.5rem', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(56, 189, 248, 0.2)', boxShadow: '0 16px 40px rgba(0,0,0,0.4)', height: 700 }}>
+              <div className="coding-grid" style={{ marginBottom: '1.5rem', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(56, 189, 248, 0.2)', boxShadow: '0 16px 40px rgba(0,0,0,0.4)' }}>
                 
                 {/* Left Pane: Problem Description & Constraints */}
                 <div style={{

@@ -513,13 +513,13 @@ export default function PortfolioPage() {
           {/* Requirement #5, #6, #7: Expanded Professional Form when editing */}
           {isEditing && (
             <form onSubmit={handleSaveLinks} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.25rem' }}>
                 {linkFields.map(field => {
                   const val = formData[field.key as keyof PortfolioData] || '';
                   const err = fieldErrors[field.key];
 
                   return (
-                    <div key={field.key} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div key={field.key} style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
                       <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.875rem', fontWeight: 700, color: isDark ? '#cbd5e1' : '#334155' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           {field.icon} {field.label} {field.required && <span style={{ color: '#ef4444' }}>*</span>}
@@ -531,6 +531,8 @@ export default function PortfolioPage() {
                         placeholder={field.placeholder}
                         onChange={(e) => handleChange(field.key as keyof PortfolioData, e.target.value)}
                         style={{
+                          width: '100%',
+                          boxSizing: 'border-box',
                           padding: '0.75rem 1rem',
                           borderRadius: 12,
                           background: isDark ? 'rgba(30, 41, 59, 0.6)' : '#f8fafc',
