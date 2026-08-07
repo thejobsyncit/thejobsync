@@ -12,116 +12,50 @@ const getRegistrationWhatsAppLink = (name: string, phone: string) => {
   if (!cleanPhone.startsWith('91') && cleanPhone.length === 10) {
     cleanPhone = '91' + cleanPhone;
   }
-  const msg = `Hi ${name || 'there'},
+  const msg = `Dear Candidate,
 
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+Greetings from The JobSync HR Team.
 
-Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+Thank you for your interest in exploring career opportunities through our platform. To proceed further with your profile evaluation, kindly complete your registration on our official job portal:
 
-✨ Why apply through GoJobSync?
+Website: https://www.gojobsync.com/
 
-- Multiple verified job opportunities
-- Quick and easy application process
-- Track your application status in real time
-- Direct access to hiring companies
-- Absolutely FREE for job seekers
+Once your registration is completed, you will receive an acknowledgement email from our side. After receiving your acknowledgement confirmation, our recruitment team will proceed with suitable job opportunities across domestic and international locations based on your profile, experience, and eligibility.
 
-Don't miss your chance to land your next job.
+Kindly ensure that your updated resume and relevant details are provided during the registration process to help us identify the right opportunities for you.
 
-👉 Apply Now: www.gojobsync.com/careers/register
+For any assistance, please feel free to contact us.
 
-Complete your profile and start applying to jobs in just a few minutes.
-
-If you have any questions, simply reply to our email—we're happy to help.
-*(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
-
-Best Regards,
-GoJobSync Recruitment Team
-🌐 www.gojobsync.com 
-📧 hr@gojobsync.com`;
+Regards,
+Dhivya
+HR Team – The JobSync
+Mobile: +91 97895 69391
+Email: hr@thejobsync.com
+Website: https://www.gojobsync.com/`;
   return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
 };
 
 const BULK_TEMPLATES = [
-  `Hi {name},
+  `Dear Candidate,
 
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+Greetings from The JobSync HR Team.
 
-Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+Thank you for your interest in exploring career opportunities through our platform. To proceed further with your profile evaluation, kindly complete your registration on our official job portal:
 
-✨ Why apply through GoJobSync?
+Website: https://www.gojobsync.com/
 
-- Multiple verified job opportunities
-- Quick and easy application process
-- Track your application status in real time
-- Direct access to hiring companies
-- Absolutely FREE for job seekers
+Once your registration is completed, you will receive an acknowledgement email from our side. After receiving your acknowledgement confirmation, our recruitment team will proceed with suitable job opportunities across domestic and international locations based on your profile, experience, and eligibility.
 
-Don't miss your chance to land your next job.
+Kindly ensure that your updated resume and relevant details are provided during the registration process to help us identify the right opportunities for you.
 
-👉 Apply Now: www.gojobsync.com/careers/register
+For any assistance, please feel free to contact us.
 
-Complete your profile and start applying to jobs in just a few minutes.
-
-If you have any questions, simply reply to our email—we're happy to help.
-*(Note: If you didn't receive our email, please check your spam/junk folder as well!)*
-
-Best Regards,
-GoJobSync Recruitment Team
-🌐 www.gojobsync.com 
-📧 hr@gojobsync.com`,
-  
-  `Hello {name},
-
-Your profile caught our attention, and we have several exciting job openings at GoJobSync that match your skills.
-
-From entry-level positions for freshers to senior roles for experienced professionals, we partner with top companies actively hiring right now.
-
-⭐ Benefits of using GoJobSync:
-- 100% Free for job seekers
-- Verified, high-quality job postings
-- Seamless and fast application tracking
-- Connect directly with top recruiters
-
-Take the next step in your career journey today!
-
-🚀 Register Here: www.gojobsync.com/careers/register
-
-It only takes a few minutes to complete your profile and start applying. 
-
-Got questions? Just reply to this email, and our team will assist you.
-*(Please check your spam/junk folder if you missed our previous emails!)*
-
-Warm Regards,
-GoJobSync Hiring Team
-🌐 www.gojobsync.com 
-📧 hr@gojobsync.com`,
-
-  `Dear {name},
-
-We are reaching out because your background looks like a great match for the latest career opportunities available on GoJobSync.
-
-Our platform connects talented individuals—both fresh graduates and seasoned experts—with companies looking to hire immediately.
-
-🔥 What makes GoJobSync different?
-- Instant access to verified employers
-- Real-time updates on your applications
-- Simple, one-click apply process
-- Completely free of charge
-
-Don't let the perfect job slip away.
-
-✅ Create Your Profile: www.gojobsync.com/careers/register
-
-Set up your account in minutes and explore jobs tailored for you.
-
-Need help? Reply to this message and we will get back to you promptly.
-*(Make sure to check your spam/junk folder so you don't miss our updates!)*
-
-Best,
-GoJobSync Talent Acquisition
-🌐 www.gojobsync.com 
-📧 hr@gojobsync.com`
+Regards,
+Dhivya
+HR Team – The JobSync
+Mobile: +91 97895 69391
+Email: hr@thejobsync.com
+Website: https://www.gojobsync.com/`
 ];
 
 const SENDER_EMAILS = [
@@ -299,32 +233,26 @@ export default function FreshDumpPage() {
       fromEmail: 'hr@gojobsync.com',
       toEmail: c.email.startsWith('noemail-') ? '' : c.email,
       subject: 'Job Opportunities at GoJobSync - Complete Your Registration',
-      message: `Hi ${c.name},
+      message: `Dear Candidate,
 
-We came across your profile and believe you could be a great fit for several exciting job opportunities available on GoJobSync.
+Greetings from The JobSync HR Team.
 
-Whether you're a Fresher or an Experienced Professional, we have openings across multiple companies and industries waiting for candidates like you.
+Thank you for your interest in exploring career opportunities through our platform. To proceed further with your profile evaluation, kindly complete your registration on our official job portal:
 
-✨ Why apply through GoJobSync?
+Website: https://www.gojobsync.com/
 
-- Multiple verified job opportunities
-- Quick and easy application process
-- Track your application status in real time
-- Direct access to hiring companies
-- Absolutely FREE for job seekers
+Once your registration is completed, you will receive an acknowledgement email from our side. After receiving your acknowledgement confirmation, our recruitment team will proceed with suitable job opportunities across domestic and international locations based on your profile, experience, and eligibility.
 
-Don't miss your chance to land your next job.
+Kindly ensure that your updated resume and relevant details are provided during the registration process to help us identify the right opportunities for you.
 
-👉 Apply Now: www.gojobsync.com/careers/register
+For any assistance, please feel free to contact us.
 
-Complete your profile and start applying to jobs in just a few minutes.
-
-If you have any questions, simply reply to this email—we're happy to help.
-
-Best Regards,
-GoJobSync Recruitment Team
-🌐 www.gojobsync.com 
-📧 hr@gojobsync.com`
+Regards,
+Dhivya
+HR Team – The JobSync
+Mobile: +91 97895 69391
+Email: hr@thejobsync.com
+Website: https://www.gojobsync.com/`
     });
   };
 
