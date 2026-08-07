@@ -133,31 +133,112 @@ async function sendStatusEmail(email: string, name: string, status: string) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Always fetch ALL applied candidates
-    const appliedCandidates = await prisma.candidate.findMany({
-      where: { source: 'applied' },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        assignedSupport: { select: { id: true, name: true } },
-        requirement: { select: { title: true } }
-      } as any
-    });
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '25', 10);
+    const search = searchParams.get('search') || '';
+    const sourceTab = searchParams.get('sourceTab') || 'all';
 
-    // Fetch the most recent 1500 candidates that are NOT applied
-    const otherCandidates = await prisma.candidate.findMany({
-      where: { source: { not: 'applied' } },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        assignedSupport: { select: { id: true, name: true } },
-        requirement: { select: { title: true } }
-      } as any
-    });
+    const andConditions: any[] = [];
 
-    // Combine them, placing applied ones at the top
-    const candidates = [...appliedCandidates, ...otherCandidates];
-    return NextResponse.json(candidates);
+    if (search) {
+      andConditions.push({
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { phone: { contains: search, mode: 'insensitive' } },
+          { currentRole: { contains: search, mode: 'insensitive' } },
+        ]
+      });
+    }
+
+    if (sourceTab === 'applied') {
+      andConditions.push({
+        OR: [
+          { source: 'applied' },
+          { appliedFor: { not: null } }
+        ]
+      });
+    } else if (sourceTab === 'registered') {
+      andConditions.push({
+        source: { notIn: ['applied', 'excel_upload'] },
+        appliedFor: null
+      });
+    } else if (sourceTab === 'excel_upload') {
+      andConditions.push({ source: 'excel_upload' });
+    }
+
+    const where = andConditions.length > 0 ? { AND: andConditions } : {};
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.candidate.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          assignedSupport: { select: { id: true, name: true } },
+          requirement: { select: { title: true } }
+        } as any
+      }),
+      prisma.candidate.count({ where })
+    ]);
+
+    const summaryWhere: any = search ? {
+      OR: [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+        { currentRole: { contains: search, mode: 'insensitive' } },
+      ]
+    } : {};
+
+    const [allCount, appliedCount, registeredCount, excelCount] = await Promise.all([
+      prisma.candidate.count({ where: summaryWhere }),
+      prisma.candidate.count({ 
+        where: { 
+          AND: [
+            summaryWhere,
+            { OR: [{ source: 'applied' }, { appliedFor: { not: null } }] }
+          ]
+        }
+      }),
+      prisma.candidate.count({ 
+        where: { 
+          AND: [
+            summaryWhere,
+            { source: { notIn: ['applied', 'excel_upload'] }, appliedFor: null }
+          ]
+        }
+      }),
+      prisma.candidate.count({ 
+        where: { 
+          AND: [
+            summaryWhere,
+            { source: 'excel_upload' }
+          ]
+        }
+      }),
+    ]);
+
+    return NextResponse.json({
+      data,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      },
+      summary: {
+        all: allCount,
+        applied: appliedCount,
+        registered: registeredCount,
+        excel_upload: excelCount
+      }
+    });
   } catch (error: any) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }

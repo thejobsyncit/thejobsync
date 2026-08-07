@@ -66,13 +66,23 @@ export default function SACandidatesPage() {
   const [pushing, setPushing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 25;
+  const [pagination, setPagination] = useState({ total: 0, page: 1, limit: 25, totalPages: 1 });
+  const [summary, setSummary] = useState({ all: 0, applied: 0, registered: 0, excel_upload: 0 });
 
   const fetchData = () => {
     setLoading(true);
-    fetch("/api/admin/candidates")
+    const query = new URLSearchParams({
+      page: currentPage.toString(),
+      limit: ITEMS_PER_PAGE.toString(),
+      search: search,
+      sourceTab: sourceTab
+    }).toString();
+    fetch(`/api/admin/candidates?${query}`)
       .then(r => r.json())
       .then(d => {
-        setCandidates(Array.isArray(d) ? d : []);
+        setCandidates(Array.isArray(d.data) ? d.data : []);
+        if (d.pagination) setPagination(d.pagination);
+        if (d.summary) setSummary(d.summary);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -86,29 +96,30 @@ export default function SACandidatesPage() {
   };
 
   useEffect(() => {
-    fetchData();
     fetchSupportUsers();
   }, []);
 
-  // Filter candidates by search and sourceTab
-  const filtered = candidates.filter(c => {
-    const matchesSearch = c.name?.toLowerCase().includes(search.toLowerCase()) || 
-                          c.email?.toLowerCase().includes(search.toLowerCase()) || 
-                          c.phone?.includes(search) ||
-                          c.currentRole?.toLowerCase().includes(search.toLowerCase());
-    if (!matchesSearch) return false;
-    if (sourceTab === 'applied') return c.source === 'applied' || !!(c.appliedFor || c.requirementTitle);
-    if (sourceTab === 'registered') return c.source !== 'applied' && !(c.appliedFor || c.requirementTitle) && c.source !== 'excel_upload';
-    if (sourceTab === 'excel_upload') return c.source === 'excel_upload';
-    return true;
-  });
-
   useEffect(() => {
-    setCurrentPage(1);
-  }, [search, sourceTab]);
+    const delayDebounceFn = setTimeout(() => {
+      fetchData();
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [currentPage, search, sourceTab]);
 
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paginatedCandidates = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleTabChange = (tab: any) => {
+    setSourceTab(tab);
+    setCurrentPage(1);
+    setSelectedIds([]);
+  };
+
+  const filtered = candidates;
+  const paginatedCandidates = candidates;
+  const totalPages = pagination.totalPages;
 
   const handleSelectAll = () => {
     if (selectedIds.length === filtered.length) {
@@ -672,17 +683,17 @@ Website: https://www.gojobsync.com/`
       <div className="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border mb-6 gap-4">
         {/* Source Tabs */}
         <div className="flex bg-gray-100 p-1 rounded-lg">
-          <button onClick={() => { setSourceTab('all'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'all' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            All ({candidates.length})
+          <button onClick={() => handleTabChange('all')} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'all' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            All ({summary.all})
           </button>
-          <button onClick={() => { setSourceTab('applied'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'applied' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            Applied ({candidates.filter(c => !!(c.appliedFor || c.requirementTitle)).length})
+          <button onClick={() => handleTabChange('applied')} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'applied' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            Applied ({summary.applied})
           </button>
-          <button onClick={() => { setSourceTab('registered'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'registered' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            Registered ({candidates.filter(c => !(c.appliedFor || c.requirementTitle) && c.source !== 'excel_upload').length})
+          <button onClick={() => handleTabChange('registered')} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'registered' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            Registered ({summary.registered})
           </button>
-          <button onClick={() => { setSourceTab('excel_upload'); setSelectedIds([]); }} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'excel_upload' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-            Excel Uploads ({candidates.filter(c => c.source === 'excel_upload').length})
+          <button onClick={() => handleTabChange('excel_upload')} className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${sourceTab === 'excel_upload' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            Excel Uploads ({summary.excel_upload})
           </button>
         </div>
 
@@ -708,7 +719,7 @@ Website: https://www.gojobsync.com/`
           )}
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input type="text" placeholder="Search name, email, phone..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input type="text" placeholder="Search name, email, phone..." value={search} onChange={handleSearchChange} className="w-full pl-9 pr-4 py-1.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
       </div>
@@ -803,10 +814,10 @@ Website: https://www.gojobsync.com/`
         </div>
 
         {/* Pagination Footer */}
-        {filtered.length > 0 && (
+        {pagination.total > 0 && (
           <div className="flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4 rounded-b-xl gap-4">
             <span className="text-sm text-gray-600">
-              Showing <span className="font-bold text-gray-900">{((currentPage - 1) * ITEMS_PER_PAGE) + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)}</span> of <span className="font-bold text-gray-900">{filtered.length}</span> candidates
+              Showing <span className="font-bold text-gray-900">{((currentPage - 1) * ITEMS_PER_PAGE) + 1}</span> to <span className="font-bold text-gray-900">{Math.min(currentPage * ITEMS_PER_PAGE, pagination.total)}</span> of <span className="font-bold text-gray-900">{pagination.total}</span> candidates
             </span>
             <div className="flex items-center gap-2">
               <button
@@ -822,8 +833,10 @@ Website: https://www.gojobsync.com/`
                   let pageNum = i + 1;
                   if (totalPages > 5) {
                     if (currentPage > 3) {
-                      pageNum = currentPage - 3 + i;
-                      if (pageNum > totalPages) return null;
+                      pageNum = currentPage - 2 + i;
+                      if (pageNum > totalPages) {
+                        pageNum = totalPages - 4 + i;
+                      }
                     }
                   }
                   if (pageNum > totalPages || pageNum < 1) return null;
