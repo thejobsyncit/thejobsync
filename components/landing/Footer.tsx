@@ -73,7 +73,7 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-3 mb-6 group">
               <div className="relative">
                 <div className="absolute inset-0 rounded-full bg-[#00B4D8]/20 blur-md group-hover:blur-lg transition-all" />
-                <img src="/loooo.jpeg" alt="GoJobSync" className="relative h-11 w-auto rounded-full border border-white/20" />
+                <img src="/loooo.jpeg" alt="GoJobSync" width="44" height="44" className="relative h-11 w-auto rounded-full border border-white/20" />
               </div>
               <span className="font-black text-xl text-white tracking-tight">GoJobSync</span>
             </Link>

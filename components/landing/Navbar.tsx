@@ -59,6 +59,7 @@ export default function Navbar() {
                 <img
                   src="/loooo.jpeg"
                   alt="The jobsync Logo"
+                  width="44" height="44"
                   className="relative h-11 w-auto object-contain rounded-full border border-[#0077B6]/40 shadow-[0_0_16px_rgba(0,119,182,0.2)]"
                 />
               </div>

@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.gojobsync.com'),
   title: {
-    default: 'GoJobSync – Find Jobs in India | Top Job Portal for IT, Engineering & More',
+    default: 'GoJobSync | Top IT & Engineering Job Portal in India',
     template: '%s | GoJobSync – India Job Portal',
   },
   description:

@@ -121,7 +121,7 @@ export default function ContactUs() {
             <div className="rounded-2xl border border-slate-200 dark:border-[#0077B6]/15 bg-white dark:bg-[#03045E]/20 overflow-hidden shadow-sm dark:shadow-none">
               <div className="relative h-52">
                 <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=900&q=80"
-                  alt="Dubai office" className="w-full h-full object-cover" />
+                  alt="Dubai office" width="900" height="600" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
                 <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/90 dark:bg-[#010a18]/80 backdrop-blur-xl border border-[#0077B6]/20 rounded-xl px-4 py-2">
                   <MapPin size={16} className="text-[#0077B6] dark:text-[#00B4D8]" />

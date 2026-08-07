@@ -61,7 +61,7 @@ export default function Features() {
               <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-[#0077B6]/15 to-transparent blur-2xl" />
               <div className="relative rounded-[2rem] overflow-hidden border border-[#0077B6]/20 shadow-[0_32px_80px_rgba(0,119,182,0.08)] dark:shadow-[0_32px_80px_rgba(0,0,0,0.5)]">
                 <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&w=900&q=80"
-                  alt="Employer Platform" className="w-full h-80 object-cover" />
+                  alt="Employer Platform" width="900" height="600" className="w-full h-80 object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 dark:from-[#010a18]/60 via-transparent to-transparent" />
               </div>
             </div>

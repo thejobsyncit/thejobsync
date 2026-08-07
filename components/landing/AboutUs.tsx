@@ -44,7 +44,7 @@ export default function AboutUs() {
               <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-[#0077B6]/15 to-transparent blur-2xl" />
               <div className="relative rounded-[2rem] overflow-hidden border border-[#0077B6]/20 shadow-[0_32px_80px_rgba(0,119,182,0.08)] dark:shadow-[0_32px_80px_rgba(0,0,0,0.5)]">
                 <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80"
-                  alt="Recruitment Platform" className="w-full h-80 object-cover" />
+                  alt="Recruitment Platform" width="900" height="600" className="w-full h-80 object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 dark:from-[#010a18]/60 via-transparent to-transparent" />
               </div>
               <div className="absolute -bottom-6 -right-6 bg-white dark:bg-[#010a18]/90 backdrop-blur-xl border border-[#0077B6]/20 rounded-2xl px-6 py-4 shadow-xl">

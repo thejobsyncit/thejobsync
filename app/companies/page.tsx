@@ -96,7 +96,7 @@ export default function CompaniesPage() {
 
         {/* Floating Circular Image on Right */}
         <div className="hidden lg:block absolute top-10 right-10 w-64 h-64 rounded-full overflow-hidden border-8 border-white shadow-2xl z-20">
-          <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=400&q=80" alt="Team Silhouette" className="w-full h-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=400&q=80" alt="Team Silhouette" width="400" height="400" className="w-full h-full object-cover" />
         </div>
 
         {/* Large Bottom Image */}
@@ -104,6 +104,7 @@ export default function CompaniesPage() {
           <img 
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80" 
             alt="Business Meeting" 
+            width="1920" height="1080"
             className="w-full h-full object-cover rounded-t-[3rem]"
           />
         </div>
@@ -154,6 +155,7 @@ export default function CompaniesPage() {
               <img 
                 src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" 
                 alt="Modern Skyscrapers" 
+                width="800" height="600"
                 className="w-full h-[600px] object-cover rounded-3xl shadow-xl"
               />
               <div className="absolute -bottom-8 -left-8 bg-white p-6 rounded-2xl shadow-2xl flex items-center gap-4">
@@ -201,7 +203,7 @@ export default function CompaniesPage() {
                 {primarySectors.map((sector) => (
                   <div key={sector.id} className="bg-white dark:bg-[#011a3b] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-white/5 hover:shadow-lg dark:hover:shadow-[#0077B6]/20 transition-all duration-300 group">
                     <div className="h-48 overflow-hidden">
-                      <img src={sector.image} alt={sector.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={sector.image} alt={sector.title} width="400" height="300" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="p-6">
                       <span className="text-[#0077B6] text-xs font-bold tracking-wider mb-2 block">{sector.id}</span>
@@ -228,7 +230,7 @@ export default function CompaniesPage() {
                 {secondarySectors.map((sector) => (
                   <div key={sector.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow group">
                     <div className="h-48 overflow-hidden">
-                      <img src={sector.image} alt={sector.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={sector.image} alt={sector.title} width="400" height="300" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="p-6">
                       <span className="text-[#0077B6] text-xs font-bold tracking-wider mb-2 block">{sector.id}</span>
@@ -255,7 +257,7 @@ export default function CompaniesPage() {
                 {tertiarySectors.map((sector) => (
                   <div key={sector.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow group">
                     <div className="h-48 overflow-hidden">
-                      <img src={sector.image} alt={sector.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={sector.image} alt={sector.title} width="400" height="300" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="p-6">
                       <span className="text-[#0077B6] text-xs font-bold tracking-wider mb-2 block">{sector.id}</span>
@@ -282,7 +284,7 @@ export default function CompaniesPage() {
                 {quaternarySectors.map((sector) => (
                   <div key={sector.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-shadow group">
                     <div className="h-48 overflow-hidden">
-                      <img src={sector.image} alt={sector.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={sector.image} alt={sector.title} width="400" height="300" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="p-6">
                       <span className="text-[#0077B6] text-xs font-bold tracking-wider mb-2 block">{sector.id}</span>
