@@ -758,6 +758,11 @@ Website: https://www.gojobsync.com/`
                                 <Check size={10} /> Completed
                               </span>
                             )}
+                            {c.status === 'new' && (
+                              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded uppercase bg-green-500 text-white flex items-center gap-1 shadow-sm">
+                                Fresh
+                              </span>
+                            )}
                             <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded uppercase ${c.source === 'excel_upload' || c.source === 'self' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}`}>
                               {c.source === 'excel_upload' || c.source === 'self' ? 'Excel' : 'Online'}
                             </span>
