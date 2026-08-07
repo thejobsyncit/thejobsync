@@ -387,7 +387,7 @@ Website: https://www.gojobsync.com/`
 
   // Group candidates by Date
   const grouped = paginatedCandidates.reduce((acc: any, c: any) => {
-    const d = new Date(c.createdAt);
+    const d = new Date(c.updatedAt || c.createdAt);
     const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     if (!acc[dateStr]) acc[dateStr] = [];
     acc[dateStr].push(c);
@@ -415,14 +415,42 @@ Website: https://www.gojobsync.com/`
   };
 
   const getEducationString = (c: any) => {
-    if (!c.education) return "NA";
+    if (!c.education) return null;
     try {
       if (c.education.startsWith('[')) {
         const edus = JSON.parse(c.education);
-        if (edus.length && edus[0].degree) return `${edus[0].degree} (${edus[0].college || ''})`;
+        if (Array.isArray(edus)) {
+          const validEdus = edus.filter(e => e.degree || e.college);
+          if (validEdus.length > 0) {
+            return validEdus.map(e => {
+              if (e.degree && e.college) return `${e.degree} (${e.college})`;
+              return e.degree || e.college;
+            }).join(' | ');
+          }
+        }
       }
     } catch {}
     return c.education;
+  };
+
+  const getExperienceString = (c: any) => {
+    if (!c.experience || c.experience === 'NA') return "NA";
+    try {
+      if (typeof c.experience === 'string' && c.experience.startsWith('[')) {
+        const exps = JSON.parse(c.experience);
+        if (Array.isArray(exps)) {
+          const validExps = exps.filter((e: any) => e.role || e.company);
+          if (validExps.length > 0) {
+            return validExps.map(e => {
+              if (e.role && e.company) return `${e.role} at ${e.company}`;
+              return e.role || e.company;
+            }).join(' | ');
+          }
+          return "NA";
+        }
+      }
+    } catch {}
+    return c.experience;
   };
 
   const getLocationString = (c: any) => {
@@ -443,7 +471,7 @@ Website: https://www.gojobsync.com/`
       name: c.name || "",
       email: c.email || "",
       phone: c.phone || "",
-      experience: c.experience || "",
+      experience: getExperienceString(c) || "",
       education: getEducationString(c) || "",
       location: getLocationString(c) || "",
       skills: typeof c.skills === 'string' && c.skills.startsWith('[') ? (() => { try { return JSON.parse(c.skills).join(', '); } catch { return c.skills; } })() : (c.skills || ""),
@@ -941,8 +969,8 @@ Website: https://www.gojobsync.com/`
                   <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Contact No</p><p className="text-sm font-medium text-gray-800">{formatNA(viewResume.phone)}</p></div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Experience</p><p className="text-sm font-medium text-gray-800">{formatNA(viewResume.experience)}</p></div>
-                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Education</p><p className="text-sm font-medium text-gray-800">{formatNA(getEducationString(viewResume))}</p></div>
+                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Experience</p><p className="text-sm font-medium text-gray-800 line-clamp-3">{formatNA(getExperienceString(viewResume))}</p></div>
+                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Education</p><p className="text-sm font-medium text-gray-800 line-clamp-3">{formatNA(getEducationString(viewResume))}</p></div>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Location</p><p className="text-sm font-medium text-gray-800">{formatNA(getLocationString(viewResume))}</p></div>
                 <div className="bg-gray-50 p-3 rounded-lg">
@@ -950,10 +978,24 @@ Website: https://www.gojobsync.com/`
                   <div className="flex flex-wrap gap-2">
                     {(() => { 
                       try { 
-                        const parsed = JSON.parse(viewResume.skills); 
-                        return Array.isArray(parsed) && parsed.length > 0 ? parsed : [viewResume.skills];
-                      } catch { return viewResume.skills ? [viewResume.skills] : ["NA"]; } 
-                    })().map((skill: string, i: number) => (
+                        let arr = [];
+                        if (Array.isArray(viewResume.skills)) {
+                          arr = viewResume.skills;
+                        } else if (typeof viewResume.skills === 'string') {
+                          if (viewResume.skills.startsWith('[')) {
+                            const parsed = JSON.parse(viewResume.skills); 
+                            arr = Array.isArray(parsed) && parsed.length > 0 ? parsed : [viewResume.skills];
+                          } else {
+                            arr = viewResume.skills.split(',').map((s: string) => s.trim());
+                          }
+                        } else {
+                          arr = ["NA"];
+                        }
+                        return Array.from(new Set(arr));
+                      } catch { 
+                        return Array.isArray(viewResume.skills) ? Array.from(new Set(viewResume.skills)) : (typeof viewResume.skills === 'string' ? Array.from(new Set(viewResume.skills.split(',').map((s: string) => s.trim()))) : ["NA"]); 
+                      } 
+                    })().map((skill: any, i: number) => (
                       <span key={i} className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{skill}</span>
                     ))}
                   </div>

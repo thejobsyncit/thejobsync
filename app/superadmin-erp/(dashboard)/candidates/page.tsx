@@ -451,10 +451,38 @@ Website: https://www.gojobsync.com/`
     try {
       if (c.education.startsWith('[')) {
         const edus = JSON.parse(c.education);
-        if (edus.length && edus[0].degree) return `${edus[0].degree} (${edus[0].college || ''})`;
+        if (Array.isArray(edus)) {
+          const validEdus = edus.filter((e: any) => e.degree || e.college);
+          if (validEdus.length > 0) {
+            return validEdus.map((e: any) => {
+              if (e.degree && e.college) return `${e.degree} (${e.college})`;
+              return e.degree || e.college;
+            }).join(' | ');
+          }
+        }
       }
     } catch {}
     return c.education;
+  };
+
+  const getExperienceString = (c: any) => {
+    if (!c.experience || c.experience === 'NA') return null;
+    try {
+      if (typeof c.experience === 'string' && c.experience.startsWith('[')) {
+        const exps = JSON.parse(c.experience);
+        if (Array.isArray(exps)) {
+          const validExps = exps.filter((e: any) => e.role || e.company);
+          if (validExps.length > 0) {
+            return validExps.map((e: any) => {
+              if (e.role && e.company) return `${e.role} at ${e.company}`;
+              return e.role || e.company;
+            }).join(' | ');
+          }
+          return null; // Return null to let the renderer show NA
+        }
+      }
+    } catch {}
+    return c.experience;
   };
 
   const getLocationString = (c: any) => {
@@ -475,7 +503,7 @@ Website: https://www.gojobsync.com/`
       name: c.name || "",
       email: c.email || "",
       phone: c.phone || "",
-      experience: c.experience || "",
+      experience: getExperienceString(c) || "",
       education: getEducationString(c) || "",
       location: getLocationString(c) || "",
       skills: typeof c.skills === 'string' && c.skills.startsWith('[') ? (() => { try { return JSON.parse(c.skills).join(', '); } catch { return c.skills; } })() : (c.skills || ""),
@@ -726,7 +754,7 @@ Website: https://www.gojobsync.com/`
                     <td className="p-4 text-sm font-semibold">{renderField(c.name)}</td>
                     <td className="p-4 text-sm text-gray-600">{renderField(c.email)}</td>
                     <td className="p-4 text-sm text-gray-600">{renderField(c.phone)}</td>
-                    <td className="p-4 text-sm font-medium text-slate-700">{renderField(c.currentRole || c.appliedFor)}</td>
+                    <td className="p-4 text-sm font-medium text-slate-700">{renderField(c.requirement?.title || c.currentRole || c.appliedFor)}</td>
                     <td className="p-4 text-sm text-gray-600">{renderField(getEducationString(c))}</td>
                     <td className="p-4 text-sm text-gray-600 whitespace-nowrap">{renderField(getLocationString(c))}</td>
                     <td className="p-4 text-xs">
@@ -989,8 +1017,8 @@ Website: https://www.gojobsync.com/`
                   <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Contact No</p><p className="text-sm font-medium text-gray-800">{renderField(viewResume.phone)}</p></div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Experience</p><p className="text-sm font-medium text-gray-800">{renderField(viewResume.experience)}</p></div>
-                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Education</p><p className="text-sm font-medium text-gray-800">{renderField(getEducationString(viewResume))}</p></div>
+                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Experience</p><p className="text-sm font-medium text-gray-800 line-clamp-3">{renderField(getExperienceString(viewResume))}</p></div>
+                  <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Education</p><p className="text-sm font-medium text-gray-800 line-clamp-3">{renderField(getEducationString(viewResume))}</p></div>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg"><p className="text-xs text-gray-500 mb-1">Location</p><p className="text-sm font-medium text-gray-800">{renderField(getLocationString(viewResume))}</p></div>
                 <div className="bg-gray-50 p-3 rounded-lg">
@@ -998,10 +1026,24 @@ Website: https://www.gojobsync.com/`
                   <div className="flex flex-wrap gap-2">
                     {(() => { 
                       try { 
-                        const parsed = JSON.parse(viewResume.skills); 
-                        return Array.isArray(parsed) && parsed.length > 0 ? parsed : [viewResume.skills];
-                      } catch { return viewResume.skills ? [viewResume.skills] : []; } 
-                    })().map((skill: string, i: number) => (
+                        let arr = [];
+                        if (Array.isArray(viewResume.skills)) {
+                          arr = viewResume.skills;
+                        } else if (typeof viewResume.skills === 'string') {
+                          if (viewResume.skills.startsWith('[')) {
+                            const parsed = JSON.parse(viewResume.skills); 
+                            arr = Array.isArray(parsed) && parsed.length > 0 ? parsed : [viewResume.skills];
+                          } else {
+                            arr = viewResume.skills.split(',').map((s: string) => s.trim());
+                          }
+                        } else {
+                          arr = [];
+                        }
+                        return Array.from(new Set(arr));
+                      } catch { 
+                        return Array.isArray(viewResume.skills) ? Array.from(new Set(viewResume.skills)) : (typeof viewResume.skills === 'string' ? Array.from(new Set(viewResume.skills.split(',').map((s: string) => s.trim()))) : []); 
+                      } 
+                    })().map((skill: any, i: number) => (
                       <span key={i} className="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">{skill}</span>
                     ))}
                   </div>

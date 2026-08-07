@@ -19,9 +19,44 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Application support user not found' }, { status: 404 });
     }
 
+    // Fetch candidates to identify duplicates
+    const candidates = await prisma.candidate.findMany({
+      where: { id: { in: candidateIds } },
+      orderBy: { createdAt: 'desc' } // Keep the newest one
+    });
+
+    const uniqueEmails = new Set();
+    const uniquePhones = new Set();
+    const idsToPush: string[] = [];
+    const idsToDelete: string[] = [];
+
+    for (const c of candidates) {
+      const email = (c.email || '').toLowerCase().trim();
+      const phone = (c.phone || '').trim();
+      
+      const isDuplicate = 
+        (email && email !== 'na' && !email.startsWith('noemail-') && uniqueEmails.has(email)) || 
+        (phone && phone !== 'na' && uniquePhones.has(phone));
+                          
+      if (!isDuplicate) {
+        if (email && email !== 'na' && !email.startsWith('noemail-')) uniqueEmails.add(email);
+        if (phone && phone !== 'na') uniquePhones.add(phone);
+        idsToPush.push(c.id);
+      } else {
+        idsToDelete.push(c.id);
+      }
+    }
+
+    // Remove duplicates from the database
+    if (idsToDelete.length > 0) {
+      await prisma.candidate.deleteMany({
+        where: { id: { in: idsToDelete } }
+      });
+    }
+
     const result = await prisma.candidate.updateMany({
       where: {
-        id: { in: candidateIds }
+        id: { in: idsToPush }
       },
       data: {
         assignedSupportId: supportUserId

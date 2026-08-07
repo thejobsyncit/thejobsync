@@ -140,7 +140,8 @@ export async function GET() {
       where: { source: 'applied' },
       orderBy: { createdAt: 'desc' },
       include: {
-        assignedSupport: { select: { id: true, name: true } }
+        assignedSupport: { select: { id: true, name: true } },
+        requirement: { select: { title: true } }
       } as any
     });
 
@@ -149,7 +150,8 @@ export async function GET() {
       where: { source: { not: 'applied' } },
       orderBy: { createdAt: 'desc' },
       include: {
-        assignedSupport: { select: { id: true, name: true } }
+        assignedSupport: { select: { id: true, name: true } },
+        requirement: { select: { title: true } }
       } as any
     });
 

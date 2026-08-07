@@ -984,7 +984,7 @@ function SmartSelector({ value, onChange, isDark, options, placeholder, searchPl
     return (
       <div style={{ position: 'relative' }}>
         <input
-          style={getINPUT(isDark)}
+          style={{ ...getINPUT(isDark), paddingRight: '110px' }}
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
