@@ -81,7 +81,7 @@ export default function FreshDumpPage() {
   const [mailModal, setMailModal] = useState<any>(null);
   const [sendingMail, setSendingMail] = useState(false);
   const [sendProgress, setSendProgress] = useState({ current: 0, total: 0 });
-  const [activeTab, setActiveTab] = useState<'pending' | 'completed'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'completed' | 'fresh'>('pending');
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 30;
 
@@ -377,7 +377,11 @@ Website: https://www.gojobsync.com/`
 
   if (loading) return <div className="p-10 flex justify-center"><div className="spinner" style={{width: 40, height: 40}} /></div>;
 
-  const filteredCandidates = candidates.filter(c => activeTab === 'completed' ? c.status === 'completed' : c.status !== 'completed');
+  const filteredCandidates = candidates.filter(c => {
+    if (activeTab === 'completed') return c.status === 'completed';
+    if (activeTab === 'fresh') return c.status === 'new' && c.source !== 'self' && new Date(c.updatedAt).toDateString() === new Date().toDateString();
+    return c.status !== 'completed';
+  });
   const totalPages = Math.ceil(filteredCandidates.length / ITEMS_PER_PAGE);
   const paginatedCandidates = filteredCandidates.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
@@ -708,6 +712,9 @@ Website: https://www.gojobsync.com/`
       )}
 
       <div className="flex bg-gray-100 p-1 rounded-lg w-fit mb-6">
+        <button onClick={() => { setActiveTab('fresh'); setSelectedIds([]); setCurrentPage(1); }} className={`px-4 py-1.5 rounded-md text-sm font-semibold transition ${activeTab === 'fresh' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+          Fresh ({candidates.filter(c => c.status === 'new' && c.source !== 'self' && new Date(c.updatedAt).toDateString() === new Date().toDateString()).length})
+        </button>
         <button onClick={() => { setActiveTab('pending'); setSelectedIds([]); setCurrentPage(1); }} className={`px-4 py-1.5 rounded-md text-sm font-semibold transition ${activeTab === 'pending' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
           Pending ({candidates.filter(c => c.status !== 'completed').length})
         </button>
