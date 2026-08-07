@@ -1,72 +1,140 @@
 'use client';
-import { Search, Monitor, Building2, ChevronDown } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { ArrowRight, Sparkles, Users, Building2, Briefcase } from 'lucide-react';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  show: (i: number = 0) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.7, delay: i * 0.15, ease: "easeOut" },
+  }),
+};
+
+const stats = [
+  { icon: <Users size={22} />, value: '10,000+', label: 'Active Candidates' },
+  { icon: <Building2 size={22} />, value: '500+', label: 'Trusted Companies' },
+  { icon: <Briefcase size={22} />, value: '1,200+', label: 'Live Jobs' },
+];
 
 export default function Hero() {
-
   return (
-    <div className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-      {/* Main Background Image */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat mt-[45vh]"
-        style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=2850&q=80")' }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-slate-50/80 to-transparent dark:from-slate-900 dark:via-slate-900/80 transition-colors duration-300"></div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-50 dark:bg-[#010a18]">
+      {/* Animated background mesh */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-[radial-gradient(circle,rgba(0,119,182,0.10)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(0,119,182,0.18)_0%,transparent_70%)]" />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(0,180,216,0.07)_0%,transparent_65%)] dark:bg-[radial-gradient(circle,rgba(0,180,216,0.12)_0%,transparent_65%)] animate-pulse" style={{ animationDuration: '6s' }} />
+        <div className="absolute -bottom-40 -right-20 w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(202,240,248,0.5)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(3,4,94,0.4)_0%,transparent_70%)]" />
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.04]" style={{ backgroundImage: 'radial-gradient(circle, #0077B6 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+        <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#0077B6]/20 to-transparent dark:via-[#0077B6]/30" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Floating Circular Image */}
-        <div 
-          className="hidden lg:block absolute right-0 top-0 w-[400px] h-[400px] rounded-full border-[12px] border-white dark:border-slate-800 shadow-2xl overflow-hidden z-20 transition-colors duration-300 animate-scale-in delay-2"
-        >
-          <img 
-            src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" 
-            alt="Professionals" 
-            className="w-full h-full object-cover"
-          />
-        </div>
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
+        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-8">
 
-        <div className="text-center lg:text-left max-w-4xl mx-auto lg:mx-0 relative z-30">
-          <h1 
-            className="text-5xl md:text-6xl lg:text-[76px] font-extrabold text-slate-900 dark:text-white tracking-tight mb-6 leading-tight transition-colors duration-300"
-          >
-            Navigate your Jobs here!
-          </h1>
-          
-          <p 
-            className="text-lg md:text-xl text-slate-500 dark:text-slate-400 italic font-medium max-w-2xl mb-12 mx-auto lg:mx-0 transition-colors duration-300"
-          >
-            "Lakhs of Employers. Millions of Job seekers. Endless success — only on The gojobsync.com."
-          </p>
-          
-          {/* Stats Bar */}
-          <div 
-            className="flex flex-col sm:flex-row items-center justify-between gap-6 max-w-4xl mx-auto lg:mx-0 z-50 mt-4 bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-gray-100 dark:border-white/10 rounded-3xl p-6 shadow-2xl"
-          >
-            <div className="flex flex-col items-center sm:items-start flex-1 text-center sm:text-left">
-              <span className="text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-blue-400">10,000+</span>
-              <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-1 uppercase tracking-wider">Active Candidates</span>
-            </div>
-            
-            <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-gray-300 dark:via-slate-600 to-transparent"></div>
-            
-            <div className="flex flex-col items-center sm:items-start flex-1 text-center sm:text-left">
-              <span className="text-3xl md:text-4xl font-extrabold text-[#03045E] dark:text-[#90E0EF]">500+</span>
-              <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-1 uppercase tracking-wider">Trusted Companies</span>
-            </div>
+          {/* Left column */}
+          <div className="flex-1 text-center lg:text-left">
+            <motion.div
+              variants={fadeUp} initial="hidden" animate="show" custom={0}
+              className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full border border-[#0077B6]/40 bg-[#0077B6]/10 text-[#0077B6] dark:text-[#00B4D8] text-xs font-bold tracking-widest uppercase"
+            >
+              <Sparkles size={13} className="animate-pulse" />
+              India's Premium Job Platform
+            </motion.div>
 
-            <div className="hidden sm:block w-px h-16 bg-gradient-to-b from-transparent via-gray-300 dark:via-slate-600 to-transparent"></div>
-            
-            <div className="flex flex-col items-center sm:items-start flex-1 text-center sm:text-left">
-              <span className="text-3xl md:text-4xl font-extrabold text-indigo-600 dark:text-indigo-400">1,200+</span>
-              <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-1 uppercase tracking-wider">Live Jobs</span>
-            </div>
+            <motion.h1
+              variants={fadeUp} initial="hidden" animate="show" custom={1}
+              className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.08] tracking-tight mb-6"
+            >
+              Navigate{' '}
+              <span className="relative inline-block">
+                <span className="bg-gradient-to-r from-[#0077B6] via-[#00B4D8] to-[#0077B6] bg-clip-text text-transparent">
+                  Your Career
+                </span>
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-[#0077B6] to-[#00B4D8] rounded-full opacity-70" />
+              </span>
+              <br />Here.
+            </motion.h1>
+
+            <motion.p
+              variants={fadeUp} initial="hidden" animate="show" custom={2}
+              className="text-slate-500 dark:text-[#90E0EF]/80 text-lg sm:text-xl font-medium max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed"
+            >
+              Lakhs of Employers. Millions of Job Seekers. Endless success — only on{' '}
+              <span className="text-[#0077B6] dark:text-[#00B4D8] font-semibold">gojobsync.com</span>
+            </motion.p>
+
+            <motion.div
+              variants={fadeUp} initial="hidden" animate="show" custom={3}
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+            >
+              <Link
+                href="/careers"
+                className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-white overflow-hidden shadow-[0_0_30px_rgba(0,119,182,0.3)] hover:shadow-[0_0_50px_rgba(0,119,182,0.5)] transition-all duration-300"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-[#0077B6] to-[#00B4D8]" />
+                <span className="absolute inset-0 bg-gradient-to-r from-[#00B4D8] to-[#0077B6] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <span className="relative">Find Jobs</span>
+                <ArrowRight size={18} className="relative group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-[#0077B6] border border-[#0077B6]/50 bg-[#0077B6]/5 hover:bg-[#0077B6]/15 hover:border-[#0077B6]/70 transition-all duration-300"
+              >
+                <Users size={18} />
+                Post a Job
+              </Link>
+            </motion.div>
           </div>
+
+          {/* Right column – floating image */}
+          <motion.div
+            initial={{ opacity: 0, x: 60, scale: 0.92 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
+            className="flex-1 w-full max-w-lg"
+          >
+            <div className="relative">
+              <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-[#0077B6]/20 to-[#00B4D8]/10 blur-2xl" />
+              <div className="relative rounded-[2rem] overflow-hidden border border-[#0077B6]/20 shadow-[0_32px_80px_rgba(0,0,0,0.15)] dark:shadow-[0_32px_80px_rgba(0,0,0,0.6)]">
+                <img
+                  src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80"
+                  alt="Professionals at work"
+                  className="w-full h-[400px] object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 dark:from-[#010a18]/80 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 bg-white/80 dark:bg-[#010a18]/80 backdrop-blur-xl border border-[#0077B6]/20 rounded-2xl p-4 flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0077B6] to-[#00B4D8] flex items-center justify-center flex-shrink-0">
+                    <Sparkles size={16} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-slate-900 dark:text-white font-bold text-sm">New Jobs Added Daily</p>
+                    <p className="text-slate-500 dark:text-[#90E0EF] text-xs font-medium">50+ fresh openings every 24 hours</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
+
+        {/* Stats bar */}
+        <motion.div
+          variants={fadeUp} initial="hidden" animate="show" custom={5}
+          className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-[#0077B6]/15 dark:divide-[#0077B6]/20 bg-white/70 dark:bg-[#03045E]/30 backdrop-blur-xl border border-[#0077B6]/15 dark:border-[#0077B6]/20 rounded-3xl overflow-hidden shadow-[0_8px_40px_rgba(0,119,182,0.08)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.3)]"
+        >
+          {stats.map((s, i) => (
+            <div key={i} className="flex flex-col sm:flex-row items-center justify-center gap-4 px-8 py-8 group hover:bg-[#0077B6]/5 dark:hover:bg-[#0077B6]/10 transition-colors duration-300">
+              <div className="w-12 h-12 rounded-2xl bg-[#0077B6]/10 border border-[#0077B6]/20 flex items-center justify-center text-[#0077B6] dark:text-[#00B4D8] group-hover:scale-110 transition-transform duration-300">
+                {s.icon}
+              </div>
+              <div className="text-center sm:text-left">
+                <div className="text-3xl font-black text-slate-900 dark:text-white leading-none">{s.value}</div>
+                <div className="text-slate-500 dark:text-[#90E0EF]/70 text-sm font-semibold mt-1 tracking-wide">{s.label}</div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
       </div>
-      
-      {/* Spacer to push content up and show background image below */}
-      <div className="h-[30vh] lg:h-[45vh]"></div>
-    </div>
+    </section>
   );
 }

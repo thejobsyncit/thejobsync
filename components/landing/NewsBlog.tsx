@@ -1,6 +1,7 @@
 'use client';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function NewsBlog() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -10,24 +11,13 @@ export default function NewsBlog() {
   useEffect(() => {
     fetch('/api/admin/blog')
       .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setPosts(data.filter(p => p.status === 'published'));
-        }
-      })
+      .then(data => { if (Array.isArray(data)) setPosts(data.filter(p => p.status === 'published')); })
       .catch(err => console.error("Error fetching blogs:", err))
       .finally(() => setLoading(false));
   }, []);
 
-  const handlePrev = () => {
-    if (posts.length === 0) return;
-    setCurrentIndex((prev) => (prev === 0 ? posts.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    if (posts.length === 0) return;
-    setCurrentIndex((prev) => (prev === posts.length - 1 ? 0 : prev + 1));
-  };
+  const handlePrev = () => { if (posts.length === 0) return; setCurrentIndex((prev) => (prev === 0 ? posts.length - 1 : prev - 1)); };
+  const handleNext = () => { if (posts.length === 0) return; setCurrentIndex((prev) => (prev === posts.length - 1 ? 0 : prev + 1)); };
 
   if (loading || posts.length === 0) return null;
 
@@ -35,65 +25,80 @@ export default function NewsBlog() {
   const formattedDate = new Date(currentPost.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
-    <section id="blog" className="py-20 bg-slate-50 dark:bg-slate-900/50 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header */}
-        <div className="flex justify-between items-end mb-12">
+    <section id="blog" className="relative py-28 bg-slate-50 dark:bg-[#010a18] overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#0077B6]/20 dark:via-[#0077B6]/30 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full bg-[radial-gradient(ellipse,rgba(0,119,182,0.04)_0%,transparent_70%)] dark:bg-[radial-gradient(ellipse,rgba(0,119,182,0.07)_0%,transparent_70%)] -translate-y-1/2" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-end mb-14">
           <div>
-            <h2 className="text-3xl md:text-[40px] font-extrabold text-slate-900 dark:text-white mb-2 transition-colors duration-300">News and Blog</h2>
-            <p className="text-slate-500 dark:text-slate-400 font-medium transition-colors duration-300">Get the latest news, updates and tips</p>
+            <p className="text-xs font-bold tracking-[0.25em] uppercase text-[#0077B6] mb-4">News & Blog</p>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-2 leading-tight tracking-tight">
+              Latest <span className="bg-gradient-to-r from-[#0077B6] to-[#00B4D8] bg-clip-text text-transparent">Insights</span>
+            </h2>
+            <p className="text-slate-500 dark:text-[#90E0EF]/60 font-medium text-lg">Get the latest news, updates and career tips</p>
           </div>
           {posts.length > 1 && (
             <div className="hidden md:flex gap-3">
-              <button onClick={handlePrev} className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-400 hover:text-[#0077B6] hover:border-[#0077B6] transition-colors">
+              <button onClick={handlePrev} className="w-11 h-11 rounded-full border border-slate-300 dark:border-[#0077B6]/25 flex items-center justify-center text-slate-400 dark:text-[#90E0EF]/50 hover:text-[#0077B6] dark:hover:text-white hover:border-[#0077B6] dark:hover:border-[#0077B6]/60 transition-all duration-300">
                 <ChevronLeft size={20} />
               </button>
-              <button onClick={handleNext} className="w-10 h-10 rounded-full border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-400 hover:text-[#0077B6] hover:border-[#0077B6] transition-colors">
+              <button onClick={handleNext} className="w-11 h-11 rounded-full border border-slate-300 dark:border-[#0077B6]/25 flex items-center justify-center text-slate-400 dark:text-[#90E0EF]/50 hover:text-[#0077B6] dark:hover:text-white hover:border-[#0077B6] dark:hover:border-[#0077B6]/60 transition-all duration-300">
                 <ChevronRight size={20} />
               </button>
             </div>
           )}
         </div>
 
-        {/* Featured Post Card */}
-        <div className="bg-white dark:bg-slate-800/80 rounded-3xl overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.06)] border border-gray-100 dark:border-white/5 flex flex-col md:flex-row mb-12 transition-all duration-300">
-          
-          {/* Image Left */}
-          <div className="w-full md:w-1/2">
-            <img 
-              src={currentPost.coverImage || "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80"} 
-              alt={currentPost.title} 
-              className="w-full h-full object-cover min-h-[300px]"
-            />
-          </div>
-          
-          {/* Content Right */}
-          <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-            <div className="flex gap-2 mb-6 flex-wrap">
-              <span className="bg-[#0077B6] text-white text-[11px] font-bold px-3 py-1 rounded-full tracking-wider uppercase">BLOG POST</span>
+        <AnimatePresence mode="wait">
+          <motion.div key={currentIndex} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}
+            className="flex flex-col md:flex-row rounded-[2rem] overflow-hidden border border-slate-200 dark:border-[#0077B6]/15 bg-white dark:bg-[#03045E]/20 shadow-[0_4px_30px_rgba(0,0,0,0.05)] dark:shadow-[0_32px_80px_rgba(0,0,0,0.3)] hover:border-[#0077B6]/30 dark:hover:border-[#0077B6]/30 transition-all duration-400">
+            <div className="w-full md:w-1/2 relative">
+              <img src={currentPost.coverImage || "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=900&q=80"}
+                alt={currentPost.title} className="w-full h-full object-cover min-h-[280px]" />
             </div>
-            
-            <h3 className="text-2xl md:text-[28px] font-extrabold text-slate-900 dark:text-white mb-6 leading-tight transition-colors duration-300">
-              {currentPost.title}
-            </h3>
-            
-            <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8 text-[15px] transition-colors duration-300">
-              {currentPost.excerpt || currentPost.content.substring(0, 150) + "..."}
-            </p>
-            
-            <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-50 dark:border-white/10 transition-colors duration-300">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0077B6] to-[#00B4D8] text-white flex items-center justify-center text-xs font-bold uppercase">
-                  {currentPost.author ? currentPost.author.substring(0, 2) : "GT"}
+            <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+              <span className="inline-flex items-center gap-1.5 self-start text-[10px] font-black px-3 py-1.5 rounded-full bg-gradient-to-r from-[#0077B6] to-[#00B4D8] text-white tracking-widest uppercase mb-5">
+                Blog Post
+              </span>
+              <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-4 leading-tight">
+                {currentPost.title}
+              </h3>
+              <p className="text-slate-500 dark:text-[#90E0EF]/60 font-medium leading-relaxed mb-8 text-[15px]">
+                {currentPost.excerpt || currentPost.content.substring(0, 160) + "..."}
+              </p>
+              <div className="flex items-center justify-between mt-auto pt-6 border-t border-slate-100 dark:border-[#0077B6]/15">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0077B6] to-[#00B4D8] text-white flex items-center justify-center text-xs font-black uppercase">
+                    {currentPost.author ? currentPost.author.substring(0, 2) : "GT"}
+                  </div>
+                  <div className="flex items-center gap-1 text-slate-600 dark:text-[#90E0EF]/80 text-sm font-semibold">
+                    <User size={13} />
+                    <span>{currentPost.author || "GoJobSync Team"}</span>
+                  </div>
                 </div>
-                <span className="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors duration-300">{currentPost.author || "The jobsync Team"}</span>
+                <div className="flex items-center gap-1.5 text-slate-400 dark:text-[#90E0EF]/50 text-sm">
+                  <Calendar size={13} />
+                  <span>{formattedDate}</span>
+                </div>
               </div>
-              <span className="text-[13px] font-medium text-slate-400 dark:text-slate-500 transition-colors duration-300">{formattedDate}</span>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
 
+        {posts.length > 1 && (
+          <div className="flex md:hidden justify-center gap-4 mt-6">
+            <button onClick={handlePrev} className="w-11 h-11 rounded-full border border-slate-300 dark:border-[#0077B6]/25 flex items-center justify-center text-slate-400 hover:text-[#0077B6] hover:border-[#0077B6] transition-all">
+              <ChevronLeft size={20} />
+            </button>
+            <button onClick={handleNext} className="w-11 h-11 rounded-full border border-slate-300 dark:border-[#0077B6]/25 flex items-center justify-center text-slate-400 hover:text-[#0077B6] hover:border-[#0077B6] transition-all">
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

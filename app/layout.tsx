@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
@@ -10,9 +10,10 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ToastProvider } from "@/context/ToastContext";
 import { Toaster } from "react-hot-toast";
 
-const inter = Inter({
+const inter = Plus_Jakarta_Sans({
   variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const geistMono = Geist_Mono({

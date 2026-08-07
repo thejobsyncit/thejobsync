@@ -32,6 +32,21 @@ const FIELDS = DEPARTMENTS;
 
 const INPUT_CLS = 'w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#0077B6] transition-colors bg-white text-slate-900';
 
+// Parses JSON location strings like {"country":"...","state":"...","city":"..."}
+// and returns a clean "City, State, Country" string
+const formatLocation = (raw: string): string => {
+  if (!raw) return '';
+  if (raw.trim().startsWith('{')) {
+    try {
+      const parsed = JSON.parse(raw);
+      return [parsed.city, parsed.state, parsed.country]
+        .filter(Boolean)
+        .join(', ');
+    } catch { return raw; }
+  }
+  return raw;
+};
+
 export default function EmployerDashboard() {
   const router = useRouter();
   const { employer, isLoading, logout } = useEmployerAuth();
@@ -429,7 +444,7 @@ export default function EmployerDashboard() {
                       </span>
                     </div>
                     <div className="flex items-center gap-3 mt-1 flex-wrap">
-                      <span className="flex items-center gap-1 text-xs text-slate-500"><MapPin size={11} />{job.location}</span>
+                      <span className="flex items-center gap-1 text-xs text-slate-500"><MapPin size={11} />{formatLocation(job.location)}</span>
                       <span className="flex items-center gap-1 text-xs text-slate-500"><Clock size={11} />{job.jobType}</span>
                       <span className="text-xs text-[#03045E] font-medium">{job.field}</span>
                       <span className="text-xs text-slate-400">{job.salaryRange}</span>
@@ -531,7 +546,7 @@ export default function EmployerDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-slate-50 p-4 rounded-xl">
                     <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Location</div>
-                    <div className="text-slate-900 font-medium flex items-center gap-2"><MapPin size={14} className="text-slate-400"/> {selectedJob.location}</div>
+                    <div className="text-slate-900 font-medium flex items-center gap-2"><MapPin size={14} className="text-slate-400"/> {formatLocation(selectedJob.location)}</div>
                   </div>
                   <div className="bg-slate-50 p-4 rounded-xl">
                     <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Salary Range</div>
