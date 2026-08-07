@@ -9,6 +9,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    let validEmails: string[] = [];
+    if (Array.isArray(toEmail)) {
+      validEmails = toEmail.filter(e => e && e !== 'NA' && e.includes('@') && !e.startsWith('noemail'));
+    } else if (typeof toEmail === 'string') {
+      validEmails = toEmail.split(',').map(e => e.trim()).filter(e => e && e !== 'NA' && e.includes('@') && !e.startsWith('noemail'));
+    }
+
+    if (validEmails.length === 0) {
+      return NextResponse.json({ error: 'No valid email addresses provided' }, { status: 400 });
+    }
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'jwij4ht3pzhr.hkph.mail-manager-smtp.amazonaws.com',
       port: 587,
@@ -19,10 +30,13 @@ export async function POST(req: NextRequest) {
       }
     });
 
+    const isBulk = validEmails.length > 1;
+
     const mailOptions = {
       from: `"GoJobSync" <hr@gojobsync.com>`,
       replyTo: process.env.SMTP_EMAIL || 'thejobsyncit@gmail.com',
-      to: toEmail,
+      to: isBulk ? `"GoJobSync Candidates" <hr@gojobsync.com>` : validEmails[0],
+      bcc: isBulk ? validEmails : undefined,
       subject: subject,
       html: `
         <!DOCTYPE html>
