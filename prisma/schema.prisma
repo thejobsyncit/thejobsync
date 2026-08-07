@@ -43,6 +43,10 @@ model User {
 
   // Application Support workflow
   assignedCandidatesSupport Candidate[] @relation("AssignedSupport")
+
+  // Daily Tasks
+  createdTasks DailyTask[] @relation("TaskCreator")
+  assignedTasks DailyTask[] @relation("TaskAssignee")
 }
 
 // ==================== CLIENT ====================
@@ -450,6 +454,21 @@ model Faq {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ==================== DAILY TASKS ====================
+model DailyTask {
+  id          String   @id @default(cuid())
+  text        String
+  priority    String   @default("medium") // high | medium | low
+  completed   Boolean  @default(false)
+  creatorId   String
+  assigneeId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creator     User     @relation("TaskCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  assignee    User     @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: Cascade)
 }
 
 model NewsletterSubscriber {

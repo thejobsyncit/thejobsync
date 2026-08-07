@@ -35,7 +35,11 @@ export default function SuperAdminERPLogin() {
         if (!res.ok) throw new Error(data.message || "Invalid credentials");
 
         if (data.role === "super_admin" || data.role === "super_admin_erp") {
-          router.push("/superadmin-erp");
+          localStorage.setItem('crm_user', JSON.stringify({
+            ...data.user,
+            role: data.role
+          }));
+          window.location.href = "/superadmin-erp";
         } else {
           throw new Error("Unauthorized role. You are not a Super Admin.");
         }
