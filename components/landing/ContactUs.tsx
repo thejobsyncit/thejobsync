@@ -34,11 +34,11 @@ export default function ContactUs() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.p variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
           className="text-center text-xs font-bold tracking-[0.25em] uppercase text-[#0077B6] mb-4">Get In Touch</motion.p>
-        <motion.h2 variants={fadeUp} initial="hidden" whileInView="show" custom={1} viewport={{ once: true }}
+        <motion.h1 variants={fadeUp} initial="hidden" whileInView="show" custom={1} viewport={{ once: true }}
           className="text-center text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-5 tracking-tight leading-tight max-w-2xl mx-auto">
           We'd Love to{' '}
           <span className="bg-gradient-to-r from-[#0077B6] to-[#00B4D8] bg-clip-text text-transparent">Hear From You</span>
-        </motion.h2>
+        </motion.h1>
         <motion.p variants={fadeUp} initial="hidden" whileInView="show" custom={2} viewport={{ once: true }}
           className="text-center text-slate-500 dark:text-[#90E0EF]/70 font-medium mb-16 max-w-xl mx-auto text-lg">
           Have a question or need support? Our team typically responds within 24 hours.

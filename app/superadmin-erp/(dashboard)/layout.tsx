@@ -8,6 +8,7 @@ import {
   CreditCard, Tag, BarChart, Image as ImageIcon, MapPin, UserCheck, Shield,
   Menu, X
 } from "lucide-react";
+import DailyChecklistWidget from "@/components/DailyChecklistWidget";
 
 export default function SuperAdminERPLayout({
   children,
@@ -169,6 +170,7 @@ export default function SuperAdminERPLayout({
           {children}
         </div>
       </main>
+      <DailyChecklistWidget />
     </div>
   );
 }

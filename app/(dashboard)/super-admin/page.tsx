@@ -328,6 +328,8 @@ export default function SuperAdminPage() {
                   <option value="super_admin">Super Admin</option>
                   <option value="admin_erp">Admin ERP</option>
                   <option value="super_admin_erp">Super Admin ERP</option>
+                  <option value="developer">Developer</option>
+                  <option value="tester">Testing</option>
                 </select>
               </div>
               <div className="form-group">
@@ -513,6 +515,8 @@ export default function SuperAdminPage() {
                   <option value="super_admin">Super Admin</option>
                   <option value="admin_erp">Admin ERP</option>
                   <option value="super_admin_erp">Super Admin ERP</option>
+                  <option value="developer">Developer</option>
+                  <option value="tester">Testing</option>
                 </select>
               </div>
               <div className="form-group">

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
+import DailyChecklistWidget from '@/components/DailyChecklistWidget';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -72,6 +73,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           {children}
         </div>
       </main>
+      <DailyChecklistWidget />
     </div>
   );
 }

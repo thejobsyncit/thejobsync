@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LayoutDashboard, Briefcase, Users, FileText, HelpCircle, FileCheck, Mail, Menu, X } from "lucide-react";
+import DailyChecklistWidget from "@/components/DailyChecklistWidget";
 
 export default function AdminERPLayout({
   children,
@@ -156,6 +157,7 @@ export default function AdminERPLayout({
           {children}
         </div>
       </main>
+      <DailyChecklistWidget />
     </div>
   );
 }

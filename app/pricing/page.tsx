@@ -140,7 +140,7 @@ export default function PricingPage() {
 
       <div className="pt-20">
         <div className="bg-[#03045E] dark:bg-slate-950 py-8 text-white flex justify-center items-center gap-4 transition-colors duration-300 border-b border-[#00B4D8]/20">
-          <span className="font-medium text-blue-200">Choose the plan that fits your needs.</span>
+          <h1 className="font-bold text-xl md:text-2xl text-white">Choose the plan that fits your needs.</h1>
           <div className="bg-white/10 rounded-lg p-1 flex">
             <button
               onClick={() => setCurrency('USD')}

@@ -26,11 +26,11 @@ export default function AboutUs() {
           className="text-center text-xs font-bold tracking-[0.25em] uppercase text-[#0077B6] mb-4">
           About GoJobSync
         </motion.p>
-        <motion.h2 variants={fadeUp} initial="hidden" whileInView="show" custom={1} viewport={{ once: true }}
+        <motion.h1 variants={fadeUp} initial="hidden" whileInView="show" custom={1} viewport={{ once: true }}
           className="text-center text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight tracking-tight max-w-3xl mx-auto">
           Redefining the Future{' '}
           <span className="bg-gradient-to-r from-[#0077B6] to-[#00B4D8] bg-clip-text text-transparent">of Recruitment</span>
-        </motion.h2>
+        </motion.h1>
         <motion.p variants={fadeUp} initial="hidden" whileInView="show" custom={2} viewport={{ once: true }}
           className="text-center text-slate-500 dark:text-[#90E0EF]/70 text-lg font-medium max-w-2xl mx-auto mb-20 leading-relaxed">
           We digitize and streamline the entire hiring lifecycle, delivering a seamless, data-driven experience that empowers both employers and job seekers.

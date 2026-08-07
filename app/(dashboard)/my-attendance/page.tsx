@@ -59,7 +59,7 @@ export default function MyAttendancePage() {
                         <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--muted-foreground)', width: 60 }}>Session {idx + 1}</div>
                         <div>
                           <div style={{ fontSize: '0.65rem', color: 'var(--muted-foreground)' }}>Login</div>
-                          <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{new Date(s.loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                          <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{s.loginTime ? new Date(s.loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}</div>
                         </div>
                         <div>
                           <div style={{ fontSize: '0.65rem', color: 'var(--muted-foreground)' }}>Logout</div>
@@ -71,7 +71,7 @@ export default function MyAttendancePage() {
                     <div style={{ display: 'flex', gap: '2rem' }}>
                       <div>
                         <div style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)' }}>Login</div>
-                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{new Date(record.loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                        <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{record.loginTime ? new Date(record.loginTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}</div>
                       </div>
                       <div>
                         <div style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)' }}>Logout</div>

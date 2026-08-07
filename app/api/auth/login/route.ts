@@ -35,8 +35,8 @@ export async function POST(request: NextRequest) {
     }
 
     // --- ATTENDANCE SYSTEM ---
-    // Skip attendance for super_admin, it_admin, client, developer, tester
-    const EXEMPT_ROLES = ['super_admin', 'it_admin', 'client', 'developer', 'tester'];
+    // Skip attendance for super_admin, it_admin, client
+    const EXEMPT_ROLES = ['super_admin', 'it_admin', 'client'];
 
     if (!EXEMPT_ROLES.includes(user.role)) {
       try {

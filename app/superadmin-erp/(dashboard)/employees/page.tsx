@@ -76,6 +76,8 @@ export default function EmployeesPage() {
                 <option value="application_support">Application Support</option>
                 <option value="admin_erp">Admin ERP</option>
                 <option value="super_admin_erp">Super Admin ERP</option>
+                <option value="developer">Developer</option>
+                <option value="tester">Testing</option>
               </select>
               <input placeholder="Department (optional)" value={form.department} onChange={e => setForm({...form, department: e.target.value})} className="w-full p-2.5 border rounded-lg text-sm" />
             </div>
