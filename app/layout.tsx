@@ -193,26 +193,26 @@ export default function RootLayout({
         </Script>
         
         {/* Google Analytics */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-V3V71XSR53" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-V3V71XSR53"></script>
+        <script dangerouslySetInnerHTML={{
+          __html: `
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-V3V71XSR53');
-          `}
-        </Script>
+          `
+        }} />
         
         {/* Google Tag Manager */}
-        <Script id="google-tag-manager" strategy="afterInteractive">
-          {`
+        <script dangerouslySetInnerHTML={{
+          __html: `
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','GTM-WD3S5W42');
-          `}
-        </Script>
+          `
+        }} />
         <style dangerouslySetInnerHTML={{ __html: `
           body { top: 0 !important; }
           .skiptranslate iframe, .goog-te-banner-frame { display: none !important; }
@@ -221,6 +221,12 @@ export default function RootLayout({
         `}} />
       </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WD3S5W42"
+          height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}></iframe>
+        </noscript>
+        {/* End Google Tag Manager (noscript) */}
         <div id="google_translate_element"></div>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} value={{ light: 'light', dark: 'dark' }}>
           <PortalThemeProvider>
