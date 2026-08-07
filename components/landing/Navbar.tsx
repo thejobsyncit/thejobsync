@@ -149,7 +149,7 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.3 }}
             className="lg:hidden fixed top-20 left-0 w-full bg-white/95 dark:bg-[#010a18]/95 backdrop-blur-2xl border-b border-slate-200 dark:border-[#0077B6]/20 px-5 py-6 space-y-2 shadow-[0_20px_60px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.5)] z-[90]"
           >
             {navLinks.map(({ href, label }) => (
