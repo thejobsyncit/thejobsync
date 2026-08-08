@@ -29,11 +29,11 @@ export async function GET() {
       }),
       prisma.placement.count({ where: { createdAt: { gte: firstDayOfMonth } } }),
       prisma.interview.count({ where: { createdAt: { gte: firstDayOfMonth } } }),
-      // Get 10 most recent items across modules
+      // Get most recent items across modules
       Promise.all([
-        prisma.placement.findMany({ orderBy: { createdAt: 'desc' }, take: 3, include: { candidate: { select: { name: true } }, client: { select: { companyName: true } } } }),
-        prisma.interview.findMany({ orderBy: { createdAt: 'desc' }, take: 3, include: { candidate: { select: { name: true } }, requirement: { select: { title: true } } } }),
-        prisma.candidate.findMany({ orderBy: { createdAt: 'desc' }, take: 3, select: { name: true, status: true, createdAt: true } }),
+        prisma.placement.findMany({ orderBy: { createdAt: 'desc' }, take: 15, include: { candidate: { select: { name: true } }, client: { select: { companyName: true } } } }),
+        prisma.interview.findMany({ orderBy: { createdAt: 'desc' }, take: 15, include: { candidate: { select: { name: true } }, requirement: { select: { title: true } } } }),
+        prisma.candidate.findMany({ orderBy: { createdAt: 'desc' }, take: 15, select: { name: true, status: true, createdAt: true } }),
       ]),
     ]);
 
@@ -64,7 +64,7 @@ export async function GET() {
         user: 'System',
         timestamp: c.createdAt.toISOString(),
       })),
-    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 7);
+    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 30);
 
     return NextResponse.json({
       stats: {

@@ -50,6 +50,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAllActivities, setShowAllActivities] = useState(false);
 
   useEffect(() => {
     async function fetchDashboard() {
@@ -266,11 +267,11 @@ export default function DashboardPage() {
             <div className="card animate-fade-in-up delay-6" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
                 <h3 style={{ fontSize: '0.9375rem', fontWeight: 600 }}>Recent Activities</h3>
-                <button className="btn-ghost" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>View All</button>
+                <button onClick={() => setShowAllActivities(true)} className="btn-ghost" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>View All</button>
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}>
-                {(data?.recentActivities || []).length > 0 ? data!.recentActivities.map((activity: any, i: number) => (
+                {(data?.recentActivities || []).length > 0 ? data!.recentActivities.slice(0, 7).map((activity: any, i: number) => (
                   <div key={activity.id ? `${activity.id}-${i}` : i} style={{ display: 'flex', gap: '0.875rem' }}>
                     <div style={{
                       width: 32, height: 32, borderRadius: '50%',
@@ -301,6 +302,51 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+
+          {/* All Activities Modal */}
+          {showAllActivities && (
+            <div style={{
+              position: 'fixed', inset: 0, zIndex: 100,
+              background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
+            }}>
+              <div className="card animate-scale-in" style={{
+                width: '100%', maxWidth: 600, maxHeight: '85vh',
+                display: 'flex', flexDirection: 'column',
+              }}>
+                <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: 600 }}>All Recent Activities</h3>
+                  <button onClick={() => setShowAllActivities(false)} className="btn-ghost btn-icon" style={{ padding: '0.25rem' }}>✕</button>
+                </div>
+                <div style={{ padding: '1.25rem', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  {(data?.recentActivities || []).map((activity: any, i: number) => (
+                    <div key={activity.id ? `${activity.id}-${i}` : i} style={{ display: 'flex', gap: '1rem' }}>
+                      <div style={{
+                        width: 36, height: 36, borderRadius: '50%',
+                        background: `${ACTIVITY_COLORS[activity.type] || '#666'}15`,
+                        color: ACTIVITY_COLORS[activity.type] || '#666',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                      }}>
+                        {ACTIVITY_ICONS[activity.type] || <Clock size={16} />}
+                      </div>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                          <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{activity.action}</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)' }}>
+                            {new Date(activity.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--muted-foreground)' }}>
+                          {activity.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

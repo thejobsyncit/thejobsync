@@ -252,7 +252,7 @@ export default function SuperAdminPage() {
           <div className="lg:col-span-2 card p-5">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold text-lg">Employee Directory</h3>
-              <button onClick={fetchEmployees} className="btn-secondary btn-sm"><RefreshCw size={14}/> Refresh</button>
+              <button onClick={() => { fetchEmployees(); toast.success('Employees refreshed successfully'); }} className="btn-secondary btn-sm"><RefreshCw size={14}/> Refresh</button>
             </div>
             <div className="overflow-x-auto">
               <table className="table w-full">

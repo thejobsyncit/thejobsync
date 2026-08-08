@@ -129,6 +129,7 @@ export default function SettingsPage() {
               <form onSubmit={async (e) => {
                 e.preventDefault();
                 const formData = new FormData(e.currentTarget);
+                const currentPass = formData.get('currentPass') as string;
                 const newPass = formData.get('newPass') as string;
                 const confirmPass = formData.get('confirmPass') as string;
 
@@ -141,13 +142,14 @@ export default function SettingsPage() {
                   const res = await fetch(`/api/users/${user.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: newPass }),
+                    body: JSON.stringify({ password: newPass, currentPassword: currentPass }),
                   });
                   if (res.ok) {
                     alert('Password updated successfully! Please log in again with your new password.');
                     logout(true); // logout without confirmation prompt
                   } else {
-                    alert('Failed to update password');
+                    const data = await res.json();
+                    alert(data.error || 'Failed to update password');
                   }
                 } catch (err) {
                   alert('An error occurred while updating password');

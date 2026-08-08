@@ -25,7 +25,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updateData: Record<string, unknown> = {};
     if (data.name !== undefined) updateData.name = data.name.trim();
     if (data.email !== undefined) updateData.email = data.email.trim();
-    if (data.password !== undefined && data.password.trim()) updateData.password = data.password.trim();
+    if (data.password !== undefined && data.password.trim()) {
+      if (data.currentPassword !== undefined) {
+        const currentUser = await prisma.user.findUnique({ where: { id }, select: { password: true } });
+        if (!currentUser || currentUser.password !== data.currentPassword) {
+          return NextResponse.json({ error: 'Incorrect current password' }, { status: 401 });
+        }
+      }
+      updateData.password = data.password.trim();
+    }
     if (data.role !== undefined) updateData.role = data.role;
     if (data.phone !== undefined) updateData.phone = data.phone.trim();
     if (data.department !== undefined) updateData.department = data.department?.trim() || null;
