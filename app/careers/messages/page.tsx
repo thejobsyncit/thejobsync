@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCandidateAuth } from '@/context/CandidateAuthContext';
-import { Send, MessageSquare } from 'lucide-react';
+import { Send, MessageSquare, Check, CheckCheck } from 'lucide-react';
 import DashboardLayout from '../DashboardLayout';
 import { motion } from 'framer-motion';
 import { usePortalTheme } from '@/context/PortalThemeContext';
@@ -24,13 +24,13 @@ export default function MessagesPage() {
   useEffect(() => {
     if (!candidate) return;
     const fetchMsgs = () => {
-      fetch(`/api/candidate-auth/messages?candidateAccountId=${candidate.id}`)
+      fetch(`/api/candidate-auth/messages?candidateAccountId=${candidate.id}&markRead=true`)
         .then(r => r.json())
         .then(data => { setMessages(Array.isArray(data) ? data : []); setLoading(false); })
         .catch(() => setLoading(false));
     };
     fetchMsgs();
-    const int = setInterval(fetchMsgs, 10000); // simple polling
+    const int = setInterval(fetchMsgs, 3000); // aggressive polling for instant feeling
     return () => clearInterval(int);
   }, [candidate]);
 
@@ -101,8 +101,11 @@ export default function MessagesPage() {
                   }}>
                     {msg.message}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 6, textAlign: isMe ? 'right' : 'left' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 6, display: 'flex', alignItems: 'center', justifyContent: isMe ? 'flex-end' : 'flex-start', gap: 4 }}>
                     {new Date(msg.sentAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {isMe && (
+                      msg.isRead ? <CheckCheck size={14} color="#38bdf8" /> : <CheckCheck size={14} color="#94a3b8" />
+                    )}
                   </div>
                 </motion.div>
               );

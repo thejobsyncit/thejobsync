@@ -62,6 +62,27 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           data.status
         ).catch(console.error);
       }
+
+      // Internal CRM Notification
+      const targetUserIds: string[] = [];
+      if (candidate.assignedSupportId) {
+        targetUserIds.push(candidate.assignedSupportId);
+      } else {
+        const superAdmins = await prisma.user.findMany({ where: { role: 'super_admin' }, select: { id: true } });
+        targetUserIds.push(...superAdmins.map(a => a.id));
+      }
+
+      if (targetUserIds.length > 0) {
+        await prisma.notification.createMany({
+          data: targetUserIds.map(uid => ({
+            userId: uid,
+            title: 'Candidate Status Updated',
+            message: `${candidate.name} is now marked as ${data.status} for ${candidate.requirement?.title || 'Job Application'}.`,
+            type: 'info',
+            link: `/crm/candidates`
+          }))
+        });
+      }
     }
 
     return NextResponse.json({ ...candidate, skills: JSON.parse(candidate.skills) });

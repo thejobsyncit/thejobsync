@@ -7,7 +7,7 @@ import type { UserRole } from '@/lib/types';
 import {
   LayoutDashboard, Users, Briefcase, UserCheck, Calendar, Heart,
   Award, BarChart3, Settings, Shield, Server, Crown, Code, TestTube2,
-  Building2, ChevronLeft, ChevronRight, X, LifeBuoy, Clock, PhoneCall
+  Building2, ChevronLeft, ChevronRight, X, LifeBuoy, Clock, PhoneCall, MessageSquare
 } from 'lucide-react';
 
 interface NavItem {
@@ -29,6 +29,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Recruiter Hub', href: '/recruiter', icon: <UserCheck size={18} />, roles: ['recruiter'] },
   { label: 'Interviewer Hub', href: '/interviewer', icon: <Calendar size={18} />, roles: ['interviewer'] },
   { label: 'HR Hub', href: '/hr', icon: <Heart size={18} />, roles: ['hr'] },
+  { label: 'Candidate Messages', href: '/candidate-messages', icon: <MessageSquare size={18} />, roles: ['hr', 'admin', 'super_admin', 'recruiter'] },
   { label: 'Fresh Dump', href: '/fresh-dump', icon: <TestTube2 size={18} />, roles: ['super_admin', 'admin', 'hr', 'placement_coordinator', 'recruiter', 'application_support'] },
   { label: 'Reports', href: '/reports', icon: <BarChart3 size={18} />, roles: ['super_admin', 'admin', 'placement_coordinator', 'hr'] },
   { label: 'Admin Panel', href: '/admin', icon: <Shield size={18} />, roles: ['super_admin', 'admin'] },

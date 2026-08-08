@@ -9,7 +9,16 @@ export async function GET(req: Request) {
   try {
     const savedJobs = await prisma.candidateSavedJob.findMany({
       where: { candidateAccountId: candidateId },
-      include: { requirement: { include: { client: true } } },
+      include: { 
+        requirement: { 
+          include: { 
+            client: true,
+            candidateApplications: {
+              where: { candidateAccountId: candidateId }
+            }
+          } 
+        } 
+      },
       orderBy: { savedAt: 'desc' }
     });
     return NextResponse.json(savedJobs);

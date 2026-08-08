@@ -471,7 +471,7 @@ export default function CandidateProfilePage() {
                 <input style={getINPUT(isDark)} value={form.name} onChange={e => setForm({ ...form, name: e.target.value.replace(/[^a-zA-Z\s.]/g, '') })} placeholder="Your full name" className="focus:border-[#0077B6]" />
               </Field>
               <Field label="Email Address">
-                <input style={{ ...getINPUT(isDark), background: 'rgba(255,255,255,0.02)', color: '#64748b' }} value={form.email} readOnly />
+                <input style={{ ...getINPUT(isDark), background: 'rgba(255,255,255,0.02)', color: '#64748b', cursor: 'not-allowed', opacity: 0.7 }} value={form.email} disabled />
               </Field>
             </Grid2>
             <Grid2>

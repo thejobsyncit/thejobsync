@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCandidateAuth } from '@/context/CandidateAuthContext';
-import { Bookmark, MapPin, DollarSign, Briefcase, Clock, Trash2, Zap } from 'lucide-react';
+import { Bookmark, MapPin, DollarSign, Briefcase, Clock, Trash2, Zap, CheckCircle2 } from 'lucide-react';
 import DashboardLayout from '../DashboardLayout';
 import { motion } from 'framer-motion';
 import { usePortalTheme } from '@/context/PortalThemeContext';
@@ -96,9 +96,24 @@ export default function SavedJobsPage() {
                   <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <Clock size={12} /> Saved {new Date(saved.savedAt).toLocaleDateString()}
                   </span>
-                  <Link href={`/careers/jobs/${job?.id}`} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'linear-gradient(135deg, #0ea5e9, #0077B6)', color: 'white', padding: '0.5rem 1rem', borderRadius: 8, fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' }} className="hover:scale-105 transition-transform">
-                    <Zap size={14} /> Apply
-                  </Link>
+                  {(() => {
+                    const hasApplied = job?.candidateApplications?.length > 0;
+                    return (
+                      <Link 
+                        href={`/careers/jobs/${job?.id}`} 
+                        style={{ 
+                          display: 'flex', alignItems: 'center', gap: 6, 
+                          background: hasApplied ? (isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0') : 'linear-gradient(135deg, #0ea5e9, #0077B6)', 
+                          color: hasApplied ? (isDark ? '#cbd5e1' : '#475569') : 'white', 
+                          padding: '0.5rem 1rem', borderRadius: 8, fontSize: '0.85rem', fontWeight: 700, textDecoration: 'none' 
+                        }} 
+                        className={!hasApplied ? "hover:scale-105 transition-transform" : ""}
+                      >
+                        {hasApplied ? <CheckCircle2 size={14} /> : <Zap size={14} />} 
+                        {hasApplied ? 'Applied' : 'Apply'}
+                      </Link>
+                    );
+                  })()}
                 </div>
               </motion.div>
             );

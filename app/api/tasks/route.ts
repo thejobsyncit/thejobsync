@@ -61,6 +61,18 @@ export async function POST(req: Request) {
       }
     });
 
+    if (assigneeId !== creatorId) {
+      await prisma.notification.create({
+        data: {
+          userId: assigneeId,
+          title: 'New Task Assigned',
+          message: `${newTask.creator.name} assigned you a new task: "${text.substring(0, 30)}${text.length > 30 ? '...' : ''}"`,
+          type: 'info',
+          link: '/crm/dashboard'
+        }
+      });
+    }
+
     return NextResponse.json(newTask, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to create task' }, { status: 500 });

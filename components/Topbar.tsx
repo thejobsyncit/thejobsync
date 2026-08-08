@@ -7,7 +7,6 @@ import { Bell, Search, LogOut, Menu, Moon, Sun } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { toggleGlobalTheme } from '@/lib/theme';
-import { MOCK_NOTIFICATIONS } from '@/lib/mock-data';
 
 interface TopbarProps {
   sidebarCollapsed: boolean;
@@ -23,11 +22,44 @@ export default function Topbar({ sidebarCollapsed, onMobileMenuToggle }: TopbarP
   const [showUserMenu, setShowUserMenu] = useState(false);
   const currentTheme = resolvedTheme || theme || 'dark';
 
+  const [notifications, setNotifications] = useState<any[]>([]);
+
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    if (user) {
+      const fetchNotifications = async () => {
+        try {
+          const res = await fetch(`/api/notifications?userId=${user.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            setNotifications(data);
+          }
+        } catch (e) {
+          console.error('Failed to fetch notifications', e);
+        }
+      };
 
-  const unreadCount = MOCK_NOTIFICATIONS.filter(n => !n.isRead).length;
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      await fetch('/api/notifications', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -96,20 +128,28 @@ export default function Topbar({ sidebarCollapsed, onMobileMenuToggle }: TopbarP
                 Notifications ({unreadCount} new)
               </div>
               <div style={{ maxHeight: 320, overflowY: 'auto' }}>
-                {MOCK_NOTIFICATIONS.slice(0, 5).map(n => (
-                  <div key={n.id} style={{
-                    padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)',
-                    background: n.isRead ? 'transparent' : 'rgba(99,102,241,0.04)',
-                    cursor: 'pointer', transition: 'background 0.15s ease',
-                  }}>
-                    <div style={{ fontSize: '0.8125rem', fontWeight: 500, marginBottom: '0.25rem' }}>
-                      {n.title}
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', lineHeight: 1.4 }}>
-                      {n.message}
-                    </div>
+                {notifications.length === 0 ? (
+                  <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--muted-foreground)', fontSize: '0.8125rem' }}>
+                    No notifications yet
                   </div>
-                ))}
+                ) : (
+                  notifications.map(n => (
+                    <div key={n.id} 
+                      onClick={() => !n.isRead && handleMarkAsRead(n.id)}
+                      style={{
+                        padding: '0.75rem 1rem', borderBottom: '1px solid var(--border)',
+                        background: n.isRead ? 'transparent' : 'rgba(99,102,241,0.04)',
+                        cursor: n.isRead ? 'default' : 'pointer', transition: 'background 0.15s ease',
+                    }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: n.isRead ? 500 : 700, marginBottom: '0.25rem' }}>
+                        {n.title}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', lineHeight: 1.4 }}>
+                        {n.message}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

@@ -334,7 +334,7 @@ export default function CompaniesPage() {
                   <div className={`w-14 h-14 rounded-2xl text-white font-extrabold flex items-center justify-center text-sm mb-4 group-hover/card:scale-110 transition-transform ${partner.color}`}>
                     {partner.code}
                   </div>
-                  <span className="text-sm font-bold text-gray-600 text-center">{partner.name}</span>
+                  <span className="text-sm font-bold text-gray-600 dark:text-gray-300 text-center">{partner.name}</span>
                 </div>
               ))}
             </div>

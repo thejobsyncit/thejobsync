@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCandidateAuth } from '@/context/CandidateAuthContext';
-import { User, Briefcase, Bookmark, MessageSquare, LogOut, Zap, Menu, X, Sun, Moon, Mic, Award, Globe, Video } from 'lucide-react';
+import { User, Briefcase, Bookmark, MessageSquare, LogOut, Zap, Menu, X, Sun, Moon, Mic, Award, Globe, Video, Bell } from 'lucide-react';
 import { usePortalTheme } from '@/context/PortalThemeContext';
 import { motion } from 'framer-motion';
 
@@ -24,6 +24,28 @@ export default function CandidateDashboardLayout({ children }: { children: React
     );
   }
 
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+
+  useEffect(() => {
+    if (candidate) {
+      fetch(`/api/candidate-auth/messages?candidateAccountId=${candidate.id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            const count = data.filter((m: any) => !m.isRead && m.sender === 'hr').length;
+            setUnreadMessagesCount(count);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [candidate]);
+
+  useEffect(() => {
+    if (pathname === '/careers/messages') {
+      setUnreadMessagesCount(0);
+    }
+  }, [pathname]);
+
   if (!candidate) {
     return null;
   }
@@ -33,7 +55,7 @@ export default function CandidateDashboardLayout({ children }: { children: React
     { label: 'Portfolio', href: '/careers/portfolio', icon: <Globe size={20} /> },
     { label: 'Saved Jobs', href: '/careers/saved-jobs', icon: <Bookmark size={20} /> },
     { label: 'Applications', href: '/careers/my-applications', icon: <Briefcase size={20} /> },
-    { label: 'Messages', href: '/careers/messages', icon: <MessageSquare size={20} /> },
+    { label: 'Messages', href: '/careers/messages', icon: <MessageSquare size={20} />, badge: unreadMessagesCount > 0 ? unreadMessagesCount : undefined },
     { label: 'AI Mock Interview', href: '/careers/mock-interview', icon: <Mic size={20} /> },
     { label: 'My Score Reports', href: '/careers/assessment-reports', icon: <Award size={20} /> },
   ];
@@ -61,9 +83,17 @@ export default function CandidateDashboardLayout({ children }: { children: React
           <img src="/loooo.jpeg" alt="The jobsync Logo" style={{ height: 32, width: 32, objectFit: 'contain', borderRadius: '50%' }} />
           <span style={{ fontWeight: 800, fontSize: '1.1rem', color: isDark ? 'white' : '#0f172a' }}>The jobsync</span>
         </div>
-        <button onClick={() => setMobileOpen(!mobileOpen)} style={{ background: 'none', border: 'none', color: isDark ? 'white' : '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Menu size={24} />
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <Link href="/careers/messages" onClick={() => setUnreadMessagesCount(0)} style={{ position: 'relative', color: isDark ? 'white' : '#0f172a', display: 'flex', alignItems: 'center' }}>
+            <Bell size={22} />
+            {unreadMessagesCount > 0 && (
+              <span style={{ position: 'absolute', top: -4, right: -4, background: '#ef4444', width: 10, height: 10, borderRadius: '50%', border: `2px solid ${isDark ? '#0f172a' : 'white'}` }} />
+            )}
+          </Link>
+          <button onClick={() => setMobileOpen(!mobileOpen)} style={{ background: 'none', border: 'none', color: isDark ? 'white' : '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+            <Menu size={24} />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -98,9 +128,12 @@ export default function CandidateDashboardLayout({ children }: { children: React
             {navItems.map(item => {
               const active = pathname === item.href;
               return (
-                <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }} onClick={() => setMobileOpen(false)}>
+                <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }} onClick={() => {
+                  setMobileOpen(false);
+                  if (item.href === '/careers/messages') setUnreadMessagesCount(0);
+                }}>
                   <div style={{
-                    display: 'flex', alignItems: 'center', gap: 12, padding: '0.75rem 1rem', borderRadius: 12,
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', borderRadius: 12,
                     background: active ? 'rgba(56,189,248,0.12)' : 'transparent',
                     color: active ? '#00B4D8' : (isDark ? '#cbd5e1' : '#475569'),
                     fontWeight: active ? 700 : 600,
@@ -108,7 +141,17 @@ export default function CandidateDashboardLayout({ children }: { children: React
                     transition: 'all 0.2s', border: `1px solid ${active ? 'rgba(56,189,248,0.25)' : 'transparent'}`
                   }}
                     className="hover:bg-sky-900/20 hover:text-sky-300">
-                    {item.icon} {item.label}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      {item.icon} {item.label}
+                    </div>
+                    {item.badge !== undefined && (
+                      <span style={{
+                        background: '#ef4444', color: 'white', fontSize: '0.75rem', fontWeight: 700,
+                        padding: '2px 8px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      }}>
+                        {item.badge}
+                      </span>
+                    )}
                   </div>
                 </Link>
               );
@@ -155,6 +198,47 @@ export default function CandidateDashboardLayout({ children }: { children: React
               {isDark ? <Sun size={18} className="flex-shrink-0" /> : <Moon size={18} className="flex-shrink-0" />}
               <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
+
+            <Link 
+              href="/careers/messages"
+              onClick={() => setUnreadMessagesCount(0)}
+              style={{
+                width: '100%',
+                height: '42px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                padding: '0 1rem',
+                margin: 0,
+                borderRadius: '10px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxSizing: 'border-box',
+                textDecoration: 'none',
+                background: isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)',
+                color: isDark ? '#f8fafc' : '#0f172a',
+                border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                position: 'relative'
+              }} 
+              className="hover:scale-[1.01] active:scale-[0.98] hover:bg-sky-500/10 hover:border-sky-500/30 dark:hover:bg-white/10 dark:hover:border-white/20"
+            >
+              <Bell size={18} className="flex-shrink-0" />
+              <span>Notifications</span>
+              {unreadMessagesCount > 0 && (
+                <span style={{ 
+                  position: 'absolute', top: 12, right: 12, 
+                  background: '#ef4444', color: 'white', 
+                  fontSize: '0.65rem', fontWeight: 800, 
+                  padding: '2px 6px', borderRadius: 10,
+                  lineHeight: 1
+                }}>
+                  {unreadMessagesCount}
+                </span>
+              )}
+            </Link>
 
             <button 
               onClick={() => { if(window.confirm("Are you sure you want to log out?")) { logout(); router.push('/careers'); } }} 
@@ -218,7 +302,19 @@ export default function CandidateDashboardLayout({ children }: { children: React
         {navItems.map(item => {
           const active = pathname === item.href;
           return (
-            <Link key={item.href} href={item.href} style={{ textDecoration: 'none', flex: 1 }} onClick={() => setMobileOpen(false)}>
+            <Link key={item.href} href={item.href} style={{ textDecoration: 'none', flex: 1, position: 'relative' }} onClick={() => {
+              setMobileOpen(false);
+              if (item.href === '/careers/messages') setUnreadMessagesCount(0);
+            }}>
+              {item.badge !== undefined && (
+                <span style={{
+                  position: 'absolute', top: 4, right: '20%', background: '#ef4444', color: 'white',
+                  fontSize: '0.65rem', fontWeight: 800, padding: '1px 5px', borderRadius: 10,
+                  zIndex: 10
+                }}>
+                  {item.badge}
+                </span>
+              )}
               <div style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 gap: 3, padding: '0.5rem 0', borderRadius: 10,
