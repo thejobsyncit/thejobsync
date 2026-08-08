@@ -15,15 +15,6 @@ export default function CandidateDashboardLayout({ children }: { children: React
   const router = useRouter();
   const { isDark, toggleTheme } = usePortalTheme();
 
-  if (isLoading) {
-    return (
-      <div style={{ minHeight: '100vh', background: isDark ? '#0f172a' : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ width: 50, height: 50, border: `3px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, borderTopColor: '#00B4D8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-      </div>
-    );
-  }
-
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
 
   useEffect(() => {
@@ -45,6 +36,15 @@ export default function CandidateDashboardLayout({ children }: { children: React
       setUnreadMessagesCount(0);
     }
   }, [pathname]);
+
+  if (isLoading) {
+    return (
+      <div style={{ minHeight: '100vh', background: isDark ? '#0f172a' : '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 50, height: 50, border: `3px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, borderTopColor: '#00B4D8', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+      </div>
+    );
+  }
 
   if (!candidate) {
     return null;

@@ -89,7 +89,7 @@ export default function CandidateProfilePage() {
   const photoRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<any>({
-    name: '', email: '', phone: '', gender: '', headline: '', summary: '',
+    name: '', email: '', phone: '', gender: '', dob: '', headline: '', summary: '',
     locCountry: 'IN', locState: '', locDistrict: '', locCity: '', locAddress: '', currentCompany: '', currentRole: '', expectedSalary: '',
     preferredRoles: '', resumeUrl: '', resumeFileName: '', photoUrl: '',
     skillsArr: [],
@@ -197,6 +197,7 @@ export default function CandidateProfilePage() {
       email: candidate.email || '',
       phone: candidate.phone || '',
       gender: (candidate as any).gender || '',
+      dob: (candidate as any).dob || '',
       headline: candidate.headline || '',
       summary: (candidate as any).summary || '',
       locCountry: parsedLoc.country,
@@ -243,6 +244,7 @@ export default function CandidateProfilePage() {
   if (!form.email) missingFields.push('Email');
   if (!form.phone) missingFields.push('Phone Number');
   if (!form.gender) missingFields.push('Gender');
+  if (!form.dob) missingFields.push('Date of Birth');
   if (!form.headline) missingFields.push('Headline');
   if (!form.summary) missingFields.push('Summary');
   if (!form.locCountry || !form.locState || !form.locCity) missingFields.push('Location');
@@ -373,6 +375,7 @@ export default function CandidateProfilePage() {
         name: form.name,
         phone: form.phone,
         gender: form.gender,
+        dob: form.dob,
         headline: form.headline,
         summary: form.summary,
         location: JSON.stringify({ country: form.locCountry, state: form.locState, district: form.locDistrict, city: form.locCity, address: form.locAddress }),
@@ -407,6 +410,19 @@ export default function CandidateProfilePage() {
   };
 
   if (!candidate) return null;
+
+  const calculateAge = (dob: string) => {
+    if (!dob) return '';
+    const birthDate = new Date(dob);
+    if (isNaN(birthDate.getTime())) return '';
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age >= 0 ? `${age} years` : '';
+  };
 
   return (
     <DashboardLayout>
@@ -487,6 +503,25 @@ export default function CandidateProfilePage() {
                   <option value="Prefer not to say">Prefer not to say</option>
                 </select>
               </Field>
+            </Grid2>
+            <Grid2>
+              <Field label="Date of Birth *">
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <input 
+                    type="date" 
+                    style={{ ...getINPUT(isDark), flex: 1 }} 
+                    value={form.dob} 
+                    onChange={e => setForm({ ...form, dob: e.target.value })} 
+                    className="focus:border-[#0077B6] [color-scheme:light] dark:[color-scheme:dark]" 
+                  />
+                  {form.dob && (
+                    <span style={{ fontSize: '0.95rem', fontWeight: 700, color: isDark ? '#38bdf8' : '#0077B6', minWidth: '70px', background: isDark ? 'rgba(56,189,248,0.1)' : 'rgba(0,119,182,0.1)', padding: '0.5rem 0.8rem', borderRadius: '8px' }}>
+                      Age: {calculateAge(form.dob)}
+                    </span>
+                  )}
+                </div>
+              </Field>
+              <div></div> {/* Empty div to keep the Grid2 balanced if needed, or you could put another field here */}
             </Grid2>
             <div style={{ marginTop: 24, marginBottom: 8, fontSize: '1rem', fontWeight: 700, color: isDark ? 'white' : '#0f172a' }}>Location Details</div>
             <Grid2>

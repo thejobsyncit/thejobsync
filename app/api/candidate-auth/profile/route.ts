@@ -56,6 +56,8 @@ export async function PUT(request: NextRequest) {
           resumeUrl: updated.resumeUrl,
           // @ts-ignore
           gender: (updated as any).gender,
+          // @ts-ignore
+          dob: (updated as any).dob,
         }
       });
     }

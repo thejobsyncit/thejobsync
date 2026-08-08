@@ -138,8 +138,29 @@ export default function PortfolioPage() {
     setFormData(prev => ({ ...prev, [key]: value }));
     if (key === 'portfolioUrl' && !value.trim()) {
       setFieldErrors(prev => ({ ...prev, portfolioUrl: 'Portfolio Website URL is required.' }));
-    } else if (value.trim() && !isValidUrl(value)) {
-      setFieldErrors(prev => ({ ...prev, [key]: 'Please enter a valid HTTP or HTTPS URL.' }));
+    } else if (value.trim()) {
+      if (!isValidUrl(value)) {
+        setFieldErrors(prev => ({ ...prev, [key]: 'Please enter a valid HTTP or HTTPS URL.' }));
+      } else {
+        const normalized = formatUrlWithHttps(value).toLowerCase().replace(/\/$/, '');
+        try {
+          const parsedUrl = new URL(normalized);
+          const hostname = parsedUrl.hostname;
+          if (key === 'githubUrl' && !hostname.includes('github.com')) {
+            setFieldErrors(prev => ({ ...prev, [key]: 'Please enter a valid GitHub URL.' }));
+          } else if (key === 'linkedinUrl' && !hostname.includes('linkedin.com')) {
+            setFieldErrors(prev => ({ ...prev, [key]: 'Please enter a valid LinkedIn URL.' }));
+          } else if (key === 'leetcodeUrl' && !hostname.includes('leetcode.com')) {
+            setFieldErrors(prev => ({ ...prev, [key]: 'Please enter a valid LeetCode URL.' }));
+          } else if (key === 'hackerrankUrl' && !hostname.includes('hackerrank.com')) {
+            setFieldErrors(prev => ({ ...prev, [key]: 'Please enter a valid HackerRank URL.' }));
+          } else {
+            setFieldErrors(prev => { const u = { ...prev }; delete u[key]; return u; });
+          }
+        } catch (e) {
+          setFieldErrors(prev => ({ ...prev, [key]: 'Please enter a valid HTTP or HTTPS URL.' }));
+        }
+      }
     } else {
       setFieldErrors(prev => { const u = { ...prev }; delete u[key]; return u; });
     }
@@ -149,12 +170,53 @@ export default function PortfolioPage() {
     e.preventDefault();
     setSuccessMessage(null); setErrorMessage(null);
     const errors: Record<string, string> = {};
-    if (!formData.portfolioUrl || !formData.portfolioUrl.trim())
+    const urlOccurrences: Record<string, string[]> = {};
+
+    if (!formData.portfolioUrl || !formData.portfolioUrl.trim()) {
       errors.portfolioUrl = 'Portfolio Website URL is required.';
+    }
+
     Object.keys(formData).forEach(k => {
       const key = k as keyof PortfolioData;
-      if (formData[key]?.trim() && !isValidUrl(formData[key]))
-        errors[key] = 'Please enter a valid HTTP or HTTPS URL.';
+      const url = formData[key]?.trim();
+      if (url) {
+        if (!isValidUrl(url)) {
+          errors[key] = 'Please enter a valid HTTP or HTTPS URL.';
+        } else {
+          const normalized = formatUrlWithHttps(url).toLowerCase().replace(/\/$/, '');
+          
+          // Domain-specific validation
+          try {
+            const parsedUrl = new URL(normalized);
+            const hostname = parsedUrl.hostname;
+            
+            if (key === 'githubUrl' && !hostname.includes('github.com')) {
+              errors[key] = 'Please enter a valid GitHub URL.';
+            } else if (key === 'linkedinUrl' && !hostname.includes('linkedin.com')) {
+              errors[key] = 'Please enter a valid LinkedIn URL.';
+            } else if (key === 'leetcodeUrl' && !hostname.includes('leetcode.com')) {
+              errors[key] = 'Please enter a valid LeetCode URL.';
+            } else if (key === 'hackerrankUrl' && !hostname.includes('hackerrank.com')) {
+              errors[key] = 'Please enter a valid HackerRank URL.';
+            }
+          } catch (e) {
+            errors[key] = 'Please enter a valid HTTP or HTTPS URL.';
+          }
+
+          if (!urlOccurrences[normalized]) {
+            urlOccurrences[normalized] = [];
+          }
+          urlOccurrences[normalized].push(key);
+        }
+      }
+    });
+
+    Object.values(urlOccurrences).forEach(keys => {
+      if (keys.length > 1) {
+        keys.forEach(k => {
+          errors[k] = 'Duplicate URLs are not allowed.';
+        });
+      }
     });
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
